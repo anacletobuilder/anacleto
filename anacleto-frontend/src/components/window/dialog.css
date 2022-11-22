@@ -1,0 +1,7 @@
+/* Spostato in app.css perchè dovrebbe essere sempre così?
+.p-dialog-content .anacleto-panel-container > .p-toggleable-content{
+	flex-grow: 1;
+}
+.p-dialog-content .anacleto-panel-container > .p-toggleable-content > .p-panel-content{
+	height: 100%;
+}*/

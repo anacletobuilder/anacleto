@@ -1,0 +1,29 @@
+.datatable .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.datatable .product-image {
+    width: 100px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.datatable .editable-cells-table td.p-cell-editing {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+
+.custom-skeleton {
+    border: 1px solid var(--surface-d);
+    border-borderRadius: 4px;
+}
+.custom-skeleton ul {
+    list-style: none;
+}
+
+.p-paginator.p-component.p-paginator-bottom{
+    justify-content: end;
+    margin-right: 1rem;
+}

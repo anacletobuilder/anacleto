@@ -1,0 +1,28 @@
+body {
+	margin: 0;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	background-color: #fafafa;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Fix to enlarge components heights */
+.p-card, .p-card-body, .p-card-content,
+.p-tabview{
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto !important;
+}
+
+.p-toggleable-content {
+	flex-grow: 1;
+}
+.p-toggleable-content > .p-panel-content,
+.p-toggleable-content > .p-panel-content > .p-component {
+	height: 100%;
+}
+.transition-all{
+	transition: .35s all cubic-bezier(0.4, 0.0, 0.2, 1);
+}

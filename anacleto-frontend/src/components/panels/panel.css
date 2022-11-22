@@ -1,0 +1,108 @@
+/*
+ * stretch, imposta un pannello dentro a un flex in modo che occupi tutta l'altezza
+ */
+.stretch .p-toggleable-content {
+    display: flex !important;
+    flex-grow: 1 !important;
+    flex-shrink: 1 !important;
+    flex-direction: column;
+}
+
+.stretch .p-toggleable-content .p-panel-content {
+    flex-grow: 1 !important;
+    flex-shrink: 1 !important;
+    display: flex;
+}
+
+@media screen and (min-width: 576px) {
+    .sm\:stretch .p-toggleable-content {
+        display: flex !important;
+        flex-grow: 1 !important;
+        flex-shrink: 1 !important;
+        flex-direction: column;
+    }
+
+    .sm\:stretch .p-toggleable-content .p-panel-content {
+        flex-grow: 1 !important;
+        flex-shrink: 1 !important;
+        display: flex;
+    }
+}
+
+
+@media screen and (min-width: 768px) {
+    .md\:stretch .p-toggleable-content {
+        display: flex !important;
+        flex-grow: 1 !important;
+        flex-shrink: 1 !important;
+        flex-direction: column;
+    }
+
+    .md\:stretch .p-toggleable-content .p-panel-content {
+        flex-grow: 1 !important;
+        flex-shrink: 1 !important;
+        display: flex;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .lg\:stretch .p-toggleable-content {
+        display: flex !important;
+        flex-grow: 1 !important;
+        flex-shrink: 1 !important;
+        flex-direction: column;
+    }
+
+    .lg\:stretch .p-toggleable-content .p-panel-content {
+        flex-grow: 1 !important;
+        flex-shrink: 1 !important;
+        display: flex;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .xl\:stretch .p-toggleable-content {
+        display: flex !important;
+        flex-grow: 1 !important;
+        flex-shrink: 1 !important;
+        flex-direction: column;
+    }
+
+    .xl\:stretch .p-toggleable-content .p-panel-content {
+        flex-grow: 1 !important;
+        flex-shrink: 1 !important;
+        display: flex;
+    }
+}
+
+
+/*
+ * No padding
+ */
+.p-panel.no-padding .p-panel-content {
+    padding: 0;
+}
+
+@media screen and (min-width: 576px) {
+    .sm\:p-panel.no-padding .p-panel-content {
+        padding: 0;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .md\:p-panel.no-padding .p-panel-content {
+        padding: 0;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .lg\:.-panel.no-padding .p-panel-content {
+        padding: 0;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .xl\:p-panel.no-padding .p-panel-content {
+        padding: 0;
+    }
+}

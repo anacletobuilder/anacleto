@@ -1,0 +1,44 @@
+{
+  "name": "anacleto-backend",
+  "description": "Anacleto builder backend",
+  "version": "1.0.0",
+  "author": "lucabiasotto",
+  "license": "MIT",
+  "main": "src/index.js",
+  "scripts": {
+    "start_autoreload": "nodemon src/index.js",
+    "start_manualreaload": "node src/index.js",
+    "start": "node src/index.js"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@google-cloud/bigquery": "^6.0.3",
+    "@google-cloud/datastore": "^6.6.2",
+    "axios": "^0.25.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.2",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.17.2",
+    "express-winston": "^4.2.0",
+    "firebase-admin": "^10.0.2",
+    "isomorphic-git": "^1.17.0",
+    "luxon": "^3.0.1",
+    "promise-mysql": "^5.2.0",
+    "uuid": "^8.3.2",
+    "winston": "^3.7.2",
+    "winston-daily-rotate-file": "^4.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  },
+  "bugs": {
+    "url": "https://github.com/lucabiasotto/anacleto-frontend/issues"
+  },
+  "homepage": "https://github.com/lucabiasotto/anacleto-frontend#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucabiasotto/anacleto-backend.git"
+  }
+}

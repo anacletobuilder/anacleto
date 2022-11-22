@@ -1,0 +1,43 @@
+{
+	"id": "search_node",
+	"component": "GridContainer",
+	"items": [
+		{
+			"id": "search_form",
+			"title": "Search",
+			"dataModel": "Window",
+			"component": "Form",
+			"className": "p-0 pt-5 col-12",
+			"items": [
+				{
+					"colNumber": "col-12 md:col-9",
+					"component": "TextInput",
+					"hasFloatingLabel": true,
+					"value": "",
+					"width": "w-full",
+					"id": "id",
+					"label": "ID*",
+					"className": "p-inputtext-sm block",
+					"events": {
+						"onChange": {
+							"body": "console.log(this.context.panels.window_header.getRecord())"
+						}
+					}
+				},
+				{
+					"id": "search",
+					"component": "Button",
+					"className": "p-button-sm",
+					"colNumber": "col-12 md:col-3",
+					"label": "Search",
+					"icon": "pi pi-search",
+					"events": {
+						"onClick": {
+							"body": "var nodeId = this.context.panels.search_form.getRecord().id;var rfInstance = utils.inputData.rfInstance;if(nodeId != '') {var node = rfInstance.getNode(nodeId);if(node) {const x = node.position.x + node.width / 2;const y = node.position.y + node.height / 2;const zoom = 1.85;rfInstance.setCenter(x, y, { zoom, duration: 1000 });this.context.closeWindow();else {window.utils.showToast({ severity: 'error', summary: 'Node not found', detail: `Node not found for id: ${nodeId}`, life: 3000 });}}"
+						}
+					}
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,32 @@
+{
+	"id": "settings",
+	"title": "Settings",
+	"component": "GridContainer",
+	"isCard": true,
+	"layout": "flex",
+	"className": "flex-column flex-auto",
+	"items": [
+		{
+			"id": "settings_editor",
+			"component": "Form",
+			"containerClassName": "flex flex-auto",
+			"className": "flex flex-auto",
+			"toggleable": false,
+			"items": [
+				{
+					"id": "source",
+					"component": "CodeEditor",
+					"className": "align-self-stretch flex-auto flex",
+					"defaultValue": "",
+					"theme": "light",
+					"language": "json"
+				}
+			],
+			"events": {
+				"afterRender": {
+					"body": "let _this = this;utils.callServer({url: '/settings',method: 'get',params: {},}).then(function (response) {if (response.data.success) {const beautyData = JSON.stringify(response.data.data, null, 4); const record = {source: beautyData,};_this.setRecord(record);} else {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error', sticky: true });}}).catch(function (error) {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error' + error, sticky: true });});"
+				}
+			}
+		}
+	]
+}

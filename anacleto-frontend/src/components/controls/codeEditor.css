@@ -1,0 +1,8 @@
+/*
+ * Rendo responsie monaco-editor, atlrimenti calcola lui le dimensioni e sbaglia sul resize di window o pannelli
+ */
+.monaco-editor,
+.overflow-guard{
+    height: 100% !important;
+    width: 100% !important;
+}

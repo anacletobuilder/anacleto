@@ -1,0 +1,87 @@
+{
+	"id": "scripts_container",
+	"component": "GridContainer",
+	"layout": "flex",
+	"className": "flex-1 flex-column md:flex-row",
+	"items": [
+		{
+			"id": "scripts",
+			"store": "code/scripts_list",
+			"component": "Tree",
+			"title": "Script Tree",
+			"filterMode": "lenient",
+			"className": "flex-shrink-1",
+			"events": {
+				"afterRender": {
+					"body": "this.load();"
+				},
+				"onContextMenu": {
+					"parameters": "event",
+					"body": "let _this = this;const deleteFile = (scriptName, isDir) => {utils.showConfirmDialog({message: isDir ? 'Do you want to delete this folder?' : 'Do you want to delete this script?',header: 'Delete Confirmation',icon: 'pi pi-info-circle',acceptClassName: 'p-button-danger',accept: function () {_this.panelsContext.scripts_editor.setIsLoading(true);utils.callServer({url: '/script',method: 'delete',params: {application: _this.context.destApplication,script: scriptName,isDir: isDir},}).then(function (response) {if (response.data && response.data.success) {_this.panelsContext.scripts.load();const record = {script: '',source: '',};_this.panelsContext.scripts_editor.setRecord(record);_this.panelsContext.scripts_editor.setTitle('');_this.panelsContext.scripts_editor.setShowToolbar(false);_this.panelsContext.scripts_editor.items.source.disabled = true;utils.showToast({ severity: 'success', summary: 'Script deleted', detail: JSON.stringify(response.data), life: 3000 });} else {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error', sticky: true });}_this.panelsContext.scripts_editor.setIsLoading(false);}).catch(function (error) {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + error, sticky: true });_this.panelsContext.scripts_editor.setIsLoading(false);});},reject: function () { },});};const createFile = (folderName, isDir) => {utils.showInputDialog({header: isDir ? 'New folder' : 'New file',message: isDir ? 'A folder cannot be empty, please specify the folder name followed by a script name [my_folder / my_script]' : 'Please specify a name for the new file',defaultValue: folderName,validate: (event, context) => {const value = event.target.value;if (!value || value.length < 1) {return { success: false, message: isDir ? 'Please folder/script' : 'Please specify a script name' };}const checkRegx = isDir ? new RegExp(/^\\w+\\/+\\w+$/) : new RegExp(/^\\w+$/);if (!checkRegx.test(value)) {return { success: false, message: isDir ? 'Invalid path' : 'Invalid file name' };}return { success: true }},accept: (event, context) => {_this.panelsContext.scripts_editor.setIsLoading(true);let scriptName = event.value;if (!isDir && selectedNode.filePath) {/*nei file devo aggiungere anche il path delle cartelle se sono in sottocartelle*/scriptName = selectedNode.filePath.substr(1) + '/' + scriptName;}const scriptSource = `/** * @author:${utils.userCredential.username} * @date: ${new Date().toGMTString()} */`;const body = {data: scriptSource};utils.callServer({url: '/script',method: 'post',params: {application: _this.context.destApplication,script: scriptName,},data: body}).then(function (response) {if (response.data && response.data.success) {_this.panelsContext.scripts.load();const record = {script: scriptName,source: scriptSource,sha : response.data.sha,};_this.panelsContext.scripts_editor.setRecord(record);_this.panelsContext.scripts_editor.setTitle(scriptName + '.js');_this.panelsContext.scripts_editor.setShowToolbar(true);_this.panelsContext.scripts_editor.items.source.disabled = false;} else {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error', sticky: true });};_this.panelsContext.scripts_editor.setIsLoading(false);}).catch(function (error) {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + error, sticky: true });_this.panelsContext.scripts_editor.setIsLoading(false);});}});};let buttons = [];const selectedNode = event.node;if (event.node.isRoot || event.node.isDir) {/*posso aggiungere cartellaposso aggiungere fileposso cancellare cartella se non root*/buttons.push({label: 'New folder',icon: 'pi pi-folder',command: () => {const folderName = event.node.isRoot ? `` : `${selectedNode.data}/`;createFile(folderName, true);}});buttons.push({label: 'New script',icon: 'pi pi-file',command: () => {createFile('', false);}});if (!event.node.isRoot) {buttons.push({label: 'Delete folder',icon: 'pi pi-trash',command: () => {const scriptName = selectedNode.data;deleteFile(scriptName, true);}});}} else {buttons.push({label: 'Delete file',icon: 'pi pi-trash',command: (event) => {const scriptName = selectedNode.filePath.substring(1, selectedNode.filePath.lastIndexOf('.'));deleteFile(scriptName, false);}});}return buttons;"
+				},
+				"onSelect": {
+					"parameters": "event",
+					"body": "let _this = this;_this.panelsContext.scripts_editor.setShowToolbar(false);_this.panelsContext.scripts_editor.items.source.disabled = true;const record = {source: ''};_this.panelsContext.scripts_editor.setRecord(record);if (event.node.isDir || event.node.isRoot) {/*è una cartella*/_this.panelsContext.scripts_editor.setTitle('');return;}_this.panelsContext.scripts_editor.setIsLoading(true);let key = event.node.key;if (key.indexOf('/') === 0) {key = key.substr(1)}const scriptName = key.substring(0, key.lastIndexOf('.'));utils.callServer({url: '/script',method: 'get',params: {application: _this.context.destApplication,script: scriptName,},}).then(function (response) {if (response.data && response.data.success) {const record = {script: scriptName,source: response.data.data,sha: response.data.sha};_this.panelsContext.scripts_editor.setRecord(record);_this.panelsContext.scripts_editor.setTitle(scriptName + '.js');_this.panelsContext.scripts_editor.setShowToolbar(true);_this.panelsContext.scripts_editor.items.source.disabled = false;} else {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error', sticky: true });}_this.panelsContext.scripts_editor.setIsLoading(false);}).catch(function (error) {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + error, sticky: true });_this.panelsContext.scripts_editor.setIsLoading(false);});"
+				}
+			}
+		},
+		{
+			"id": "scripts_editor",
+			"component": "Form",
+			"layout": "flex",
+			"isCard": false,
+			"containerClassName": "flex flex-auto",
+			"className": "flex flex-auto",
+			"actions": [
+				{
+					"id": "save",
+					"label": "Save",
+					"icon": "pi pi-save",
+					"events": {
+						"onClick": {
+							"body": "let _this = this; _this.panelsContext.scripts_editor.setIsLoading(true);const record = _this.panelsContext.scripts_editor.getRecord();const source = record.source;const body = {data: record.source,sha: record.sha};utils.callServer({url: '/script',method: 'patch',params: {application: _this.context.destApplication,script: record.script,},data: body}).then(function (response) {if (response.data.success == true) {utils.showToast({ severity: 'success', summary: 'Script updated', detail: JSON.stringify(response.data), life: 3000 });const record = _this.panelsContext.scripts_editor.getRecord();record.sha = response.data.sha;_this.panelsContext.scripts_editor.setRecord(record)} else {utils.showToast({ severity: 'error', summary: 'Error', detail: response?.data?.message || 'Server error', sticky: true });}_this.panelsContext.scripts_editor.setIsLoading(false);}).catch(function (error) {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + error || 'Error', sticky: true });_this.panelsContext.scripts_editor.setIsLoading(false);});"
+						}
+					},
+					"actions": [
+						{
+							"id": "rename",
+							"label": "Rename",
+							"icon": "pi pi-pencil",
+							"events": {
+								"onClick": {
+									"body": "utils.showToast({ severity: 'warning', summary: 'TODO', detail: 'Not implemented, use right click in tree', life: 3000 });"
+								}
+							}
+						},
+						{
+							"id": "delete",
+							"label": "Delete",
+							"icon": "pi pi-times",
+							"events": {
+								"onClick": {
+									"body": "utils.showToast({ severity: 'warning', summary: 'TODO', detail: 'Not implemented, use right click in tree', life: 3000 });"
+								}
+							}
+						}
+					]
+				}
+			],
+			"items": [
+				{
+					"component": "CodeEditor",
+					"className": "align-self-stretch flex-1 flex",
+					"id": "source",
+					"theme": "light",
+					"language": "javascript",
+					"scope" : "backend",
+					"disabled": true
+				}
+			],
+			"events": {
+				"afterRender": {
+					"body": "this.panelsContext.scripts_editor.setShowToolbar(false);this.panelsContext.scripts_editor.items.source.disabled = true;"
+				}
+			}
+		}
+	]
+}

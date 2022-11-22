@@ -1,0 +1,93 @@
+{
+	"application": "BUILDER",
+	"name": "Anacleto Builder",
+	"appLogo": "/builder/logo.png",
+	"menu": [
+		{
+			"label": "Apps",
+			"icon": "pi pi-fw pi-th-large",
+			"items": [
+				{
+					"label": "Settings",
+					"icon": "pi pi-fw pi-cog",
+					"command": {
+						"body": "utils.openWindow({window : '/admin/settings',searchParams : {}});"
+					}
+				}
+			]
+		},
+		{
+			"label": "UI",
+			"icon": "pi pi-fw pi-desktop",
+			"items": [
+				{
+					"label": "Menu",
+					"icon": "pi pi-fw pi-sitemap",
+					"command": {
+						"body": "utils.openWindow({window : '/admin/menu',searchParams : {}});"
+					}
+				},
+				{
+					"label": "Windows",
+					"icon": "pi pi-fw pi-box",
+					"items": [
+						{
+							"label": "New window",
+							"icon": "pi pi-fw pi-plus",
+							"command": {
+								"body": "utils.openWindow({window:'new_window',type:'modal',settings:{header:'Nuova finestra'}})"
+							}
+						},
+						{
+							"label": "Windows",
+							"icon": "pi pi-fw pi-list",
+							"command": {
+								"body": "utils.openWindow({window : '/admin/window_list',searchParams : {}});"
+							}
+						},
+						{
+							"label": "Test columns",
+							"icon": "pi pi-question",
+							"command": {
+								"body": "utils.openWindow({window:'manage_columns',type:'modal',settings:{header:'Gestione colonne'}})"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"label": "Code",
+			"icon": "pi pi-fw pi-code",
+			"items": [
+				{
+					"label": "Scripts",
+					"icon": "pi pi-fw pi-list",
+					"command": {
+						"body": "utils.openWindow({window : '/admin/scripts',searchParams : {}});"
+					}
+				}
+			]
+		},
+		{
+			"label": "Access management",
+			"icon": "pi pi-fw pi-desktop",
+			"items": [
+				{
+					"label": "Roles",
+					"icon": "pi pi-fw pi-shield",
+					"command": {
+						"body": "utils.openWindow({window : '/admin/roles',searchParams : {}});"
+					}
+				},
+				{
+					"label": "Users",
+					"icon": "pi pi-fw pi-users",
+					"command": {
+						"body": "utils.openWindow({window : '/admin/users',searchParams : {}});"
+					}
+				}
+			]
+		}
+	]
+}

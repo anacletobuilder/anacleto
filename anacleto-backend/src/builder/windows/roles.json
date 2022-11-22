@@ -1,0 +1,42 @@
+{
+	"id": "roles",
+	"component": "GridContainer",
+	"title": "Roles",
+	"isCard": true,
+	"layout": "flex",
+	"className": "flex-column flex-auto",
+	"items": [
+		{
+			"id": "roles_settings",
+			"component": "Form",
+			"containerClassName": "flex flex-auto",
+			"className": "flex flex-auto col-12",
+			"events": {
+				"afterRender": {
+					"body": "let _this = this;_this.setIsLoading(true);utils.callServer({url: '/roles',method: 'get',headers: {application: _this.context.destApplication,},}).then(function (response) {if (response.data.success) {const beautyData = JSON.stringify(response.data.data, null, 4);const record = {source: beautyData,};_this.setRecord(record);} else {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error', sticky: true });}_this.setIsLoading(false);}).catch(function (error) {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + error, sticky: true });_this.setIsLoading(false);});"
+				}
+			},
+			"actions": [
+				{
+					"id": "save",
+					"label": "Save",
+					"icon": "pi pi-save",
+					"events": {
+						"onClick": {
+							"body": "let _this = this;_this.panelsContext.roles_settings.setIsLoading(true);var record = _this.panelsContext.roles_settings.getRecord();var source = record.source;var body = {data: record.source}utils.callServer({url: '/roles',method: 'patch',params: {application: _this.context.destApplication,},data: body}).then(function (response) {if (response.data.success == true) {life: 3000 });} else {true });}_this.panelsContext.roles_settings.setIsLoading(false);}).catch(function (error) {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + error, sticky: true });_this.panelsContext.roles_settings.setIsLoading(false);});"
+						}
+					}
+				}
+			],
+			"items": [
+				{
+					"component": "CodeEditor",
+					"className": "col-12",
+					"id": "source",
+					"theme": "light",
+					"language": "json"
+				}
+			]
+		}
+	]
+}

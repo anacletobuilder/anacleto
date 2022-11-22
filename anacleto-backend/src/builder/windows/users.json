@@ -1,0 +1,67 @@
+{
+	"id": "users_list",
+	"component": "GridContainer",
+	"title": "Users",
+	"isCard": true,
+	"layout": "flex",
+	"className": "flex-column flex-auto",
+	"items": [
+		{
+			"id": "users",
+			"store": "users/list",
+			"component": "DataTable",
+			"toggleable": false,
+			"className": "no-padding col-12",
+			"showGridlines": true,
+			"sortable": false,
+			"removableSort": true,
+			"resizableColumns": true,
+			"columnResizeMode": "fit",
+			"columns": [
+				{
+					"component": "Avatar",
+					"image": "photoURL",
+					"size": "xlarge",
+					"field": "photoURL",
+					"containerClassName": "text-center",
+					"header": "",
+					"sortable": false,
+					"referrerpolicy": "no-referrer"
+				},
+				{
+					"field": "uid",
+					"header": "ID",
+					"sortable": false
+				},
+				{
+					"field": "displayName",
+					"header": "Name",
+					"sortable": true
+				},
+				{
+					"field": "email",
+					"header": "e-mail",
+					"sortable": true
+				}
+			],
+			"paginator": false,
+			"stripedRows": true,
+			"tableSize": "large",
+			"scrollHeight": "flex",
+			"isEditable": false,
+			"editMode": "row",
+			"dataKey": "id",
+			"emptyMessage": "No Users",
+			"events": {
+				"onSelectionChange": {
+					"parameters": "event",
+					"body": "if(event.value[0]){utils.openWindow({window: '/admin/user', searchParams: {uid: event.value[0].uid}});}"
+				},
+				"afterRender": {
+					"body": "this.load();"
+				}
+			},
+			"isMultipleSelection": true
+		}
+	]
+}
