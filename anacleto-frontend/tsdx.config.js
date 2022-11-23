@@ -31,6 +31,12 @@ module.exports = {
       images({ include: ['**/*.png', '**/*.jpg'] }),
       ...config.plugins
     ]
+	if(process.env.NODE_ENV === "production"){
+		delete config.output.file;
+		config.output.dir = "./dist";
+	}else{
+		config.inlineDynamicImports = true;
+	}
 
     return config
   }
