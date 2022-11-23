@@ -78,7 +78,7 @@ const HOME = {
           "label": "Docs 📖",
           "events": {
             "onClick": {
-              "body": "window.open('https://github.com/lucabiasotto/Anacleto.wiki.git', '_blank').focus();"
+              "body": "window.open('https://github.com/anacletobuilder/anacleto.wiki.git', '_blank').focus();"
             }
           }
         },
@@ -90,7 +90,7 @@ const HOME = {
           "label": "GitHub 🗂",
           "events": {
             "onClick": {
-              "body": "window.open('https://github.com/lucabiasotto/Anacleto', '_blank').focus();"
+              "body": "window.open('https://github.com/anacletobuilder/anacleto', '_blank').focus();"
             }
           }
         }

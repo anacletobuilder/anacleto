@@ -1,7 +1,7 @@
 {
   "name": "anacleto-backend",
   "description": "Anacleto builder backend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "lucabiasotto",
   "license": "MIT",
   "main": "src/index.js",
@@ -34,11 +34,11 @@
     "nodemon": "^2.0.19"
   },
   "bugs": {
-    "url": "https://github.com/lucabiasotto/anacleto-frontend/issues"
+    "url": "https://github.com/anacletobuilder/anacleto/issues"
   },
-  "homepage": "https://github.com/lucabiasotto/anacleto-frontend#readme",
+  "homepage": "https://github.com/anacletobuilder/anacleto#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lucabiasotto/anacleto-backend.git"
+    "url": "git+https://github.com/anacletobuilder/anacleto.git"
   }
 }
