@@ -42,7 +42,8 @@ function CodeEditor({ id, context, panelContext, ...props }) {
 		return disposable?.dispose;
 	}, [monaco]);
 
-
+	if(panelContext._status !== PANEL_STATUS_READY) return;
+	
 	const onMount = (editor, monaco) => {
 		//editor mount, ex monaco.focus()
 	}
@@ -88,6 +89,9 @@ const MemoCodeEditor = React.memo(CodeEditor, (prev, next) => {
 CodeEditor.propTypes = {
 	id: PropTypes.string.isRequired,
 	updatePanelContext: PropTypes.func,
+	forwardData: PropTypes.any,
+	record: PropTypes.object,
+	setRecord: PropTypes.func,
 	panelContext: PropTypes.object.isRequired,
 	setIsLoading: PropTypes.func,
 	context: PropTypes.object.isRequired,
@@ -96,7 +100,6 @@ CodeEditor.propTypes = {
 	title: PropTypes.string,
 	panelBaseMethods: PropTypes.object,
 	disabled: PropTypes.bool,
-	record: PropTypes.object,
 	theme: PropTypes.oneOf(["dark", "light"]),
 	language: PropTypes.string,
 	defaultValue: PropTypes.string,

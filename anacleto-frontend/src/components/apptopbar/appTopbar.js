@@ -12,26 +12,7 @@ import { classNames } from "primereact/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { selectTenant, setTenant } from "../../reducers/context";
 import { selectMenu } from "../../reducers/metadata";
-
-const getFunctionFromMetadata = (functionObj) => {
-	if(functionObj.constructor == Function){
-		//Is already a function, just return it
-		return functionObj;
-	}else if(!functionObj.body){
-		let msg = 'Events must be defined as eventName: { parameters: "parameter1, parameter2, ..., parameterN", body: "return ..." }.';
-		console.warn(msg);
-		return () => (console.warn(msg));
-	}else{
-		//console.log("Converting metadata to function for component " + component, functionObj);
-		try{
-			return new Function(functionObj.parameters || "", functionObj.body);
-		}catch(e){
-			console.error(e);
-			return () => (console.error(e));
-		}
-		
-	}
-}
+import { getFunctionFromMetadata } from "../../utils/utils"
 
 const recurseParseMenuFunctions = (menuArray) => {
 	return menuArray.map((e) => {

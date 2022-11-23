@@ -59,6 +59,9 @@ MemoAvatar.displayName = "Avatar";
 Avatar.propTypes = {
 	id: PropTypes.string.isRequired,
 	updatePanelContext: PropTypes.func,
+	forwardData: PropTypes.any,
+	record: PropTypes.object,
+	setRecord: PropTypes.func,
 	panelContext: PropTypes.object.isRequired,
 	setIsLoading: PropTypes.func,
 	context: PropTypes.object.isRequired,
@@ -69,8 +72,6 @@ Avatar.propTypes = {
 	label: PropTypes.string,
 	icon: PropTypes.string,
 	image: PropTypes.string,
-	record: PropTypes.object,
-	setRecord: PropTypes.func,
 	events: PropTypes.object,
 };
 export default Avatar;

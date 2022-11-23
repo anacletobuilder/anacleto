@@ -23,7 +23,7 @@ function ErrorPage(props) {
     */
 
 	return (
-		<div className="surface-section px-4 py-8 md:px-6 lg:px-8">
+		<div className="flex flex-column surface-section px-4 py-6 md:px-6 h-full w-full">
 			<div
 				className="text-center"
 				style={{
@@ -38,10 +38,10 @@ function ErrorPage(props) {
 			<div className="p-component mt-6 mb-5 font-bold text-6xl text-900 text-center">
 				{props.title}
 			</div>
-			<p className="p-component text-700 text-3xl mt-0 mb-6 text-center">
+			<div className="flex flex-auto p-component text-700 text-3xl mt-0 mb-6 text-center">
 				{props.message}
-			</p>
-			<div className="text-center">
+			</div>
+			{props.showHomeButton !== false && <div className="text-center">
 				<button
 					aria-label="Go to Home"
 					className="p-button p-component"
@@ -51,13 +51,13 @@ function ErrorPage(props) {
 					<span className="p-button-label p-c">Go to Home</span>
 					<span role="presentation" className="p-ink"></span>
 				</button>
-			</div>
+			</div>}
 		</div>
 	);
 }
 ErrorPage.propTypes = {
 	code: PropTypes.string,
 	title: PropTypes.string,
-	message: PropTypes.string,
+	message: PropTypes.any,
 }
 export default ErrorPage;

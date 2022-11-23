@@ -5,22 +5,26 @@ import { Skeleton } from "primereact/skeleton";
 import { SplitButton } from "primereact/splitbutton";
 import { classNames } from "primereact/utils";
 import PropTypes from "prop-types";
-import React, { useContext, useEffect, useRef, useState } from "react"
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { ComponentsContext } from "../contexts/componentsContext";
 import { PanelsContext, PANEL_STATUS_INITIALIZING, PANEL_STATUS_READY, PANEL_STATUS_RENDERING } from "../contexts/panelsContext";
 import { selectContext } from "../reducers/context";
-import { componentHasProps } from "./components";
 import MemoButton from "./controls/button";
-import utils from "../utils/utils";
+import utils, {getFunctionFromMetadata} from "../utils/utils";
+import ErrorPage from "./errorPage";
+import { useErrorBoundary, withErrorBoundary } from "react-use-error-boundary";
 const { v4: uuidv4 } = require('uuid');
 
 
-const Component = ({ component, ...props }) => {
+const Component = withErrorBoundary(({ component, ...props }) => {
 	const context = useSelector(selectContext);
+	const [error, resetError] = useErrorBoundary(
+		//(error, errorInfo) => console.error(error, errorInfo)
+	);
 	const { panelsContext, updatePanelContext, resetPanelContext } = useContext(PanelsContext);
 	const [panelContext, setPanelContext] = useState({});
-	const { componentsContext } = useContext(ComponentsContext);
+	const { componentsContext, componentHasProps } = useContext(ComponentsContext);
 	const [title, setTitle] = useState(props.title);
 	const [panelCollapsed, setPanelCollapsed] = useState(null);
 	const [isLoading, setIsLoading] = useState(props.isLoading || false);
@@ -29,6 +33,8 @@ const Component = ({ component, ...props }) => {
 	const [items, setItems] = useState(props.items);
 	const [invalidMessage, setInvalidMessage] = useState("");
 	const [label, setLabel] = useState(props.label);
+	const [className, setClassName] = useState(props.className || "");
+
 	const panelBaseMethods = {
 		setTitle,
 		setShowToolbar,
@@ -37,12 +43,17 @@ const Component = ({ component, ...props }) => {
 		setInvalidMessage,
 		setLabel,
 		setIsLoading,
+		setClassName: useCallback((newClass) => {
+			if(newClass){
+				setClassName((prev) => prev + " " + newClass);
+			}
+		}, []),
 	};
 	const [events, setEvents] = useState({});
 
 	useEffect(() => {
 		//Component mount!
-		console.log("Component - Initializing", component, props.id);
+		//console.log("Component - Initializing", component, props.id);
 
 		//Immediately set the baseMethods for all the panels
 		let initialPanelContext = {
@@ -56,7 +67,7 @@ const Component = ({ component, ...props }) => {
 		updatePanelContext(initialPanelContext);
 
 		return (() => {
-			console.log("Component - Unmounting ", component, props.id);
+			//console.log("Component - Unmounting ", component, props.id);
 			resetPanelContext({ id: props.id });
 
 			if (events.onUnload) {
@@ -80,8 +91,8 @@ const Component = ({ component, ...props }) => {
 
 	useEffect(() => {
 		let statuses = { 1: "INITIALIZING", 2: "RENDERING", 3: "READY" };
-		if (panelContext._status) console.log("Component - Status", component, props.id, statuses[panelContext._status]);
-		if (panelContext._status === PANEL_STATUS_RENDERING) {
+		//if(panelContext._status) console.log("Component - Status", component, props.id, statuses[panelContext._status]);
+		if(panelContext._status === PANEL_STATUS_RENDERING){
 			//panelContext should now contain all the necessary methods used by events
 			let _evts = {}
 			for (let e in props.events) {
@@ -120,26 +131,6 @@ const Component = ({ component, ...props }) => {
 		setItems(props.items);
 	}, [props.items]);
 
-	//Internal function to convert metadata events to JS Functions
-	const getFunctionFromMetadata = (functionObj) => {
-		if (functionObj.constructor == Function) {
-			//Is already a function, just return it
-			return functionObj;
-		} else if (!functionObj.body) {
-			let msg = 'Events must be defined as eventName: { parameters: "parameter1, parameter2, ..., parameterN", body: "return ..." }.';
-			console.warn(msg);
-			return () => (console.warn(msg));
-		} else {
-			//console.log("Converting metadata to function for component " + component, functionObj);
-			try {
-				return new Function(functionObj.parameters || "", functionObj.body);
-			} catch (e) {
-				console.error(e);
-				return () => (console.error(e));
-			}
-		}
-	}
-
 	/*
 		HELPER CHECKS
 		This section is used to trigger warning or errors depending on how components are implemented
@@ -149,8 +140,8 @@ const Component = ({ component, ...props }) => {
 		return;
 	}
 
-	if (!props.id) {
-		console.error("Component ID not defined. All Components should have an ID");
+	if(!props.id){
+		console.error("Component ID not defined. All Components should have an ID", props);
 	}
 
 	if (!componentsContext["Memo" + component] && !componentsContext[component]) {
@@ -198,24 +189,26 @@ const Component = ({ component, ...props }) => {
 		events,
 	}
 
+	//Use forwardData to forward input data to children components
 	const content = <React.Fragment>
-		{props.isCard && isLoading && loadingSpinner}
-		{RenderComponent && <RenderComponent key={props.id} className={classNames("relative overflow-hidden", props.className)} {...props} {...defaultProps}>
-			{!props.isCard && isLoading && loadingSpinner}
-			{items?.map(({ component, ...compProps }) => (
-				<MemoComponent {...compProps} key={compProps.id || uuidv4()} component={component} setIsLoading={setIsLoading} />
+		{ props.isCard && isLoading && loadingSpinner }
+		{ RenderComponent && <RenderComponent {...props} {...defaultProps} key={props.id} className={classNames("relative", className)/* Removed className overflow-hidden, maybe it's not needed anymore*/}>
+			{ !props.isCard && isLoading && loadingSpinner }
+			{ items?.map(({component, ...compProps}) => (
+				<MemoComponent {...compProps} key={compProps.id || uuidv4()} component={ component } setIsLoading={setIsLoading}/>
 			))}
+			{ props.children }
 		</RenderComponent>}
 	</React.Fragment>;
 
 	let container;
-	if (props.isCard) {
+	if(props.isCard){
 		const getHeaderTemplate = (options) => {
 			//buttoni della toolbar
 			const toolbarItems = props.actions || [];
 			const toolbarSplitButtons = toolbarItems.map((_splitButton, _i) => {
 				const onClick = function (_event) {
-					if (_splitButton.events?.onClick) {
+					if (_splitButton.events?.onClick){
 						//Convert and execute the function
 						getFunctionFromMetadata(_splitButton.events.onClick).bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(_event);
 					}
@@ -226,7 +219,7 @@ const Component = ({ component, ...props }) => {
 
 					const model = _splitButton.actions.map((_action) => {
 						_action.command = function (_event) {
-							if (_action.events?.onClick) {
+							if (_action.events?.onClick){
 								//Convert and execute the function
 								getFunctionFromMetadata(_action.events.onClick).bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(_event);
 							}
@@ -281,12 +274,26 @@ const Component = ({ component, ...props }) => {
 				{content}
 			</Card>
 		</div>
-	} else {
+	}else{
 		container = <React.Fragment>{content}</React.Fragment>
 	}
 
+	if(error){
+		const message = <div className="flex flex-column w-full">
+			<b className="text-red-600">Error: {error.message}</b>
+			<pre className="h-full w-full overflow-auto text-sm text-left">{error.stack}
+			</pre>
+		</div>
+		return <ErrorPage
+			code=" "
+			title="Component rendering error"
+			message={message}
+			showHomeButton={false}
+		/>
+	}
 	return container;
-}
+});
+
 const MemoComponent = React.memo(Component);
 MemoComponent.displayName = "Component";
 

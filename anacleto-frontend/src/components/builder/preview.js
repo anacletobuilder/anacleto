@@ -73,16 +73,15 @@ const Preview = ({ id, context, panelContext, ...props }) => {
 	if(panelContext._status !== PANEL_STATUS_READY) return;
 
 	var portalChildren = <React.Fragment>
-		<div id="previewWindowDimensions" className="absolute top-0 right-0 opacity-50 bg-white p-2 text-xs border-round-sm z-5"></div>
+		<div id="previewWindowDimensions" className="fixed top-0 right-0 opacity-50 bg-white p-2 text-xs border-round-sm z-5"></div>
 		{ previewItems && previewItems.map((i) => (
 			<MemoComponent key={i.id} context={context} {...i} />
 		))}
 	</React.Fragment>;
 
-	console.log(`Component Preview (ID: ${id}) is rendering`);
 	return (
 		<iframe
-			className={classNames("anacleto-preview", props.className)}
+			className={classNames("anacleto-preview border-round-3xl", props.className)}
 			ref={setContentRef}
 			style={{ border: "none" }}
 		>
@@ -99,6 +98,9 @@ Preview.propTypes = {
 	id: PropTypes.string,
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
+	forwardData: PropTypes.any,
+	record: PropTypes.object,
+	setRecord: PropTypes.func,
 	items: PropTypes.array,
 	className: PropTypes.string,
 	setIsLoading: PropTypes.func,

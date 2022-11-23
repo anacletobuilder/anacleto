@@ -23,10 +23,10 @@ import { defaultMemoizeFunction } from "../../utils/utils";
  * @returns
  */
 function TextInput({ id, context, panelContext, ...props }) {
-	const { updatePanelContext } = useContext(PanelsContext);
-	const [inputValue, setInputValue] = useState(typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id] || props.value || "");
+	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
+	const [inputValue, setInputValue] = useState(props.value || (typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id]) || "");
 	const [isValidInput, setIsValidInput] = useState(false);
-	const [disabled, setDisabled] = useState(props.disabled || typeof props.record[id] == 'object');
+	const [disabled, setDisabled] = useState((props.disabled === true || props.disabled === false ? props.disabled : (typeof props.record[id] == 'object')));
 
 	//Mi tocca metterlo come stato perchè è aggiornato da un'evento asincrono e React non si accorge che cambia qualcosa lì
 	const [icon, setIcon] = useState({ icon: props.icon, iconColor: props.iconColor, iconPosition: props.iconPosition });
@@ -39,11 +39,11 @@ function TextInput({ id, context, panelContext, ...props }) {
 	}, [props.disabled]);
 
 	useEffect(() => {
-		setInputValue(typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id] || props.value || "");
+		setInputValue(typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id] || "");
 		if(typeof props.record[id] == 'object'){
 			setDisabled(true);
 		}
-	}, [props.record, props.value]);
+	}, [props.record/*, props.value*/]);
 
 	useEffect(() => {
 		updatePanelContext({ id, setDisabled });
@@ -83,7 +83,7 @@ function TextInput({ id, context, panelContext, ...props }) {
 			clearTimeout(changeTimeout);
 			setChangeTimeout(
 				setTimeout(() => {
-					const validationRes = props.events.validate(_event, props.context) || { success: false };
+					const validationRes = props.events.validate.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(_event) || { success: false };
 					//È una promise
 					if(validationRes.then instanceof Function){
 						validationRes
@@ -184,13 +184,14 @@ TextInput.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
+	forwardData: PropTypes.any,
+	record: PropTypes.object,
+	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,
 	containerClassName: PropTypes.string,
 	className: PropTypes.string,
 	labelClassName: PropTypes.string,
 	events: PropTypes.object,
-	record: PropTypes.object,
-	setRecord: PropTypes.func,
 	label: PropTypes.string,
 	panelBaseMethods: PropTypes.object,
 	hasFloatingLabel: PropTypes.bool,

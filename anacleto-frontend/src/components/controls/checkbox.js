@@ -7,11 +7,19 @@ import { defaultMemoizeFunction } from "../../utils/utils";
 
 const Checkbox = ({ id, context, panelContext, ...props }) => {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
+	const [checked, setChecked] = useState(props.value === true || props.value === false ? props.value : props.record[id] || false);
 	
 	useEffect(() => {
-		updatePanelContext({ id })
+		updatePanelContext({
+			id,
+			setChecked
+		});
 	}, []);
-	
+
+	useEffect(() => {
+		setChecked(props.value === true || props.value === false ? props.value : props.record[id] || false);
+	}, [props.value]);
+
 	if(panelContext._status !== PANEL_STATUS_READY) return;
 
 	const onChange = function (_event) {
@@ -28,10 +36,10 @@ const Checkbox = ({ id, context, panelContext, ...props }) => {
 	const onBlur = props.onBlur ? props.onBlur : () => {};
 
 	return (
-		<div className={classNames("field-checkbox", props.className)}>
+		<div className={classNames("field-checkbox px-2", props.containerClassName, props.className)}>
 			<PrimeCheckbox
 				inputId={id}
-				checked={props.record[id] || ""}
+				checked={checked}
 				disabled={props.disabled}
 				onChange={(e) => onChange(e)}
 				onBlur={(e) => onBlur(e)}
@@ -48,15 +56,20 @@ MemoCheckbox.displayName = "Checkbox";
 
 Checkbox.propTypes = {
 	id: PropTypes.string.isRequired,
-	updatePanelContext: PropTypes.func,
-	setIsLoading: PropTypes.func,
 	context: PropTypes.object.isRequired,
-	className: PropTypes.string,
-	panelBaseMethods: PropTypes.object,
-	disabled: PropTypes.bool,
+	panelContext: PropTypes.object.isRequired,
+	updatePanelContext: PropTypes.func,
+	forwardData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
+	setIsLoading: PropTypes.func,
+	containerClassName: PropTypes.string,
+	className: PropTypes.string,
+	panelBaseMethods: PropTypes.object,
+	value: PropTypes.bool,
+	disabled: PropTypes.bool,
 	style: PropTypes.object,
 	label: PropTypes.string,
+	onChange: PropTypes.func,
 }
 export default MemoCheckbox;

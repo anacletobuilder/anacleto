@@ -97,6 +97,9 @@ AutoComplete.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
+	forwardData: PropTypes.any,
+	record: PropTypes.object,
+	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,
 	containerClassName: PropTypes.string,
 	className: PropTypes.string,
@@ -108,8 +111,6 @@ AutoComplete.propTypes = {
 	panelBaseMethods: PropTypes.object,
 	hasFloatingLabel: PropTypes.bool,
 	disabled: PropTypes.bool,
-	record: PropTypes.object,
-	setRecord: PropTypes.func,
 	style: PropTypes.object,
 	events: PropTypes.object,
 }

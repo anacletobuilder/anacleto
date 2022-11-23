@@ -17,7 +17,7 @@ import PropTypes from "prop-types";
 import { PanelsContext, PANEL_STATUS_READY } from "../../contexts/panelsContext";
 import { defaultMemoizeFunction } from "../../utils/utils";
 import MemoComponent from "../component";
-import { componentHasProps } from "../components";
+import { ComponentsContext } from "../../contexts/componentsContext";
 import { useSelector } from 'react-redux';
 import { selectApplication, selectDestApplication, selectTenant, selectWindow } from '../../reducers/context';
 import { getTranslator } from '../../utils/translator';
@@ -45,9 +45,9 @@ function DataTable({ context, panelContext, ...props }) {
 	const [filters, setFilters] = useState(null);
 	const [globalFilterValue, setGlobalFilterValue] = useState("");
 	const { updatePanelContext } = useContext(PanelsContext);
+	const { componentHasProps } = useContext(ComponentsContext);
 
 	useEffect(() => {
-		console.log("DataTable render - Update panel context.");
 		updatePanelContext({
 			id: panelId,
 			load: function (_params) {
@@ -59,7 +59,6 @@ function DataTable({ context, panelContext, ...props }) {
 
 	useEffect(() => {
 		if(panelContext._status === PANEL_STATUS_READY){
-			console.log("DataTable" + props.id + " READY");
 			if (props.isMultipleSelection) {
 				setSelectionMode("multiple");
 			} else if (props.events?.onSelectionChange) {
@@ -607,7 +606,6 @@ function DataTable({ context, panelContext, ...props }) {
 		}) || [];
 	const dynamicColumns = [...editCols, ...cols];
 
-	console.log(`Component DataTable (ID: ${props.id}) is rendering`);
 	return (
 		<React.Fragment>
 			<ContextMenu
@@ -666,6 +664,9 @@ DataTable.propTypes = {
 	id: PropTypes.string.isRequired,
 	context: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
+	forwardData: PropTypes.any,
+	record: PropTypes.object,
+	setRecord: PropTypes.func,
 	panelContext: PropTypes.object.isRequired,
 	columnResizeMode: PropTypes.string,
 	className: PropTypes.string,

@@ -57,6 +57,7 @@ const TabView = ({ id, context, panelContext, ...props }) => {
 		<PrimeTabView
 			panelContainerStyle={{
 				...props.style,
+				overflow: "auto",
 				height: "calc(100% - 3rem)",
 			}}
 			activeIndex={activeIndex}
@@ -75,6 +76,9 @@ TabView.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
+	forwardData: PropTypes.any,
+	record: PropTypes.object,
+	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,
 	items: PropTypes.array,
 	panelBaseMethods: PropTypes.object,

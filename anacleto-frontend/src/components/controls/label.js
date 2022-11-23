@@ -46,6 +46,9 @@ Label.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
+	forwardData: PropTypes.any,
+	record: PropTypes.object,
+	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,
 	className: PropTypes.string,
 	isCard: PropTypes.bool,
@@ -54,7 +57,5 @@ Label.propTypes = {
 	label: PropTypes.string.isRequired,
 	disabled: PropTypes.bool,
 	for: PropTypes.string,
-	record: PropTypes.object,
-	setRecord: PropTypes.func,
 }
 export default MemoLabel;

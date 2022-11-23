@@ -1,0 +1,14 @@
+{
+	"id": "home",
+	"component": "GridContainer",
+	"isCard": true,
+	"items": [
+		{
+			"id": "home_panel",
+			"component": "Label",
+			"label": "Riprendi da dove avevi lasciato",
+			"width": "col-12",
+			"className": "bg-primary-reverse"
+		}
+	]
+}

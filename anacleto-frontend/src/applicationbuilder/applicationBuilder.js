@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useContext } from "react";
 import {
 	createSearchParams,
 	useNavigate,
@@ -24,8 +24,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectApplication, selectContext, selectDestApplication, selectTenant, selectUserCredentials, setApplication, setDestApplication, setTenant } from "../reducers/context";
 import { resetMetadata, selectApplications, selectMetadata, selectTenants, setApplications, setMenu, setName, setTenants } from "../reducers/metadata";
 import PanelsContextComponent from "../contexts/panelsContext";
+import ComponentsContextComponent, { ComponentsContext } from "../contexts/componentsContext";
 import PropTypes from "prop-types";
-import ComponentsContextComponent from "../contexts/componentsContext";
 
 const ApplicationBuilder = (props) => {
 	const dispatch = useDispatch();
@@ -47,6 +47,7 @@ const ApplicationBuilder = (props) => {
 	const [metadataError, setMetadataError] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [dialogSettings, setDialogSettings] = useState({});
+	const [dialogForwardData, setDialogForwardData] = useState({});
 	const [inputDialogSettings, setInputDialogSettings] = useState({});
 	const [sidebarSettings, setSidebarSettings] = useState({});
 	const navigate = useNavigate();
@@ -105,7 +106,8 @@ const ApplicationBuilder = (props) => {
 			setDialogSettings,
 			setInputDialogSettings,
 			setSidebarSettings,
-			context
+			context,
+			setDialogForwardData,
 		};
 		window.utils = utils.init(utilsArgs);
 		window.DateTime = DateTime;
@@ -317,43 +319,44 @@ const ApplicationBuilder = (props) => {
 			{!isLoading && metadata && applications?.length > 0 && (
 				<React.Fragment>
 					<ComponentsContextComponent>
-						<PanelsContextComponent>
-							<Toast ref={toast} />
+						<RegisterComponentListener application={application}>
+							<PanelsContextComponent>
+								<Toast ref={toast} />
 
-							<InputDialog
-								settings={inputDialogSettings}
-								setInputDialogSettings={setInputDialogSettings}
-							/>
+								<InputDialog
+									settings={inputDialogSettings}
+									setInputDialogSettings={setInputDialogSettings}
+								/>
 
-							<ConfirmDialog />
+								<ConfirmDialog />
 
-							<Dialog
-								id={"dialogWindow"}
-								settings={dialogSettings}
-								application={application}
-								destApplication={destApplication}
-								tenant={tenant}
-								metadata={metadata}
-								userCredential={userCredentials}
-								setDialogSettings={setDialogSettings}
-								confirmDialog={confirmDialog}
-								toast={toast}
-							/>
-							<Sidebar
-								id={"sidebar"}
-								settings={sidebarSettings}
-								application={application}
-								destApplication={destApplication}
-								tenant={tenant}
-								metadata={metadata}
-								userCredential={userCredentials}
-								setSidebarSettings={setSidebarSettings}
-								confirmDialog={confirmDialog}
-								toast={toast}
-							/>
+								<Dialog
+									id="dialogWindow"
+									context={context}
+									settings={dialogSettings}
+									setDialogSettings={setDialogSettings}
+									metadata={metadata}
+									forwardData={dialogForwardData}
+									userCredential={userCredentials}
+									confirmDialog={confirmDialog}
+									toast={toast}
+								/>
+								<Sidebar
+									id={"sidebar"}
+									settings={sidebarSettings}
+									application={application}
+									destApplication={destApplication}
+									tenant={tenant}
+									metadata={metadata}
+									userCredential={userCredentials}
+									setSidebarSettings={setSidebarSettings}
+									confirmDialog={confirmDialog}
+									toast={toast}
+								/>
 
-							<Window />
-						</PanelsContextComponent>
+								<Window />
+							</PanelsContextComponent>
+						</RegisterComponentListener>
 					</ComponentsContextComponent>
 				</React.Fragment>
 			)}
@@ -361,6 +364,29 @@ const ApplicationBuilder = (props) => {
 			<AppFooter metadata={ metadata } />
 		</React.Fragment>
 	);
+}
+
+/* Register component listener (could not listen inside of ApplicationBuilder because it must be a children of the ComponentsContext) */
+const RegisterComponentListener = ({ application, children }) => {
+	const {registerComponents} = useContext(ComponentsContext);
+	useEffect(() => {
+		(async () => {
+			if(application === 'BUILDER'){
+				//If application is BUILDER, import register the builder-only components
+				const { default: MemoFlow } = await import('../components/builder/flow');
+				const { default: MemoPreview } = await import('../components/builder/preview');
+				const { default: MemoFieldEditor } = await import('../components/builder/fieldEditor');
+				
+				registerComponents({
+					MemoFlow,
+					MemoPreview,
+					MemoFieldEditor,
+				});
+			}
+		})();
+	}, [application]);
+
+	return children;
 }
 const MemoApplicationBuilder = React.memo(ApplicationBuilder, (prev, next) => {
 	return defaultMemoizeFunction(ApplicationBuilder.propTypes, prev, next);

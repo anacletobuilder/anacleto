@@ -24,14 +24,15 @@ import PropTypes from "prop-types";
 import { PanelsContext } from "../../contexts/panelsContext";
 import { useSelector } from "react-redux";
 import { selectDestApplication } from "../../reducers/context";
+import { defaultMemoizeFunction } from "../../utils/utils";
 
 const initNodes = [];
 const initEdges = [];
 
-function Flow(props) {
+function Flow({ id, context, panelContext, ...props }) {
 	const destApplication = useSelector(selectDestApplication);
 
-	const { updatePanelContext } = useContext(PanelsContext);
+	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 	const [nodes, setNodes, onNodesChange] = useNodesState(initNodes);
 	const [edges, setEdges, onEdgesChange] = useEdgesState(initEdges);
 	const [rfInstance, setRfInstance] = useState(null);
@@ -50,8 +51,16 @@ function Flow(props) {
 		}), []
 	);
 
-	//Funzioni FLOW -> MAP e MAP -> FLOW -> MAP
+	useEffect(() => {
+		//Update context as it points to state variables subject to changes
+		updatePanelContext({
+			id,
+			flowToMap: convertFlowToMap,
+			mapToFlow: convertMapToFlow,
+		});
+	}, [nodes, edges]);
 
+	//Funzioni FLOW -> MAP e MAP -> FLOW -> MAP
 	const convertFlowToMap = (id, nodeArr) => {
 		if (!nodeArr) {
 			nodeArr = nodes;
@@ -129,7 +138,7 @@ function Flow(props) {
 					y: 0,
 				},
 				draggable: false,
-				context: props.context,
+				context,
 			};
 			for (var attr in obj) {
 				if (attr == "itemPosition") {
@@ -317,30 +326,44 @@ function Flow(props) {
 	useEffect(() => {
 		//Inside useEffect so that it doesn't interfere with ApplicationBuilder render!
 		updatePanelContext({
-			id: props.id,
+			id,
 			flowToMap: convertFlowToMap,
 			mapToFlow: convertMapToFlow,
+			setNodes,
+			setEdges
 		});
-	}, [])
 
-	useEffect(() => {
 		window.utils
-			.callServer({
-				url: "/window",
-				method: "get",
-				contentType: "application/javascript",
-				params: {
-					application: destApplication,
-					window: window.utils.getSearchParam("window"),
-					getRawData: true,
-				},
-			})
-			.then(function (response) {
-				convertMapToFlow(response.data);
-			});
+		.callServer({
+			url: "/window",
+			method: "get",
+			contentType: "application/javascript",
+			params: {
+				application: destApplication,
+				window: window.utils.getSearchParam("window"),
+				getRawData: true,
+			},
+		})
+		.then(function (response) {
+			convertMapToFlow(response.data);
+		});
 	}, []);
 	
 	const onNodeClick = (event, node) => {
+		const forwardData = {
+			node,
+			rfInstance,
+			convertMapToFlow,
+			convertFlowToMap,
+			emptyNode: {
+				position: { x: 0, y: 0 },
+				draggable: false,
+				context,
+			},
+		};
+		if(props.events.onNodeClick){
+			props.events.onNodeClick.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(event, forwardData);
+		}
 		if (node.type == "addnode") {
 			//alert("Aggiungi controllo");
 			var parentNode = node.id.replace("_ADDNEWITM", "");
@@ -350,17 +373,7 @@ function Flow(props) {
 				settings: {
 					header: `Add node to: ${parentNode}`,
 				},
-				inputData: {
-					rfInstance: rfInstance,
-					parentNode: parentNode,
-					convertMapToFlow: convertMapToFlow,
-					convertFlowToMap: convertFlowToMap,
-					emptyNode: {
-						position: { x: 0, y: 0 },
-						draggable: false,
-						context: props.context,
-					},
-				},
+				forwardData: { ...forwardData, parentNode}
 			});
 		} else if (node.type == "addeventnode") {
 			var parentNode = node.id.replace("_ADDEVENT", "");
@@ -371,17 +384,7 @@ function Flow(props) {
 					header: `Add event to: ${parentNode}`,
 					maximizable: true,
 				},
-				inputData: {
-					rfInstance: rfInstance,
-					parentNode: parentNode,
-					convertMapToFlow: convertMapToFlow,
-					convertFlowToMap: convertFlowToMap,
-					emptyNode: {
-						position: { x: 0, y: 0 },
-						draggable: false,
-						context: props.context,
-					},
-				},
+				forwardData: { ...forwardData, parentNode}
 			});
 		} else if (node.type == "eventnode") {
 			window.utils.openWindow({
@@ -392,12 +395,7 @@ function Flow(props) {
 					maximizable: true,
 					contentClassName: "flex-column",
 				},
-				inputData: {
-					node: node,
-					rfInstance: rfInstance,
-					convertMapToFlow: convertMapToFlow,
-					convertFlowToMap: convertFlowToMap,
-				},
+				forwardData: { ...forwardData, parentNode}
 			});
 		} else if (node.type == "addaction") {
 			var parentNode = node.id.replace("_ADDACTION", "");
@@ -407,42 +405,45 @@ function Flow(props) {
 				settings: {
 					header: `Add action to: ${parentNode}`,
 				},
-				inputData: {
-					rfInstance: rfInstance,
-					parentNode: parentNode,
-					convertMapToFlow: convertMapToFlow,
-					convertFlowToMap: convertFlowToMap,
-					emptyNode: {
-						position: { x: 0, y: 0 },
-						draggable: false,
-						context: props.context,
-					},
-				},
+				forwardData: { ...forwardData, parentNode}
 			});
-		} else {
-			//Apro la sidebar
+		}/* else {
 			window.utils.openWindow({
 				window: "node_info",
-				type: "sidebar",
+				type: "dialog",
 				settings: {
-					header: "Information",
-					className: "p-sidebar-sm",
-					position: "right",
-					style: {
-						height: "calc(100% - 5rem)",
-						marginTop: "5rem",
-					},
+					header: "Informazioni",
+					actions: [
+						{
+							"id": "windows_node_footer_save",
+							"component": "Button",
+							"containerClassName": "col-12 h-3rem",
+							"icon":"pi pi-save",
+							"label": "SAVE",
+							"events" : {
+								"onClick": {
+									"body": "console.log('saving');"
+								}
+							}
+						},
+						{
+							"id": "windows_node_footer_delete",
+							"component": "Button",
+							"containerClassName": "col-12 h-3rem",
+							"className":"p-button-outlined p-button-danger",
+							"icon":"pi pi-trash",
+							"label": "DELETE",
+							"events" : {
+								"onClick": {
+									"body": "const _this = this;utils.showConfirmDialog({ message: 'Do you want to delete this node?', header: 'Delete Confirmation', icon: 'pi pi-info-circle', acceptClassName: 'p-button-danger', accept: function () { var forwardData = this.forwardData; var currentNode = forwardData.node; var instance = forwardData.rfInstance; var nodes = instance.getNodes(); var edges = instance.getEdges(); const removeChildNodes = function (parentNode) { var childNodes = nodes.filter(el => el.ancestorNode == parentNode); if(childNodes.length > 0) { for(var i = 0; i < childNodes.length; i++) { var nIndex = nodes.findIndex(el => el.id == childNodes[i].id); if(nIndex > -1) { nodes.splice(nIndex,1); removeChildNodes(childNodes[i].id); filterEdges(childNodes[i].id); } } } }; const filterEdges = function(nodeId) { console.log('filterEdges',nodeId); edges = edges.filter(el => el.target != nodeId); }; var currentNodeIndex = nodes.findIndex(el => el.id == currentNode.id); if(currentNodeIndex > -1) { nodes.splice(currentNodeIndex,1); filterEdges(currentNode.id); removeChildNodes(currentNode.id); var siblingNodes = nodes.filter(el => el.ancestorNode == currentNode.ancestorNode); console.log(siblingNodes); for(var i = 0; i < siblingNodes.length; i++) { var siblingIndex = nodes.findIndex(el => el.id == siblingNodes[i].id); if(nodes[siblingIndex].itemPosition > currentNode.itemPosition) { nodes[siblingIndex].itemPosition--; } } } const windowId = utils.getSearchParam('window'); const windowMap = forwardData.convertFlowToMap(windowId,nodes); forwardData.convertMapToFlow(windowMap); _this.closeWindow(); }, reject: function () { }});"
+								}
+							}
+						}
+					]
 				},
-				inputData: {
-					node: node,
-					rfInstance: rfInstance,
-					setNodes: setNodes,
-					setEdges: setEdges,
-					convertMapToFlow: convertMapToFlow,
-					convertFlowToMap: convertFlowToMap,
-				},
+				forwardData
 			});
-		}
+		}*/
 	};
 
 	const metaAndKPressed = useKeyPress(["Meta+Shift+o", "Strg+Shift+o"]);
@@ -455,7 +456,7 @@ function Flow(props) {
 				settings: {
 					header: "Search node",
 				},
-				inputData: {
+				forwardData: {
 					rfInstance: rfInstance,
 				},
 			});
@@ -469,7 +470,7 @@ function Flow(props) {
 				props.className
 			)}
 		>
-			<div className="flex-auto">
+			<div className="flex-auto" style={{ minHeight: "50vh" }}>
 				<ReactFlow
 					nodes={nodes}
 					edges={edges}
@@ -512,15 +513,22 @@ function Flow(props) {
 		</ReactFlowProvider>
 	);
 }
+const MemoFlow = React.memo(Flow, (prev, next) => {
+	return defaultMemoizeFunction(Flow.propTypes, prev, next);
+});
+MemoFlow.displayName = "Flow";
+
 Flow.propTypes = {
 	id: PropTypes.string.isRequired,
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
+	forwardData: PropTypes.any,
+	record: PropTypes.object,
+	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,
 	className: PropTypes.string,
-	isCard: PropTypes.bool,
 	title: PropTypes.string,
-	panelBaseMethods: PropTypes.object,
+	events: PropTypes.object,
 }
-export default Flow;
+export default MemoFlow;

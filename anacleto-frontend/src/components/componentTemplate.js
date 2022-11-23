@@ -74,6 +74,7 @@ ComponentTemplate.propTypes = {
 	id: PropTypes.string.isRequired,
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
+	updatePanelContext: PropTypes.func,
 	className: PropTypes.string,
 	events: PropTypes.object,
 	setIsLoading: PropTypes.func,

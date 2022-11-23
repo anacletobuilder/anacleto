@@ -33,7 +33,7 @@
                         "className": "p-inputtext-sm block",
                         "events": {
                             "validate": function (event,context) {
-                                var inputData = utils.getInputData(); 
+                                var inputData = this.inputData;
                                 const value = event.target.value.trim();
                                 if (!value || value.length < 1) {
                                     return { success: false, message: "Please specify a valid id" };

@@ -128,6 +128,12 @@ function Form({ id, context, panelContext, ...props }) {
 			}
 		}
 	}, [record]);
+
+	useEffect(() => {
+		if(props.record && props.record !== record){
+			setRecord(props.record);
+		}
+	}, [props.record]);
 	
 	useEffect(() => {
 		if(items?.length){
@@ -144,8 +150,9 @@ function Form({ id, context, panelContext, ...props }) {
 	return (
 		<div className={classNames(
 			"anacleto-form-container p-0",
-			!props.isCard && props.containerClassName
+			props.isCard ? "flex flex-auto" : props.containerClassName
 		)}>
+			{props.title && <div className="text-xl font-bold">{props.title}</div>}
 			<div
 				className={classNames(
 					"anacleto-form",
@@ -153,11 +160,15 @@ function Form({ id, context, panelContext, ...props }) {
 					props.className
 				)}
 			>
-				
 				{
 					React.Children.toArray
 					(props.children).filter(c => c ).map(c => (
-						React.cloneElement(c, c.type?.type?.name ? { record, setRecord: _setRecord } : {})
+						React.cloneElement(c, c.type?.type?.name ? {
+							record,
+							setRecord:
+							_setRecord,
+							forwardData: props.forwardData,
+						} : {})
 					))
 				}
 			</div>
@@ -171,6 +182,9 @@ MemoForm.displayName = "Form";
 Form.propTypes = {
 	id: PropTypes.string.isRequired,
 	updatePanelContext: PropTypes.func,
+	record: PropTypes.object,
+	setRecord: PropTypes.func,
+	forwardData: PropTypes.any,
 	panelContext: PropTypes.object.isRequired,
 	setIsLoading: PropTypes.func,
 	context: PropTypes.object.isRequired,
@@ -184,12 +198,11 @@ Form.propTypes = {
 	toggleable: PropTypes.bool,
 	layout: PropTypes.oneOf(["grid", "flex"]),
 	mode: PropTypes.oneOf([FormMode.INSERT, FormMode.EDIT, FormMode.FREE]),
-	record: PropTypes.object,
 	script: PropTypes.any,
 	sectionMultiple: PropTypes.bool,
-	showTitle: PropTypes.bool,
 	store: PropTypes.string,
 	subtype: PropTypes.string,
 	title: PropTypes.string,
+	children: PropTypes.any,
 }
 export default MemoForm;

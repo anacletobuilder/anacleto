@@ -1,0 +1,10 @@
+{
+	"id": "node_info",
+	"component": "GridContainer",
+	"className": "flex-auto m-0",
+	"items": [{
+		"id": "field-editor",
+		"component": "FieldEditor",
+		"className" : "flex-auto"
+	}]
+}

@@ -24,7 +24,7 @@
 			],
 			"events": {
 				"afterRender": {
-					"body": "let _this = this;utils.callServer({url: '/settings',method: 'get',params: {},}).then(function (response) {if (response.data.success) {const beautyData = JSON.stringify(response.data.data, null, 4); const record = {source: beautyData,};_this.setRecord(record);} else {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error', sticky: true });}}).catch(function (error) {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error' + error, sticky: true });});"
+					"body": "const _this = this;utils.callServer({url: '/settings',method: 'get',params: {},}).then(function (response) {if (response.data.success) {const beautyData = JSON.stringify(response.data.data, null, 4); const record = {source: beautyData,};_this.setRecord(record);} else {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error', sticky: true });}}).catch(function (error) {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error' + error, sticky: true });});"
 				}
 			}
 		}

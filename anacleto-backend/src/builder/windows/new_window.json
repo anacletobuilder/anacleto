@@ -1,0 +1,36 @@
+{
+	"id": "new_window",
+	"component": "GridContainer",
+	"items": [{
+		"id": "new_window_header",
+		"title": "Crea nuova finestra",
+		"component": "Form",
+		"items": [
+			{
+				"id": "windowId",
+				"label": "Id finestra",
+				"className": "mt-4 col-12 md:col-6",
+				"component": "TextInput",
+				"hasFloatingLabel": true
+			},
+			{
+				"id": "name",
+				"label": "Nome finestra",
+				"className": "mt-4 col-12 md:col-6",
+				"component": "TextInput",
+				"hasFloatingLabel": true
+			},
+			{
+				"id": "create_window",
+				"label": "Crea finestra",
+				"component": "Button",
+				"className": "col-4 col-offset-8",
+				"events": {
+					"onClick": {
+						"body": "const _this = this;var record = _this.panelsContext.new_window_header.getRecord();var body = { data: utils._stringifyJsonWithFunctions({ window: record.windowId, windowName: record.name, items: [], }),};utils.callServer({ url: '/window', method: 'post', params: { application: this.context.destApplication, window: record.windowId, }, data: body,}).then(function (response) { if (response.data.success) { utils.showToast({ severity: 'success', summary: 'Window created', detail: JSON.stringify(response.data), life: 3000, }); _this.closeWindow(); } else { utils.showToast({ severity: 'error', summary: 'Window not created', detail: JSON.stringify(response.data), life: 3000, }); }}).catch(function (error) { utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error', sticky: true, });});"
+					}
+				}
+			}
+		]
+	}]
+}

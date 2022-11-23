@@ -16,8 +16,8 @@ class Utils {
 		this.toast = params.toast;
 		this.setDialogSettings = params.setDialogSettings;
 		this.setInputDialogSettings = params.setInputDialogSettings;
-		this.setSidebarSettings = params.setSidebarSettings;
-		this.inputData = params.inputData;
+		this.setSidebarSettings = params.setSidebarSettings
+		this.setDialogForwardData = params.setDialogForwardData;
 		this.context = params.context;
 		return this;
 	}
@@ -90,17 +90,6 @@ class Utils {
 			return this.searchParams.get(paramName);
 		}
 		return null;
-	};
-
-	/**
-	 *
-	 */
-	getInputData = () => {
-		return this.inputData;
-	};
-
-	setInputData = (data) => {
-		this.inputData = data;
 	};
 	/**
 	 * Chiama uno script server
@@ -248,25 +237,26 @@ class Utils {
 		const searchParams = { ...{ tenant: this.context.tenant, application: this.context.application }, ...params.searchParams };
 		const type = params.type || "window";
 		var settings = params.settings || {};
-		var inputData = params.inputData || {};
+		this.setDialogForwardData(params.forwardData || {});
 
-		if (type == "modal") {
-			settings.windowId = window;
-			settings.visible = true;
-			this.setDialogSettings(settings);
-			this.inputData = inputData;
-		} else if (type == "sidebar") {
-			settings.windowId = window;
-			settings.visible = true;
-			this.setSidebarSettings(settings);
-			this.inputData = inputData;
-		} else {
-			this.inputData = inputData;
-			const options = {
-				searchParams: searchParams,
-			};
-
-			this.navigate(window, options);
+		switch(type){
+			case 'modal': case 'dialog':{
+				settings.windowId = window;
+				settings.visible = true;
+				this.setDialogSettings(settings);
+			}break;
+			case 'sidebar':{
+				settings.windowId = window;
+				settings.visible = true;
+				this.setSidebarSettings(settings);
+			}break;
+			default:{
+				const options = {
+					searchParams: searchParams,
+				};
+		
+				this.navigate(window, options);
+			}
 		}
 	};
 
@@ -683,4 +673,23 @@ export const defaultMemoizeFunction = (propTypes, prevProps, nextProps) => {
 	}).length === 0;
 	//console.log(`Component ${prevProps.id} has ${arePropsSame ? 'the same' : 'different'} props. ${arePropsSame ? 'NO ' : ''}render is necessary.`);
 	return arePropsSame;
+}
+//Internal function to convert metadata events to JS Functions
+export const getFunctionFromMetadata = (functionObj) => {
+	if(functionObj.constructor == Function){
+		//Is already a function, just return it
+		return functionObj;
+	}else if(!functionObj.body){
+		let msg = 'Events must be defined as eventName: { parameters: "parameter1, parameter2, ..., parameterN", body: "return ..." }.';
+		console.warn(msg);
+		return () => (console.warn(msg));
+	}else{
+		//console.log("Converting metadata to function for component " + component, functionObj);
+		try{
+			return new Function(functionObj.parameters || "", functionObj.body);
+		}catch(e){
+			console.error(e);
+			return () => (console.error(e));
+		}
+	}
 }

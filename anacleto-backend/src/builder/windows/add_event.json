@@ -1,0 +1,71 @@
+{
+	"id": "add_event",
+	"component": "GridContainer",
+	"layout": "grid",
+	"isCard": true,
+	"className": "flex-column h-full",
+	"items": [{
+		"id": "add_event_info",
+		"title": "Event type",
+		"dataModel": "Window",
+		"component": "Form",
+		"layout": "flex",
+		"className": "flex-column",
+		"items": [{
+			"id": "eventType",
+			"component": "Dropdown",
+			"className": "mt-2",
+			"optionLabel": "description",
+			"optionValue": "code",
+			"options": [],
+			"placeholder": "Select an event type",
+			"label": "Event type",
+			"events" : {
+				"afterRender" : {
+					"body": "const _this = this; forwardData = this.panelsContext.dialogWindow.forwardData; var parentNode; if(forwardData.node) { parentNode = forwardData.rfInstance.getNode(forwardData.node.ancestorNode); _this.panelsContext.add_event_info.setRecord({eventType:forwardData.node.attributes.eventType}); }else { parentNode = forwardData.rfInstance.getNode(forwardData.parentNode); } this.setOptions(utils.getDefaultControlsConfig(parentNode.attributes.type,'events'));"
+				}
+			}
+		}]
+		},
+		{
+			"id": "add_event_code",
+			"title": "Code",
+			"component": "Form",
+			"layout": "flex",
+			"containerClassName": "mt-4 flex flex-column flex-auto",
+			"className": "flex-auto",
+			"items": [
+				{
+					"component": "CodeEditor",
+					"id": "source",
+					"className": "flex flex-auto border-1 surface-border mt-2"
+				}
+			],
+			"events": {
+				"afterRender": {
+					"body": "const _this = this; forwardData = this.panelsContext.dialogWindow.forwardData; if(forwardData.node) {var sourceValue = forwardData.node.attributes.value || '';sourceValue = sourceValue.replace(`const _this = this; /* Use _this on async callbacks */\n`, '');_this.panelsContext.add_event_code.setRecord({source: sourceValue});}"
+				}
+			}
+		}
+	],
+	"actions": [{
+		"id": "save_button",
+		"label": "Save",
+		"icon": "pi pi-save",
+		"events" : {
+			"onClick": {
+				"body": "const _this = this;_this.panelsContext.add_event.setIsToolbarLoading(true);forwardData = this.panelsContext.dialogWindow.forwardData;if (forwardData.node) { var functionStr = _this.panelsContext.add_event_code.getRecord().source; forwardData.node.attributes.value = `const _this = this; /* Use _this on async callbacks */\n${functionStr}`, _this.panelsContext.add_event.setIsToolbarLoading(false); _this.panelsContext.dialogWindow.closeWindow();} else { let nodes = forwardData.rfInstance.getNodes(); let edges = forwardData.rfInstance.getEdges(); var eventType = _this.panelsContext.add_event_info.getRecord().eventType; if (eventType) { var functionStr = _this.panelsContext.add_event_code.getRecord().source; var eventNode = JSON.parse(JSON.stringify(forwardData.emptyNode)); var eventId = forwardData.parentNode + '_EVENT_' + eventType; eventNode = {...eventNode, data: { label: eventType, attributeType: 'EVENT' }, id: eventId, component: 'eventnode', ancestorNode: forwardData.parentNode, attributes: { id: eventId, component: 'EVENT', title: eventType, eventType: eventType, value: `const _this = this; /* Use _this on async callbacks */\n${functionStr}`, }, }; const getItmSiblingPos = function (nodes, parentNode) { return nodes.findIndex((n) => n.id === parentNode + '_ADDEVENT'); }; let addItmSiblingPos = getItmSiblingPos(nodes, forwardData.parentNode); if (addItmSiblingPos > -1) { eventNode.itemPosition = nodes[addItmSiblingPos].itemPosition || 0; nodes[addItmSiblingPos].itemPosition++; } else { eventNode.itemPosition = 0; } nodes.push(eventNode); var edge = { id: forwardData.parentNode + '|' + eventId, source: forwardData.parentNode, target: eventId, component: 'smoothstep', }; edges.push(edge); const windowId = utils.getSearchParam('window'); const windowMap = forwardData.convertFlowToMap(windowId, nodes); forwardData.convertMapToFlow(windowMap); } _this.panelsContext.add_event.setIsToolbarLoading(false); _this.panelsContext.dialogWindow.closeWindow();}"
+			}
+		},
+		"actions": [{
+			"id":"delete_button",
+			"label": "Delete",
+			"icon": "pi pi-trash",
+			"events": {
+				"onClick": {
+					"body": "const _this = this;let forwardData = this.forwardData; if(forwardData.node) { var nodes = forwardData.rfInstance.getNodes(); var nodes = nodes.filter((el) => {return el.id != forwardData.node.id}); const windowId = utils.getSearchParam('window'); const windowMap = forwardData.convertFlowToMap(windowId,nodes); forwardData.convertMapToFlow(windowMap); } _this.panelsContext.dialogWindow.closeWindow();"
+				}
+			}
+		}]
+	}]
+}

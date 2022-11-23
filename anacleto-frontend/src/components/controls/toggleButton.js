@@ -1,34 +1,80 @@
-import React,{ useState } from 'react';
+import React,{ useContext, useEffect, useState } from 'react';
 import { ToggleButton as PrimeToggleButton} from 'primereact/togglebutton';
+import { PanelsContext, PANEL_STATUS_READY } from '../../contexts/panelsContext';
+import { defaultMemoizeFunction } from '../../utils/utils';
+import PropTypes from 'prop-types';
 
-function ToggleButton(props) {
+const ToggleButton = ({ id, context, panelContext, ...props }) => {
+	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
+    const [checked, setChecked] = useState(props.value === true || props.value === false ? props.value : props.record[id] || false);
 
-    const [checked,setChecked] = useState(props.control.checked);
+	useEffect(() => {
+		updatePanelContext({
+			id,
+			setChecked
+		});
+	}, []);
+	
+	useEffect(() => {
+		setChecked(props.value === true || props.value === false ? props.value : props.record[id] || false);
+	}, [props.value]);
 
-    const onChange = (_event) => {        
-        if (props.control.events?.onChange) {
-            props.control.events.onChange(_event,props.context)
+	if(panelContext._status !== PANEL_STATUS_READY) return;
+
+    const onChange = (_event) => {
+        if (props.events?.onChange) {
+            props.events.onChange.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(_event);
         }
         setChecked(_event.value);
     }
 
-    props.control.setChecked = (value) => {setChecked(value)};
-
     return <PrimeToggleButton
-        id = {props.control.id}
-        onIcon = {props.control.onIcon}
-        offIcon = {props.control.offIcon}
-        onLabel = {props.control.onLabel}
-        offLabel = {props.control.offLabel}
-        style = {props.control.style}
-        className = {props.control.className}
+        id = {id}
+        onIcon = {props.onIcon}
+        offIcon = {props.offIcon}
+        onLabel = {props.onLabel}
+        offLabel = {props.offLabel}
+        style = {props.style}
+        className = {props.className}
         checked = {checked}
-        tabIndex = {props.control.tabIndex}
-        iconPos = {props.control.iconPos}
-        tooltip = {props.control.tooltip}
-        tooltipOption = {props.control.tooltipOption}
+        tabIndex = {props.tabIndex}
+        iconPos = {props.iconPos}
+        tooltip = {props.tooltip}
+        tooltipOption = {props.tooltipOption}
         onChange = {onChange}
     />
 }
 
-export default ToggleButton;
+const MemoToggleButton = React.memo(ToggleButton, (prev, next) => {
+	return defaultMemoizeFunction(ToggleButton.propTypes, prev, next);
+});
+MemoToggleButton.displayName = "ToggleButton";
+
+ToggleButton.propTypes = {
+	id: PropTypes.string.isRequired,
+	context: PropTypes.object.isRequired,
+	panelContext: PropTypes.object.isRequired,
+	updatePanelContext: PropTypes.func,
+	forwardData: PropTypes.any,
+	record: PropTypes.object,
+	setRecord: PropTypes.func,
+	setIsLoading: PropTypes.func,
+	containerClassName: PropTypes.string,
+	className: PropTypes.string,
+	panelBaseMethods: PropTypes.object,
+	value: PropTypes.bool,
+	disabled: PropTypes.bool,
+	style: PropTypes.object,
+	label: PropTypes.string,
+	onChange: PropTypes.func,
+	events: PropTypes.object,
+	iconPos: PropTypes.string,
+	offIcon: PropTypes.string,
+	offLabel: PropTypes.string,
+	onIcon: PropTypes.string,
+	onLabel: PropTypes.string,
+	tabIndex: PropTypes.any,
+	tooltip: PropTypes.string,
+	tooltipOption: PropTypes.any,
+}
+export default MemoToggleButton;

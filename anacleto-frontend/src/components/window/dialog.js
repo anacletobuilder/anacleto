@@ -1,114 +1,122 @@
 import { Dialog as PrimeDialog } from "primereact/dialog";
-import Utils from "../../utils/utils";
-import React, { useState, useEffect, useRef } from "react";
+import Utils, { defaultMemoizeFunction } from "../../utils/utils";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import MemoGridContainer from "../panels/gridContainer";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { classNames } from "primereact/utils";
 import "./dialog.css";
 import { getToken } from "../../login/loginUtils";
+import { PanelsContext, PANEL_STATUS_READY } from "../../contexts/panelsContext";
+import PropTypes from "prop-types";
+import MemoComponent from "../component";
+import MemoButton from "../controls/button";
+import {getFunctionFromMetadata} from "../../utils/utils";
 
-function Dialog(props) {
+const Dialog = ({ id, context, forwardData, ...props }) => {
+	const { panelsContext, updatePanelContext, resetPanelContext } = useContext(PanelsContext);
+	const [panelContext, setPanelContext] = useState({});
 	const [dialogMetadata, setDialogMetadata] = useState(null);
 	const navigate = useNavigate();
-
-	/**
-	 * metadati della finestra che arrivano dal server e servono a renderizzarla
-	 */
-	const [loadError, setLoadError] = useState(false);
 	const dialogScript = document.createElement("script");
 
+	const onHide = () => {
+		props.setDialogSettings((prev) => ({...prev, visible: false}));
+	};
 	useEffect(() => {
-		document.body.appendChild(dialogScript);
+		updatePanelContext({
+			id,
+			_status: PANEL_STATUS_READY,
+			closeWindow: onHide,
+			forwardData
+		});
+	}, []);
 
-		//li risetto altrimenti destapplication è sempre null anche se in creazione era stato passato
-		//non ho ben capito il perchè ma va beh
-		setContext(
-			Object.assign(context, {
-				tenant: props.tenant,
-				application: props.metadata.application,
-				destapplication: props.destApplication,
-			})
-		);
+	useEffect(() => {
+		updatePanelContext({
+			id,
+			forwardData
+		});
+	}, [forwardData]);
 
-		fetchData(props.settings.windowId);
+	useEffect(() => {
+		if(!panelsContext || typeof panelsContext[id] === typeof undefined) return;
+		if(panelContext !== panelsContext[id]){
+			setPanelContext(panelsContext[id]);
+		}
+	}, [panelsContext]);
 
-		return () => {
-			console.log("Dialog component is unmounting");
-			document.body.removeChild(dialogScript);
-		};
+	useEffect(() => {
+		if(props.settings.visible){
+			fetchData(props.settings.windowId);
+		}
 	}, [
-		props.tenant,
-		props.application,
-		props.destApplication,
+		props.settings.visible,
+		context.tenant,
+		context.application,
+		context.destApplication,
 		props.settings.windowId,
 	]);
 
 	const fetchData = (windowId) => {
 		if (windowId) {
-
 			getToken().then(token => {
 				return axios.get(
-					`${process.env.REACT_APP_BACKEND_HOST}/window?window=${windowId}&application=${props.application}&destapplication=${props.destApplication}`,
+					`${process.env.REACT_APP_BACKEND_HOST}/window?window=${windowId}&application=${context.application}&destapplication=${context.destApplication}`,
 					{
 						timeout: 60000,
 						headers: {
 							Authorization: token,
-							application: props.metadata.application,
-							tenant: props.tenant,
+							application: context.application,
+							tenant: context.tenant,
 						},
 					}
 				)
 			}).then((res) => {
-				dialogScript.innerHTML = res.data;
-				let windowData = document.getWindowData(navigate);
-
-				/*LDN: Perchè solo per questa finestra?
-				Mi dava errore nel nuovo cliente dicendo che gli eventi non
-				erano di tipo function perchè erano rimasti stringhe
-				*/
-				//if (windowData.window == "window_detail") {
-				windowData = window.utils._parseJsonWithFunctions(
-					window.utils._stringifyJsonWithFunctions(windowData)
-				);
-				//}
-
-				setDialogMetadata(windowData);
-				setLoadError(false);
+				setDialogMetadata(res.data);
 			})
-				.catch((e) => {
-					console.error(e);
-					setLoadError(true);
-				});
-
+			.catch((e) => {
+				console.error(e);
+			});
 		} else {
 			setDialogMetadata(null);
 		}
 	};
 
-	const onHide = () => {
-		props.setDialogSettings({
-			visible: false,
-			position: props.settings.position,
+	let footer = <React.Fragment />;
+	if(props.settings.actions){
+		var btns = [];
+		props.settings.actions.map((atn) => {
+			const onClick = function (_event) {
+				if (atn.events?.onClick){
+					//Convert and execute the function
+					getFunctionFromMetadata(atn.events.onClick).bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(_event);
+				}
+			};
+			btns.push(
+				<MemoButton
+					id={atn.id}
+					key={atn.id}
+					icon={atn.icon}
+					onClick={onClick}
+					label={atn.label}
+					containerClassName="flex-none"
+					className={classNames(atn.className)}
+					context={context}
+					panelContext = {{ /* Nothing to initialize here */ _status: PANEL_STATUS_READY }}
+				/>
+			)
 		});
-	};
 
-	const [context, setContext] = useState({
-		tenant: props.tenant,
-		application: props.metadata.application,
-		destapplication: props.destApplication,
-		windowId: props.windowId,
-		panels: {}, //i pannelli si aggiungono man mano che vengono creati
-		closeWindow: onHide,
-		userCredential: props.userCredential,
-	});
-
+		footer = <div className="flex flex-row-reverse border-top-1 surface-border pt-3">
+			{btns}
+		</div>
+	}
 	return (
 		<PrimeDialog
-			id={props.id}
+			id={id}
 			header={props.settings.header}
-			footer={props.settings.footer}
+			footer={props.settings.footer || footer}
 			visible={props.settings.visible || false}
 			position={props.settings.position}
 			modal={props.settings.modal}
@@ -121,8 +129,8 @@ function Dialog(props) {
 			headerClassName={props.settings.headerClassName}
 			contentStyle={props.settings.contentStyle}
 			contentClassName={classNames(props.settings.contentClassName, "flex")}
-			closeOnEscape={props.settings.closeOnEscape}
-			dismissableMask={props.settings.dismissableMask}
+			closeOnEscape={props.settings.closeOnEscape || true}
+			dismissableMask={props.settings.dismissableMask || true}
 			rtl={props.settings.rtl}
 			closable={props.settings.closable}
 			style={props.settings.style || { width: "75vw", minHeight: "75vh", maxHeight: "95vh" }}
@@ -144,15 +152,7 @@ function Dialog(props) {
 		>
 			{dialogMetadata ? (
 				<div className="layout-main flex flex-1">
-					<MemoGridContainer
-						key={props.windowId + "_container"}
-						items={
-							dialogMetadata?.items ? dialogMetadata.items : null
-						}
-						layout={dialogMetadata.layout}
-						className={dialogMetadata.className}
-						context={context || {}}
-					></MemoGridContainer>
+					<MemoComponent {...dialogMetadata} forwardData={forwardData} />
 				</div>
 			) : (
 				//caricamento in corso
@@ -161,5 +161,19 @@ function Dialog(props) {
 		</PrimeDialog>
 	);
 }
+const MemoDialog = React.memo(Dialog, (prev, next) => {
+	return defaultMemoizeFunction(Dialog.propTypes, prev, next);
+});
+MemoDialog.displayName = "Dialog";
 
-export default Dialog;
+Dialog.propTypes = {
+	id: PropTypes.string.isRequired,
+	context: PropTypes.object.isRequired,
+	className: PropTypes.string,
+	setDialogSettings: PropTypes.func,
+	settings: PropTypes.object.isRequired,
+	userCredential: PropTypes.object,
+	windowId: PropTypes.any,
+};
+
+export default MemoDialog;

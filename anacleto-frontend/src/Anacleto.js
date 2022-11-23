@@ -62,8 +62,8 @@ export const Anacleto = () => {
     if (searchParams.get('application')) {
       dispatch(setApplication(searchParams.get('application')))
     }
-    if (searchParams.get('destapplication')) {
-      dispatch(setDestApplication(searchParams.get('destapplication')))
+    if (searchParams.get('destApplication')) {
+      dispatch(setDestApplication(searchParams.get('destApplication')))
     }
     if (searchParams.get('tenant')) {
       dispatch(setTenant(searchParams.get('tenant')))
