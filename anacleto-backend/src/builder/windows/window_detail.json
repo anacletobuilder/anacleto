@@ -43,7 +43,7 @@
 									"events": {
 										"onNodeClick": {
 											"parameters": "event, forwardData",
-											"body": "const _this = this;if(forwardData.node.type === ''){this.panelsContext.field_editor_container.setClassName('w-full md:w-4');}this.panelsContext.field_editor.setFieldData(forwardData);"
+											"body": "debugger;const _this = this;if(forwardData.node.type === 'itemnode'){this.panelsContext.field_editor_container.setClassName('w-full md:w-4');}this.panelsContext.field_editor.setFieldData(forwardData);"
 										}
 									}
 								}

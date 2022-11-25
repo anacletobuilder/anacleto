@@ -192,7 +192,7 @@ const Component = withErrorBoundary(({ component, ...props }) => {
 	//Use forwardData to forward input data to children components
 	const content = <React.Fragment>
 		{ props.isCard && isLoading && loadingSpinner }
-		{ RenderComponent && <RenderComponent {...props} {...defaultProps} key={props.id} className={classNames("relative", className)/* Removed className overflow-hidden, maybe it's not needed anymore*/}>
+		{ RenderComponent && <RenderComponent {...props} {...defaultProps} key={props.id} className={classNames(`component-${props.id} relative`, className)/* Removed className overflow-hidden, maybe it's not needed anymore*/}>
 			{ !props.isCard && isLoading && loadingSpinner }
 			{ items?.map(({component, ...compProps}) => (
 				<MemoComponent {...compProps} key={compProps.id || uuidv4()} component={ component } setIsLoading={setIsLoading}/>

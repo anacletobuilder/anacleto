@@ -1,6 +1,6 @@
 {
     "version": "1.0.1",
-  "author": "lucabiasotto",
+    "author": "Luca Biasotto",
     "license": "MIT",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -30,7 +30,6 @@
         "trailingComma": "es5"
     },
     "name": "anacleto-frontend",
-    "author": "Luca Biasotto",
     "module": "dist/anacleto-frontend.esm.js",
     "size-limit": [
         {
@@ -91,16 +90,17 @@
         "react-router-dom": "^6.2.1",
         "react-scripts": "^5.0.1",
         "react-transition-group": "^4.4.2",
+        "react-use-error-boundary": "^3.0.0",
         "sass": "^1.49.8",
         "uuid": "^9.0.0",
         "web-vitals": "^2.1.4"
     },
-  "bugs": {
-    "url": "https://github.com/anacletobuilder/anacleto/issues"
-  },
-  "homepage": "https://github.com/anacletobuilder/anacleto#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/anacletobuilder/anacleto.git"
-  }
+    "bugs": {
+        "url": "https://github.com/anacletobuilder/anacleto/issues"
+    },
+    "homepage": "https://github.com/anacletobuilder/anacleto#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/anacletobuilder/anacleto.git"
+    }
 }
