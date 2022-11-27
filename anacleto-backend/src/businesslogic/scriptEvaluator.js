@@ -191,6 +191,11 @@ class ScriptEvaluator {
                 _stringifyJsonWithFunctions: function (params) {
                     return scriptUtils._stringifyJsonWithFunctions(params.object);
                 },
+            },
+            translations: {
+                getAppLanguages: function({application}){
+                    return metadataUtils.getAppLanguages({application})
+                }
             }
         };
 

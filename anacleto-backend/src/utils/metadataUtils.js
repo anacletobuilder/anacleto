@@ -130,6 +130,33 @@ class MetadataUtils {
 
 		return {}
 	}
+
+	/**
+	 * Get 
+	 * @param {String} application 
+	 * @returns 
+	 */
+	getAppLanguages({ application }) {
+		if (!application) {
+			throw "Application required!"
+		}
+
+		if (application == "BUILDER") {
+			return ["en"]
+		}
+
+		const appConfigration = appUtils.getAppConfiguration(application);
+		if (!appConfigration) {
+			console.error(`App ${application} not found in .env file`);
+			return Promise.reject(`App ${application} not found`);
+		}
+
+		const appPath = appUtils.getAppFolder(application);
+		const files = fs.readdirSync(appPath)
+		return files.filter(file => {
+			return file.startsWith("i18n.")
+		})
+	}
 }
 
 module.exports = new MetadataUtils();

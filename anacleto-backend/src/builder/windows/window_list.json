@@ -43,5 +43,17 @@
 				}
 			}
 		}
+	],
+	"actions":[
+		{
+			"id": "new_window",
+			"label": "New window",
+			"icon": "pi pi-ad",
+			"events" : {
+				"onClick": {
+					"body": "utils.openWindow({window:'new_window',type:'modal',settings:{header:'Nuova finestra'}})"
+				}
+			}
+		}
 	]
 }

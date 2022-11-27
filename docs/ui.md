@@ -1,123 +1,180 @@
 # Ancleto UI
-In Anacleto ogni finestra è rapresentata da un oggetto javascript. Questo oggetto contiene tutte le info necessarie per renderizzare l'intera finestra.
+In Anacleto each window is represented by a json object. This object contains all the info needed to render the entire window.
 
-Di seguito un esempio:
+Below is an example
 
-```javascript
+```json
 {
-    "window": "windows_list",
-    "layout": "grid",
-    "classNames": "myClass1 myClass2"
-    "items" : [
+  "id": "home",
+  "windowName": "Home",
+  "component": "GridContainer",
+  "items": [
+    {
+      "id": "home_sample_form",
+      "component": "Form",
+      "isCard": true,
+      "toggleable": false,
+      "title": "Welcome form",
+      "containerClassName": "col-12 md:col-6",
+      "className": "mt-0 md:mt-4",
+      "items": [
         {
-            "id": "scripts",
-            "type": "tree",
-            "colNumber": "col-3",
-            "title": "Scripts Tree",
-            "classNames": "bg-primary-reverse",
-            "style": {
-                "gap": "1rem"
-            },
-            "isCard": false,
-            "toggleable": false,
-            "onSelect": function (event, context) {
-                context.panels.script_editor.setShowToolbar(false);
-                context.panels.script_editor.items.source.disabled = true;
-                const record = {
-                            source:"bla bla",
-                            source: "alert('hello!')"
-                        }
-                context.panels.script_editor.setRecord(record);        
-                context.panels.script_editor.setShowToolbar(true);
+          "component": "Label",
+          "className": "col-12 font-bold text-3xl",
+          "id": "title",
+          "label": "ANACLETO_SAMPLE"
         },
         {
-            "id": "script_editor",
-            "type": "form",
-            "colNumber": "col-9",
-            "classNames": "bg-primary-reverse",
-            "title": "",
-            "isCard": true,
-            "toggleable": false,
-            "actions": [{
-                "label": "Save",
-                "icon": "pi pi-save",
-                "onClick": function (event, context) {
-                    context.panels.script_editor.setIsToolbarLoading(true);
-                    utils.showToast({ severity: 'success', summary: 'Yeah!', life: 3000 });
-                    context.panels.script_editor.setIsToolbarLoading(false);
-                    });
-                },
-                "actions": [{
-                    "label": 'Rename',
-                    "icon": 'pi pi-pencil',
-                    "onClick": (e) => {
-                        //enjoy
-                    }
-                },
-                {
-                    "label": 'Delete',
-                    "icon": 'pi pi-times',
-                    "onClick": (e) => {
-                        //enjoy
-                    }
-                },]
-            }],
-            "items": [{
-                "colNumber": "col-12 md:col-6",
-                "fieldMargin": "mt-4",
-                "type": "textInput",
-                "hasFloatingLabel": true,
-                "value": "",
-                "id": "my_field",
-                "disabled": true,
-                "label": "My field",
-                "onChange": function (event, context, value) {
-                    console.log(context.panels.script_editor.getRecord())
-                }
-            }]
+          "component": "Label",
+          "className": "col-12 mt-3",
+          "id": "subtitle",
+          "label": "Thank you for installing Anacleto Builder! 🦉"
+        },
+        {
+          "component": "Label",
+          "className": "col-12 mt-3",
+          "id": "subtitle-2",
+          "label": "This is an example window created using Anacleto, use the Builder to customize it and start building your application."
+        },
+        {
+          "component": "Button",
+          "containerClassName": "col-auto mt-5",
+          "className": "col-12 md:col-6",
+          "id": "btnBuilder",
+          "label": "Go to Builder 👷‍♂️",
+          "events": {
+            "onClick": {
+              "body": "window.open('/admin', '_blank').focus();"
+            }
+          }
+        },
+        {
+          "component": "Label",
+          "className": "col-12 mt-5",
+          "id": "subtitle-3",
+          "label": "If you have any questions check out the Docs or contact us on GitHub. 🧐"
+        },
+        {
+          "component": "Button",
+          "containerClassName": "col-12 md:col-6 mt-5",
+          "className": "col-12",
+          "id": "btnDocs",
+          "label": "Docs 📖",
+          "events": {
+            "onClick": {
+              "body": "window.open('https://github.com/anacletobuilder/anacleto.wiki.git', '_blank').focus();"
+            }
+          }
+        },
+        {
+          "component": "Button",
+          "containerClassName": "col-12 md:col-6 mt-5",
+          "className": "col-12",
+          "id": "btnGit",
+          "label": "GitHub 🗂",
+          "events": {
+            "onClick": {
+              "body": "window.open('https://github.com/anacletobuilder/anacleto', '_blank').focus();"
+            }
+          }
         }
-    ]
+      ]
+    },
+    {
+      "id": "home_sample_grid",
+      "component": "DataTable",
+      "store": "sample_store",
+      "emptyMessage": "No owls",
+      "isCard": true,
+      "toggleable": false,
+      "title": "Owls",
+      "containerClassName": "col-12 md:col-6",
+      "className": "mt-0 md:mt-4",
+      "sortable": true,
+      "stripedRows": true,
+      "skeletonRow": 5,
+      "paginator": true,
+      "paginationType": "client",
+      "globalFilterMode": "client",
+      "globalFilterFields": ["name", "scientificName", "type"],
+      "columns": [
+        {
+          "field": "name",
+          "header": "Name",
+          "sortable": true
+        },
+        {
+          "field": "scientificName",
+          "header": "Scientific Name",
+          "sortable": true
+        },
+        {
+          "field": "type",
+          "header": "Owl type",
+          "sortable": true,
+          "pugTemplate": "return `div.flex.flex-row\n\tspan.flex-shrink-0.p-tag.surface-300\n\t\tspan.text-600.flex-shrink-0 ${data['type']}`;"
+        },
+        {
+          "field": "dangerOfExtinction",
+          "header": "Danger of extinction",
+          "sortable": true,
+          "pugTemplate": "let emoj = '😊';\nif(data['dangerOfExtinction']===1){emoj='😨'}\nif(data['dangerOfExtinction']===2){emoj='😱'}\nreturn `span ${emoj}`"
+        }
+      ],
+      "events": {
+        "onSelectionChange": {
+          "parameters": "event",
+          "body": "if(event.value){ alert(`${event.value.name} is so cute!`) } ;"
+        },
+        "afterRender": {
+          "body": "this.load();"
+        }
+      }
+    }
+  ]
 }
-
 ```
 
-È fondamentale per ogni item specificare l'attributo `id`, questo ci permetterà di interagire con il controllo tramite Javascript.
+It is essential for each item to specify the `id` attribute, this will allow us to interact with the control via Javascript.
 
-Supponiamo ad esempio di voler cambiare la label del campo di input `my_field` presente all'interno del pannello `scripts_editor`, quello che ci basterà fare è:
+For example, suppose we want to change the label of the `title` input field inside the `home_sample_form` panel, what we need to do is:
 
 ```javascript
-context.panels.scripts_editor.items.my_field.label = `My field Edit`;
+context.panels.home_sample_form.items.title.label = `My title Edit`;
 ```
 
-**NB: l'id di un item NON è l'id del tag html.**
+> NB: the id of an item is NOT the id of the html tag
 
-**NON USARE MAI FUNZIONI JS tipo: document.getElementById o document. querySelector  PER MODIFICARE UNA FINESTRA** :smiling_imp:  Ho sentito che è stato recentemente creato un apposito girone dell'inferno :smiling_imp:
+## Avoid javascript
 
-Anacleto è stato sviluppato in React e per sfruttarne a pieno le potenzialità dobbiamo dimenticarci l'esistenza di questi metodi, in React ogni controllo grafico è legato a delle proprietà Javascript e per modificarlo bisogna agire su queste:smiling_face_with_three_hearts: 
+**NEVER USE JS FUNCTIONS such as: document.getElementById or document. querySelector TO MODIFY A WINDOW.**
+
+Anacleto was developed in React and to use its full potential we must forget the existence of these methods, in React every graphic control is linked to states and to modify it you have to act on these states.
 
 ## Layout
-Quando crei una finestra puoi scegliere tra 2 tipi di layout, usando la proprietà `layout`
+When creating a window you can choose between 2 types of layouts, using the `layout` property
 * grid
 * flex
 
-Se non viene specificata acluna proprietà verrà usato il valore di default `grid`
+If no property is specified, the default `grid` will be used.
 
-Oltre al layout puoi aggiungre alla finestra classi aggiuntive usando l'attributo `classNames`
+In addition to the layout you can add additional classes to the window or components using the `classNames` attribute
 
 ## grid layout
 ```json
 "layout" : "grid"
 ```
-Quando utilizzi il layout grid Anacleto è completamente autonomo nel disporre i pannelli all'interno di una finestra, la sola cosa che devi fare è dare un peso **da 1 a 12** ai pannelli.
-> Se un peso non viene specificato di default il valore è 12.
+When using the grid layout Anacleto is completely autonomous in arranging the panels within a window, the only thing you need to do is give the panels a weight **from 1 to 12**.
 
-Il peso di un pannello va specificato tramite la proprietà `colNumber` utilizzando le classi apposite `col-1`,`col-2` ... `col-12`.
+> If a weight is not specified by default the value is 12.
 
-Se decidi di usare `col` senza specificare un peso, le colonne verranno equidistribuite.
+The weight of a panel must be specified through the `className` property using the appropriate classes` col-1`, `col-2` ...` col-12`.
 
-Se vuoi dare ad una collonna una dimensione specifica usa `col-fixed` e specifica nello style la dimensione dediderata.
+If you decide to use `col` without specifying a weight, the columns will be evenly distributed.
 
-Se ne hai la necessuità puoi definire un peso diverso per schermi diversi, per farlo utilizza i prefissi:
+If you want to give a column a specific dimension use `col-fixed` and specify the desired dimension in the style.
+
+If you need it you can define a different weight for different screens, to do this use the prefixes:
 - sm
 - md
 - lg
@@ -301,9 +358,14 @@ Per ogni pannello (o controllo) puoi usare la proprietà `style` per definire de
 Es:
 ```json
 style: {
-    gap: "1rem"
-},
+    "gap": "1rem"
+}
 ```
+
+# Translations
+Anacleto allows you to translate your application and will use the browser language to show the correct translation.
+
+[Docs](translation.md)
 
 # Pannelli
 In una finestra di Anacleto puoi inserire diversi tipi di pannello.

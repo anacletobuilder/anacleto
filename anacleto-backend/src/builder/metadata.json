@@ -29,30 +29,24 @@
 				},
 				{
 					"label": "Windows",
-					"icon": "pi pi-fw pi-box",
-					"items": [
-						{
-							"label": "New window",
-							"icon": "pi pi-fw pi-plus",
-							"command": {
-								"body": "utils.openWindow({window:'new_window',type:'modal',settings:{header:'Nuova finestra'}})"
-							}
-						},
-						{
-							"label": "Windows",
-							"icon": "pi pi-fw pi-list",
-							"command": {
-								"body": "utils.openWindow({window : '/admin/window_list',searchParams : {}});"
-							}
-						},
-						{
-							"label": "Test columns",
-							"icon": "pi pi-question",
-							"command": {
-								"body": "utils.openWindow({window:'manage_columns',type:'modal',settings:{header:'Gestione colonne'}})"
-							}
-						}
-					]
+					"icon": "pi pi-fw pi-list",
+					"command": {
+						"body": "utils.openWindow({window : '/admin/window_list',searchParams : {}});"
+					}
+				},
+				{
+					"label": "Translations",
+					"icon": "pi pi-fw pi-language",
+					"command": {
+						"body": "utils.openWindow({window : '/admin/translations',searchParams : {}});"
+					}
+				},
+				{
+					"label": "Test columns",
+					"icon": "pi pi-question",
+					"command": {
+						"body": "utils.openWindow({window:'manage_columns',type:'modal',settings:{header:'Gestione colonne'}})"
+					}
 				}
 			]
 		},
@@ -74,17 +68,17 @@
 			"icon": "pi pi-fw pi-desktop",
 			"items": [
 				{
-					"label": "Roles",
-					"icon": "pi pi-fw pi-shield",
-					"command": {
-						"body": "utils.openWindow({window : '/admin/roles',searchParams : {}});"
-					}
-				},
-				{
 					"label": "Users",
 					"icon": "pi pi-fw pi-users",
 					"command": {
 						"body": "utils.openWindow({window : '/admin/users',searchParams : {}});"
+					}
+				},
+				{
+					"label": "Roles",
+					"icon": "pi pi-fw pi-shield",
+					"command": {
+						"body": "utils.openWindow({window : '/admin/roles',searchParams : {}});"
 					}
 				}
 			]
