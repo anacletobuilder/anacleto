@@ -9,15 +9,15 @@ function listToTree(_list) {
     return undefined;
   }
 
-  let treeList = _list.map(function (langauge) {
-    if (!langauge) {
+  let treeList = _list.map(function (language) {
+    if (!language) {
       return undefined;
     }
 
     const scriptItem = {
-      key: langauge,
-      label: langauge,
-      data: langauge, 
+      key: language,
+      label: language,
+      data: language, 
       icon: "pi pi-fw pi-language",
     }
 

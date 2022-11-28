@@ -71,6 +71,12 @@ function DataTable({ context, panelContext, ...props }) {
 		}
 	}, [panelContext._status]);
 
+	useEffect(() => {
+		if(props.events.onLoad){
+			props.events.onLoad.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(list);
+		}
+	}, [list]);
+
 	if(!panelContext._status === PANEL_STATUS_READY) return;
 
 	const fetchData = async (_storeParams, _pageFirst, _pageRows) => {

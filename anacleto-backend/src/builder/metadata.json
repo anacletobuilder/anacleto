@@ -35,7 +35,7 @@
 					}
 				},
 				{
-					"label": "Translations",
+					"label": "App translations",
 					"icon": "pi pi-fw pi-language",
 					"command": {
 						"body": "utils.openWindow({window : '/admin/translations',searchParams : {}});"

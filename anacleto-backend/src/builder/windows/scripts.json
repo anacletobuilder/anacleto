@@ -29,7 +29,7 @@
 			"id": "scripts_editor",
 			"component": "Form",
 			"layout": "flex",
-			"isCard": false,
+			"isCard": true,
 			"containerClassName": "flex flex-auto",
 			"className": "flex flex-auto",
 			"actions": [

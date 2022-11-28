@@ -29,6 +29,7 @@ function Tree({ id, context, panelContext, ...props }) {
 			updatePanelContext({
 				id,
 				setNodes,
+				setExpandedKeys: (expKeys) => setExpandedKeys(prev =>({ ...prev, ...expKeys })),
 				load: function (_params) {
 					//TODO gestire parametri
 					fetchData();
@@ -47,6 +48,11 @@ function Tree({ id, context, panelContext, ...props }) {
 			id,
 			nodes: nodes,
 		});
+
+		if (props.events.onLoad) {
+			props.events.onLoad.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(nodes);
+		}
+
 	}, [nodes]);
 
 	const fetchData = () => {
@@ -61,34 +67,40 @@ function Tree({ id, context, panelContext, ...props }) {
 			return;
 		}
 
-		getToken()
-		.then((token) => {
-			return axios.get(
-				`${process.env.REACT_APP_BACKEND_HOST}/processScript?panel=${id}&script=${props.store}`,
-				{
-					timeout: 60000,
-					headers: {
-						Authorization: token,
-						application: application,
-						destapplication: destApplication,
-						tenant: tenant,
-					},
-				}
-			);
-		})
-		.then((res) => {
-			setNodes(res.data);
-		})
-		.catch((e) => {
-			window.utils.showToast({
-				severity: "error",
-				summary: "Error",
-				detail: "Server error, can't load tree",
-				sticky: true,
-			});
+		updatePanelContext({
+			id,
 		});
+
+		getToken()
+			.then((token) => {
+				return axios.get(
+					`${process.env.REACT_APP_BACKEND_HOST}/processScript?panel=${id}&script=${props.store}`,
+					{
+						timeout: 60000,
+						headers: {
+							Authorization: token,
+							application: application,
+							destapplication: destApplication,
+							tenant: tenant,
+						},
+					}
+				);
+			})
+			.then((res) => {
+				setNodes(res.data)
+
+
+			})
+			.catch((e) => {
+				window.utils.showToast({
+					severity: "error",
+					summary: "Error",
+					detail: "Server error, can't load tree",
+					sticky: true,
+				});
+			});
 	};
-	
+
 	const onExpand = useCallback((_event) => {
 		if (props.events?.onExpand) {
 			props.events?.onExpand.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(_event);
@@ -127,8 +139,8 @@ function Tree({ id, context, panelContext, ...props }) {
 	const onToggle = useCallback((e) => setExpandedKeys(e.value), []);
 	const onSelectionChange = useCallback((e) => setSelectedNodeKey(e.value), []);
 	const onContextMenuSelectionChange = useCallback((e) => setSelectedNodeKey(e.value), []);
-	
-	if(panelContext._status !== PANEL_STATUS_READY) return;
+
+	if (panelContext._status !== PANEL_STATUS_READY) return;
 
 	return (
 		<div className="anacleto-tree-container">
@@ -169,8 +181,8 @@ Tree.propTypes = {
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
 	forwardData: PropTypes.any,
-record: PropTypes.object,
-setRecord: PropTypes.func,
+	record: PropTypes.object,
+	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,
 	className: PropTypes.string,
 	isCard: PropTypes.bool,
