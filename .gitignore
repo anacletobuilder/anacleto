@@ -133,5 +133,4 @@ dist
 .pnp.*
 client/src/config/firebase-config.js
 server/config/googleServiceAccount.json
-anacleto-backend/.DS_Store
 .DS_Store
