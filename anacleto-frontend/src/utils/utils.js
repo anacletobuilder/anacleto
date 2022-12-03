@@ -688,7 +688,7 @@ export const getFunctionFromMetadata = (functionObj) => {
 		try{
 			return new Function(functionObj.parameters || "", functionObj.body);
 		}catch(e){
-			console.error(e);
+			console.error(`Invalid event script\n${functionObj.body}\n`,e);
 			return () => (console.error(e));
 		}
 	}
