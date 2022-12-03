@@ -14,9 +14,14 @@ function listToTree(_list) {
       return undefined;
     }
 
+    let languageDescription = 'App translations'
+    if(language !== 'i18n.json'){
+      languageDescription = language.replace('i18n.', '').replace('.json', '').toUpperCase()
+    }
+
     const scriptItem = {
       key: language,
-      label: language,
+      label: languageDescription,
       data: language, 
       icon: "pi pi-fw pi-language",
     }
@@ -25,10 +30,10 @@ function listToTree(_list) {
   });
 
   treeList = treeList.sort((a, b) => {
-    if (a.label < b.label) {
+    if (a.key === 'i18n.json' || a.label < b.label) {
       return -1;
     }
-    if (a.label > b.label) {
+    if (b.key === 'i18n.json' || a.label > b.label) {
       return 1;
     }
     return 0;
@@ -46,5 +51,6 @@ return [{
   label: destapplication,
   data: destapplication,
   icon: "pi pi-fw pi-window",
-  children: treeData
+  children: treeData,
+  isRoot:true
 }];

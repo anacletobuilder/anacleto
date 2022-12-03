@@ -132,6 +132,40 @@ class MetadataUtils {
 	}
 
 	/**
+	 * Add app language
+	 * @param {string} application 
+	 * @param {string} language 
+	 * @returns 
+	 */
+	addAppLanguage({application, user, language}){
+		if (!application || application === "BUILDER") {
+			return Promise.reject(`Invalid application not found`);
+		}
+
+		const appConfigration = appUtils.getAppConfiguration(application);
+		if (!appConfigration) {
+			console.error(`App ${application} not found in .env file`);
+			return Promise.reject(`App ${application} not found`);
+		}
+
+		//const appPath = appUtils.getAppFolder(application);
+		const i18nLanguagePath = path.join(appUtils.getAppFolder(application), `i18n.${language.toLowerCase()}.json`);
+		if (fs.existsSync(i18nLanguagePath)) {
+			return Promise.reject(`Language ${language} already exists`);
+		}
+
+		const translationRelativePath = `i18n.${language.toLowerCase()}.json`
+
+		return gitConnector.writeFile(
+			application,
+			user,
+			translationRelativePath,
+			JSON.stringify({}, null, 2)
+		);
+
+	}
+
+	/**
 	 * Get 
 	 * @param {String} application 
 	 * @returns 
