@@ -9,21 +9,27 @@ function listToTree(_list) {
     return undefined;
   }
 
-  let treeList = _list.map(function (language) {
-    if (!language) {
+  let treeList = _list.map(function (file) {
+    if (!file) {
       return undefined;
     }
 
+    let language = null
+    if(file !== 'i18n.json'){
+      language = file.replace('i18n.', '').replace('.json', '')
+    }
+
     let languageDescription = 'App translations'
-    if(language !== 'i18n.json'){
-      languageDescription = language.replace('i18n.', '').replace('.json', '').toUpperCase()
+    if(language){
+      languageDescription = `${language.toUpperCase()} translations`
     }
 
     const scriptItem = {
-      key: language,
+      key: file,
       label: languageDescription,
-      data: language, 
+      data: file, 
       icon: "pi pi-fw pi-language",
+      language : language,
     }
 
     return scriptItem;
@@ -48,7 +54,7 @@ const treeData = listToTree(ret);
 //Aggiungo un nodo fittizio con il nome dell'app mi aiuta a capire in che app sono e posso mettere le feature del tasto destro
 return [{
   key: `root`,
-  label: destapplication,
+  label: `${destapplication}`,
   data: destapplication,
   icon: "pi pi-fw pi-window",
   children: treeData,

@@ -183,7 +183,7 @@ class ScriptEvaluator {
             },
             metadata: {
                 get: function (params) {
-                    return metadataUtils.getMetadataRawData(params.application);
+                    return metadataUtils.getMetadataRawData({application:params.application});
                 },
                 _parseJsonWithFunctions: function (params) {
                     return scriptUtils._parseJsonWithFunctions(params.string);
