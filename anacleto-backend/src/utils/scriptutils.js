@@ -4,7 +4,6 @@ const gitConnector = require("../git/gitConnector");
 const path = require('path');
 const logger = require('./logger');
 const fileUtils = require('./fileUtils');
-const crypto = require('crypto-js')
 
 class ScriptUtils {
 
@@ -113,14 +112,11 @@ class ScriptUtils {
     getScriptFile(application, script){
         const source = this.getScriptRawData(application, script);
         return {
-            sha : this.getScriptSha(source),
+            sha : fileUtils.getFileSha(source),
             source : source
         }
     }
 
-    getScriptSha(source){
-        return crypto.SHA1(source).toString();
-    }
 
     /**
      * Crea una finestra per l'applicazione passata
@@ -164,7 +160,7 @@ class ScriptUtils {
         }
 
         //check versione
-        const serverSha = this.getScriptSha(source);
+        const serverSha = this.getFileSha(source);
         if(clientSha != serverSha){
             return Promise.reject(new Error('fail_sha'));
         }

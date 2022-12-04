@@ -2,6 +2,7 @@ const fs = require("fs");
 const appUtils = require("./appUtils");
 const gitConnector = require("./../git/gitconnector");
 const path = require("path");
+const { getFileSha: getFileSha } = require("./fileUtils");
 
 class MetadataUtils {
 	/**
@@ -98,10 +99,6 @@ class MetadataUtils {
 			throw "Application required!";
 		}
 
-		if (!language) {
-			throw "Language required!";
-		}
-
 		if (application == "BUILDER") {
 			const metaPath = path.join(
 				__dirname,
@@ -117,7 +114,7 @@ class MetadataUtils {
 			return null;
 		}
 
-		const i18nLanguagePath = path.join(appUtils.getAppFolder(application), `i18n.${language.toLowerCase()}.json`);
+		const i18nLanguagePath = path.join(appUtils.getAppFolder(application), `i18n${language ? "." + language.toLowerCase(): ""}.json`);
 		if (fs.existsSync(i18nLanguagePath)) {
 			return fs.readFileSync(i18nLanguagePath, "utf8");
 		}
@@ -142,6 +139,10 @@ class MetadataUtils {
 			return Promise.reject(`Invalid application not found`);
 		}
 
+		if(language.length != 2){
+			return Promise.reject(`Invalid language ${language}`);
+		}
+
 		const appConfigration = appUtils.getAppConfiguration(application);
 		if (!appConfigration) {
 			console.error(`App ${application} not found in .env file`);
@@ -161,6 +162,55 @@ class MetadataUtils {
 			user,
 			translationRelativePath,
 			JSON.stringify({}, null, 2)
+		);
+
+	}
+
+	/**
+	 * 
+	 * @param {string} application 
+	 * @param {string} user 
+	 * @param {string} language 
+	 * @param {string} source 
+	 * @param {string} clientSha 
+	 * @returns 
+	 */
+	updateAppLanguage({application, user, language, source, clientSha}){
+		if (!application || application === "BUILDER") {
+			return Promise.reject(`Invalid application not found`);
+		}
+
+		if(language && language.length != 2){
+			return Promise.reject(`Invalid language ${language}`);
+		}
+
+		const appConfigration = appUtils.getAppConfiguration(application);
+		if (!appConfigration) {
+			console.error(`App ${application} not found in .env file`);
+			return Promise.reject(`App ${application} not found`);
+		}
+
+		//const appPath = appUtils.getAppFolder(application);
+		const i18nLanguagePath = path.join(appUtils.getAppFolder(application), `i18n${language ? "." + language.toLowerCase(): ""}.json`);
+		if (!fs.existsSync(i18nLanguagePath)) {
+			return Promise.reject(`Language ${language} not exists`);
+		}
+
+		const originalFileSource = fs.readFileSync(i18nLanguagePath, "utf8");
+		
+		 //check versione
+		 const serverSha = getFileSha(originalFileSource);
+		 if(clientSha != serverSha){
+			 return Promise.reject(new Error('fail_sha'));
+		 }
+
+		const translationRelativePath = `i18n${language ? "." + language.toLowerCase(): ""}.json`
+
+		return gitConnector.writeFile(
+			application,
+			user,
+			translationRelativePath,
+			source
 		);
 
 	}
