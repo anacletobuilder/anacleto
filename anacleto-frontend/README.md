@@ -14,4 +14,4 @@ npm install --save anacleto-frontend
 ## Usage
 
 ## Usage
-[Docs](https://anacleto.gitbook.io/anacleto/getting-started/setup-anacleto#anacleto-frontend
+[Docs](https://anacleto.gitbook.io/anacleto/getting-started/setup-anacleto#anacleto-frontend)
