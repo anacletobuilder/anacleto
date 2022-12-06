@@ -30,7 +30,7 @@ module.exports = function (app) {
 
 			let application = req.headers.application;
 			if (application == "BUILDER") {
-				metadataString = metadataUtils.getMetadataRawData(application);
+				metadataString = metadataUtils.getMetadataRawData({application});
 			} else {
 				if (!application) {
 					//carica applicazione di default dell'utente
@@ -56,7 +56,7 @@ module.exports = function (app) {
 				) {
 					try {
 						metadataString =
-							metadataUtils.getMetadataRawData(application);
+							metadataUtils.getMetadataRawData({application});
 					} catch (e) {
 						console.error(e.toString());
 					}
@@ -107,12 +107,12 @@ module.exports = function (app) {
 			}
 
 			const metaString =
-				metadataUtils.getMetadataRawData(destapplication);
+				metadataUtils.getMetadataRawData({application:destapplication});
 			let meta = scriptUtils._parseJsonWithFunctions(metaString);
 			meta.menu = req.body.menu;
 
 			metadataUtils
-				.updateMetadata(destapplication, req.user, meta)
+				.updateMetadata({application:destapplication, user:req.user, metadata:meta},)
 				.then((data) => {
 					res.send({ success: true });
 				})

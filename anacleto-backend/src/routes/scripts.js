@@ -5,6 +5,7 @@ const scriptEvaluator = require("../businesslogic/scriptEvaluator");
 const scriptUtils = require("../utils/scriptutils");
 
 module.exports = function (app, {mySqlConnector, datastoreConnector}) {
+
 	app.get("/script", (req, res) => {
 		try {
 			const application = req.headers.application;
@@ -52,7 +53,7 @@ module.exports = function (app, {mySqlConnector, datastoreConnector}) {
 					req.body.data
 				)
 				.then((data) => {
-					res.send({ success: true, sha: scriptUtils.getScriptSha(req.body.data) });
+					res.send({ success: true, sha: scriptUtils.getFileSha(req.body.data) });
 				})
 				.catch((error) => {
 					console.error(`Create script ${scriptName} error`, error);
@@ -85,7 +86,7 @@ module.exports = function (app, {mySqlConnector, datastoreConnector}) {
 					req.body.sha
 				)
 				.then((data) => {
-					res.send({ success: true, sha: scriptUtils.getScriptSha(req.body.data) });
+					res.send({ success: true, sha: scriptUtils.getFileSha(req.body.data) });
 				})
 				.catch((error) => {
 					console.error(`Update script ${scriptName} error`, error);
@@ -97,6 +98,7 @@ module.exports = function (app, {mySqlConnector, datastoreConnector}) {
 				});
 		} catch (e) {
 			console.error(`Error`, e);
+			res.sendStatus(500);
 		}
 	});
 

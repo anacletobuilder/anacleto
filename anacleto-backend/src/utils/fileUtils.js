@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require("path")
+const crypto = require('crypto-js')
 
 class FileUtils {
 
@@ -73,6 +74,11 @@ class FileUtils {
     return arrayOfFiles;
   }
 
+  getFileSha(source){
+    return crypto.SHA1(source).toString();
+  }
+
 }
+
 
 module.exports = new FileUtils();
