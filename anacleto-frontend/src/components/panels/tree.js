@@ -88,8 +88,6 @@ function Tree({ id, context, panelContext, ...props }) {
 			})
 			.then((res) => {
 				setNodes(res.data)
-
-
 			})
 			.catch((e) => {
 				window.utils.showToast({

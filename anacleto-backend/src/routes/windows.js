@@ -6,12 +6,11 @@ const windowUtils = require("../utils/windowUtils");
 module.exports = function (app) {
 	app.get("/window", (req, res) => {
 		try {
-			let application = req.headers.application;
+			const application = req.headers.application;
 			const window = req.query.window;
-			let requiredAppWindow = req.query.application || application;
-			console.info(
-				`Get window data ${window} for application ${requiredAppWindow}`
-			);
+			const requiredAppWindow = req.query.application || application;
+
+			console.info(`Get window data ${window} for application ${requiredAppWindow}`);
 
 			let ret, windowRawData;
 			if (requiredAppWindow == "BUILDER") {

@@ -30,7 +30,6 @@
         "singleQuote": true,
         "trailingComma": "es5"
     },
-    "name": "anacleto-frontend",
     "module": "dist/anacleto-frontend.esm.js",
     "size-limit": [
         {
