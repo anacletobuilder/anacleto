@@ -13,8 +13,7 @@ function listToTree(_list) {
         }
 
         return {
-			id: leave.id,
-            key: leave.key || leave.id,
+            key: leave.key || utils.uuid(),
             label: leave.label,
             icon: leave.icon || (leave.items ? "pi pi-fw pi-sitemap" : "pi pi-fw pi-circle-fill"),
             children: listToTree(leave.items),

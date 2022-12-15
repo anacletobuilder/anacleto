@@ -16,9 +16,10 @@ function Window(props) {
 	const tenant = useSelector(selectTenant);
 	const application = useSelector(selectApplication);
 	const destApplication = useSelector(selectDestApplication);
-	
-	const { windowId } = useParams();
-	
+
+	 const params = useParams()
+	 const windowId = params.windowId || 'home'
+
 	const [windowMetadata, setWindowMetadata] = useState(null);
 	const [loadError, setLoadError] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
@@ -31,8 +32,10 @@ function Window(props) {
 	useEffect(() => {
 		dispatch(setWindow(windowId))
 	}, [windowId]);
+
+
 	const fetchData = (windowId) => {
-		if(!windowId){
+		if (!windowId) {
 			setIsLoading(false);
 			return;
 		}
@@ -64,10 +67,10 @@ function Window(props) {
 				//CARICO LE TRADUZIONI RECUPERATE NEL BUNDLE DELLA FINESTRA
 				if (resp?.data) {
 					return i18n.addResourceBundle(
-						i18n.language, 
-						_i18nResourceBundle, 
-						resp.data, 
-						true, 
+						i18n.language,
+						_i18nResourceBundle,
+						resp.data,
+						true,
 						true);
 				}
 				return Promise.resolve();
@@ -88,7 +91,7 @@ function Window(props) {
 			.then((res) => {
 				//windowScript.innerHTML = res.data;
 				//let windowData = document.getWindowData(navigate);
-				if (typeof res.data === 'string' || res.data instanceof String){
+				if (typeof res.data === 'string' || res.data instanceof String) {
 					throw `Window '${windowId}' returns data that is not a JSON Object. Check the syntax for the window definition.`;
 				}
 
@@ -103,15 +106,15 @@ function Window(props) {
 			});
 	};
 
-	return <div className={classNames("layout-main-container flex flex-column justify-content-between mt-4 pt-8 pb-2 px-4", windowMetadata?.padding)} style={{minHeight: "calc(100vh - 4rem)"}}>
-		{ isLoading && 
+	return <div className={classNames("layout-main-container flex flex-column justify-content-between mt-4 pt-8 pb-2 px-4", windowMetadata?.padding)} style={{ minHeight: "calc(100vh - 4rem)" }}>
+		{isLoading &&
 			<div className="layout-main flex flex-1">
 				<div className="flex flex-1 align-content-center flex-wrap card-container blue-container">
 					<ProgressSpinner strokeWidth={4} />
 				</div>
 			</div>
 		}
-		{ loadError &&
+		{loadError &&
 			<div className="card">
 				<div className="grid">
 					<div className="col-12">
@@ -124,7 +127,7 @@ function Window(props) {
 				</div>
 			</div>
 		}
-		{ !isLoading && !loadError && windowMetadata &&
+		{!isLoading && !loadError && windowMetadata &&
 			<MemoComponent {...windowMetadata} />
 		}
 	</div>

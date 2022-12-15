@@ -1,7 +1,7 @@
 {
   "name": "anacleto-backend",
   "description": "Anacleto builder backend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "lucabiasotto",
   "license": "MIT",
   "main": "src/index.js",

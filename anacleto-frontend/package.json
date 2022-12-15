@@ -1,6 +1,6 @@
 {
     "name": "anacleto-frontend",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "author": "Luca Biasotto",
     "license": "MIT",
     "main": "dist/index.js",
@@ -30,7 +30,6 @@
         "singleQuote": true,
         "trailingComma": "es5"
     },
-    "name": "anacleto-frontend",
     "module": "dist/anacleto-frontend.esm.js",
     "size-limit": [
         {
