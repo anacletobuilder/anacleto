@@ -31,7 +31,7 @@
 					"label": "Windows",
 					"icon": "pi pi-fw pi-list",
 					"command": {
-						"body": "utils.openWindow({window : '/admin/window_list',searchParams : {}});"
+						"body": "utils.openWindow({window : '/admin/windows',searchParams : {}});"
 					}
 				},
 				{
