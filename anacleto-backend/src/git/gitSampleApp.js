@@ -24,7 +24,7 @@ const HOME = {
   "id": "home",
   "windowName": "Home",
   "component": "GridContainer",
-  "items": [
+  "components": [
     {
       "id": "home_sample_form",
       "component": "Form",
@@ -33,7 +33,7 @@ const HOME = {
       "title": "Welcome form",
       "containerClassName": "col-12 md:col-6",
       "className": "mt-0 md:mt-4",
-      "items": [
+      "components": [
         {
           "component": "Label",
           "className": "col-12 font-bold text-3xl",

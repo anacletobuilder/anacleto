@@ -30,7 +30,7 @@ const Checkbox = ({ id, context, panelContext, ...props }) => {
 
 		//chiama l'eventuale eventuale custom definita dall'utente
 		if (props.onChange) {
-			props.onChange.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(_event, newValue);
+			props.onChange.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(_event, newValue);
 		}
 	};
 	const onBlur = props.onBlur ? props.onBlur : () => {};

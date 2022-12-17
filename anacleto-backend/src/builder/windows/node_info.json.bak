@@ -2,12 +2,12 @@
 	"id": "node_info",
 	"component": "GridContainer",
 	"className": "m-0 mt-4",
-	"items": [{
+	"components": [{
 		"id": "window_node_container",
 		"component": "GridContainer",
 		"layout": "flex",
 		"className" : "flex-column",
-		"items": [
+		"components": [
 			{
 				"id": "windows_node_info",
 				"component": "Form",
@@ -17,7 +17,7 @@
 						"body": "var nodeInfo = utils.getInputData().node;var renderItems = [];var attributeRecord = {};const isAttrDisabled = function (type) { return ['id', 'component'].indexOf(type) > -1;};for (attr in nodeInfo.attributes) { if (attr == 'items' || attr == 'events') { continue; } if (typeof nodeInfo.attributes[attr] == 'boolean') { renderItems.push({ className: 'w-full mt-2', component: 'Checkbox', id: attr, disabled: isAttrDisabled(attr), label: attr, onChange: function (event, context, value) { utils.getInputData().node.attributes[event.target.id] = event.target.checked; } }); } else { renderItems.push({ component: 'TextInput', hasFloatingLabel: true, value: JSON.stringify(nodeInfo.attributes[attr]), id: attr, disabled: isAttrDisabled(attr), label: attr, className: 'w-full p-inputtext-sm block mt-2', events: { onChange: function (event, context, value) { utils.getInputData().node.attributes[event.target.id] = event.target.value; } } }); } attributeRecord[attr] = nodeInfo.attributes[attr];}this.setItems(renderItems);this.setRecord(attributeRecord);"
 					}
 				},
-				"items": []
+				"components": []
 			}
 	]
 }]

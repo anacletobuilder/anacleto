@@ -79,9 +79,9 @@ function Flow({ id, context, panelContext, ...props }) {
 			return a.itemPosition - b.itemPosition;
 		});
 		if (itemChilds.length > 0) {
-			obj.items = [];
+			obj.components = [];
 			for (var i in itemChilds) {
-				obj.items.push(convertFlowToMap(itemChilds[i].id, nodeArr));
+				obj.components.push(convertFlowToMap(itemChilds[i].id, nodeArr));
 			}
 		}
 		var events = nodeArr.filter(function (n) {
@@ -144,7 +144,7 @@ function Flow({ id, context, panelContext, ...props }) {
 				if (attr == "itemPosition") {
 					node.itemPosition = obj[attr];
 				} else if (
-					attr == "items" ||
+					attr == "components" ||
 					attr == "events" ||
 					attr == "actions"
 				) {
@@ -188,12 +188,12 @@ function Flow({ id, context, panelContext, ...props }) {
 			initialNodes.push(node);
 
 			if (
-				!obj.items &&
+				!obj.components &&
 				itm.id?.indexOf("ADDNEWITM") < 0 &&
 				itm.id?.indexOf("_EVENT_") < 0 &&
 				itm.id?.indexOf("_ADDEVENT") < 0
 			) {
-				//Se non ho items non devo avere possibilità di aggiungere figli
+				//Se non ho components non devo avere possibilità di aggiungere figli
 			}
 
 			if (parentNode) {
@@ -207,9 +207,9 @@ function Flow({ id, context, panelContext, ...props }) {
 
 			var siblingPosition = 0;
 
-			if (obj.items) {
-				for (var i = 0; i < obj.items.length; i++) {
-					var currItm = obj.items[i];
+			if (obj.components) {
+				for (var i = 0; i < obj.components.length; i++) {
+					var currItm = obj.components[i];
 					currItm.itemPosition = siblingPosition;
 					siblingPosition++;
 					composeNodesAndEdges(currItm, node.id);
@@ -219,7 +219,7 @@ function Flow({ id, context, panelContext, ...props }) {
 						id: node.id + "_ADDNEWITM",
 						title: "Add object",
 						nodeType: "addnode",
-						itemPosition: obj.items.length,
+						itemPosition: obj.components.length,
 					},
 					node.id
 				);
@@ -362,7 +362,7 @@ function Flow({ id, context, panelContext, ...props }) {
 			},
 		};
 		if(props.events.onNodeClick){
-			props.events.onNodeClick.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(event, forwardData);
+			props.events.onNodeClick.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(event, forwardData);
 		}
 		if (node.type == "addnode") {
 			//alert("Aggiungi controllo");
@@ -387,6 +387,7 @@ function Flow({ id, context, panelContext, ...props }) {
 				forwardData: { ...forwardData, parentNode}
 			});
 		} else if (node.type == "eventnode") {
+			debugger;
 			window.utils.openWindow({
 				window: "add_event",
 				type: "modal",

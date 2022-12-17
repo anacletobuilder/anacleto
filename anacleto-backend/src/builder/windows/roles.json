@@ -5,7 +5,7 @@
 	"isCard": true,
 	"layout": "flex",
 	"className": "flex-column flex-auto",
-	"items": [
+	"components": [
 		{
 			"id": "roles_settings",
 			"component": "Form",
@@ -23,12 +23,12 @@
 					"icon": "pi pi-save",
 					"events": {
 						"onClick": {
-							"body": "const _this = this;_this.panelsContext.roles_settings.setIsLoading(true);var record = _this.panelsContext.roles_settings.getRecord();var source = record.source;var body = {data: record.source}utils.callServer({url: '/roles',method: 'patch',params: {application: _this.context.destApplication,},data: body}).then(function (response) {if (response.data.success == true) {life: 3000 });} else {true });}_this.panelsContext.roles_settings.setIsLoading(false);}).catch(function (error) {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + error, sticky: true });_this.panelsContext.roles_settings.setIsLoading(false);});"
+							"body": "const _this = this;_this.components.roles_settings.setIsLoading(true);var record = _this.components.roles_settings.getRecord();var source = record.source;var body = {data: record.source}utils.callServer({url: '/roles',method: 'patch',params: {application: _this.context.destApplication,},data: body}).then(function (response) {if (response.data.success == true) {life: 3000 });} else {true });}_this.components.roles_settings.setIsLoading(false);}).catch(function (error) {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + error, sticky: true });_this.components.roles_settings.setIsLoading(false);});"
 						}
 					}
 				}
 			],
-			"items": [
+			"components": [
 				{
 					"component": "CodeEditor",
 					"className": "col-12",

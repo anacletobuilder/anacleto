@@ -5,7 +5,7 @@
 	"isCard": true,
 	"layout": "flex",
 	"className": "flex-column flex-auto",
-	"items": [
+	"components": [
 		{
 			"id": "user_detail",
 			"store": "users/detail",
@@ -19,10 +19,10 @@
 				},
 				"onRecordChange": {
 					"parameters": "record",
-					"body": "this.panelsContext.userPhoto.setImage(record.photoURL)"
+					"body": "this.components.userPhoto.setImage(record.photoURL)"
 				}
 			},
-			"items": [
+			"components": [
 				{
 					"id": "userPhoto",
 					"component": "Avatar",
@@ -34,7 +34,7 @@
 					"component": "GridContainer",
 					"layout": "flex",
 					"className": "col-9 flex-column mb-5",
-					"items": [
+					"components": [
 						{
 							"component": "Label",
 							"id": "displayName",

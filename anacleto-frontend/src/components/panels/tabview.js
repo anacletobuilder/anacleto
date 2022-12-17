@@ -28,12 +28,12 @@ const TabView = ({ id, context, panelContext, ...props }) => {
 	if(panelContext._status !== PANEL_STATUS_READY) return;
 	
 	const getItems = () => {
-		if (!props.items) {
+		if (!props.components) {
 			//no subpanel set
 			return <PrimeTabPanel key={"no_item"} />;
 		}
 
-		const items = props.items.map((item) => {
+		const components = props.components.map((item) => {
 			return (
 				<PrimeTabPanel
 					className={classNames("p-0")}
@@ -50,7 +50,7 @@ const TabView = ({ id, context, panelContext, ...props }) => {
 				</PrimeTabPanel>
 			);
 		});
-		return items;
+		return components;
 	};
 
 	return (
@@ -80,7 +80,7 @@ TabView.propTypes = {
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,
-	items: PropTypes.array,
+	components: PropTypes.array,
 	panelBaseMethods: PropTypes.object,
 	style: PropTypes.object,
 	title: PropTypes.string,

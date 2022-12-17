@@ -11,10 +11,12 @@ export const PANEL_STATUS_UNAVAILABLE = 0;
 export const PANEL_STATUS_INITIALIZING = 1;
 export const PANEL_STATUS_RENDERING = 2;
 export const PANEL_STATUS_READY = 3;
+
 const PanelsContextComponent = (props) => {
 	const [panelsContext, setPanelsContext] = useState({});
 
 	const updatePanelContext = useCallback((payload) => {
+		debugger;
 		if(!payload.id){
 			console.error("payload.id missing - Cannot update panelContext without providing a panel ID!");
 			return;

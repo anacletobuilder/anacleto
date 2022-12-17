@@ -23,7 +23,7 @@ const ToggleButton = ({ id, context, panelContext, ...props }) => {
 
     const onChange = (_event) => {
         if (props.events?.onChange) {
-            props.events.onChange.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(_event);
+            props.events.onChange.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(_event);
         }
         setChecked(_event.value);
     }

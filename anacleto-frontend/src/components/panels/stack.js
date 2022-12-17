@@ -45,6 +45,6 @@ Stack.propTypes = {
 	flex: PropTypes.oneOf(["1", "auto", "initial"]),
 	gap: PropTypes.number,
 	grow: PropTypes.oneOf(["1", "0"]),
-	items: PropTypes.array
+	components: PropTypes.array
 };
 export default Stack;

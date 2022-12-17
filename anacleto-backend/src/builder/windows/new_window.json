@@ -1,11 +1,11 @@
 {
 	"id": "new_window",
 	"component": "GridContainer",
-	"items": [{
+	"components": [{
 		"id": "new_window_header",
 		"title": "Crea nuova finestra",
 		"component": "Form",
-		"items": [
+		"components": [
 			{
 				"id": "windowId",
 				"label": "Id finestra",
@@ -27,7 +27,7 @@
 				"className": "col-4 col-offset-8",
 				"events": {
 					"onClick": {
-						"body": "const _this = this;var record = _this.panelsContext.new_window_header.getRecord();var body = { data: utils._stringifyJsonWithFunctions({ window: record.windowId, windowName: record.name, items: [], }),};utils.callServer({ url: '/window', method: 'post', params: { application: this.context.destApplication, window: record.windowId, }, data: body,}).then(function (response) { if (response.data.success) { utils.showToast({ severity: 'success', summary: 'Window created', detail: JSON.stringify(response.data), life: 3000, }); _this.closeWindow(); } else { utils.showToast({ severity: 'error', summary: 'Window not created', detail: JSON.stringify(response.data), life: 3000, }); }}).catch(function (error) { utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error', sticky: true, });});"
+						"body": "const _this = this;var record = _this.components.new_window_header.getRecord();var body = { data: utils._stringifyJsonWithFunctions({ window: record.windowId, windowName: record.name, components: [], }),};utils.callServer({ url: '/window', method: 'post', params: { application: this.context.destApplication, window: record.windowId, }, data: body,}).then(function (response) { if (response.data.success) { utils.showToast({ severity: 'success', summary: 'Window created', detail: JSON.stringify(response.data), life: 3000, }); _this.closeWindow(); } else { utils.showToast({ severity: 'error', summary: 'Window not created', detail: JSON.stringify(response.data), life: 3000, }); }}).catch(function (error) { utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error', sticky: true, });});"
 					}
 				}
 			}

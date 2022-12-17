@@ -18,7 +18,7 @@ function GridContainer({ id, context, panelContext, ...props }) {
 	if(panelContext._status !== PANEL_STATUS_READY) return;
 
 	return (<React.Fragment>
-		{ props.items &&
+		{ props.components &&
 			<div
 				className={classNames(props.layout == "flex" ? "flex gap-3" : "grid", props.className)}
 				style={props.style || {}}
@@ -35,11 +35,11 @@ function GridContainer({ id, context, panelContext, ...props }) {
 				}
 			</div>
 		}
-		{ !props.items && <div className="layout-main-container">
+		{ !props.components && <div className="layout-main-container">
 			<div className="card">
 				<div className="grid">
 					<div className="col-12">
-						<Message severity="error" text="No items" />
+						<Message severity="error" text="No components" />
 					</div>
 				</div>
 			</div>
@@ -59,7 +59,7 @@ GridContainer.propTypes = {
 	forwardData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
-	items: PropTypes.array,
+	components: PropTypes.array,
 	isCard: PropTypes.bool,
 	toggleable: PropTypes.bool,
 	events: PropTypes.object,

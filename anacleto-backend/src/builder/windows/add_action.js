@@ -1,6 +1,6 @@
 {
     "window":"add_node",
-    items: [{
+    components: [{
         "id": "add_node_grid",
         "type": "gridcontainer",
         "title": "Info",
@@ -8,7 +8,7 @@
         "layout": "grid",
         "isCard": true,
         "className": "p-0 pt-2",
-        "items": [
+        "components": [
             {
                 "id": "add_action_info",
                 "title": "Action info",
@@ -19,7 +19,7 @@
                 "isCard": false,
                 "toggleable": false,
                 "showTitle": false,
-                "items": [
+                "components": [
                     {
                         "colNumber": "col-12 md:col-6",
                         "fieldMargin": "mt-2",

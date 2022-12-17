@@ -33,6 +33,7 @@ const Dialog = ({ id, context, forwardData, ...props }) => {
 	}, []);
 
 	useEffect(() => {
+		debugger
 		updatePanelContext({
 			id,
 			forwardData
@@ -90,7 +91,7 @@ const Dialog = ({ id, context, forwardData, ...props }) => {
 			const onClick = function (_event) {
 				if (atn.events?.onClick){
 					//Convert and execute the function
-					getFunctionFromMetadata(atn.events.onClick).bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(_event);
+					getFunctionFromMetadata(atn.events.onClick).bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(_event);
 				}
 			};
 			btns.push(

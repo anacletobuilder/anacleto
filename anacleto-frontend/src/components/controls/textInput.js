@@ -83,7 +83,7 @@ function TextInput({ id, context, panelContext, ...props }) {
 			clearTimeout(changeTimeout);
 			setChangeTimeout(
 				setTimeout(() => {
-					const validationRes = props.events.validate.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(_event) || { success: false };
+					const validationRes = props.events.validate.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(_event) || { success: false };
 					//È una promise
 					if(validationRes.then instanceof Function){
 						validationRes

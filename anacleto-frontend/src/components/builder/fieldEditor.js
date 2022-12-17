@@ -183,9 +183,9 @@ const FieldEditor = ({ id, context, panelContext, ...props }) => {
 				}));*/
 				//Update flow nodes
 				if(props.events.onElementChange){
-					props.events.onElementChange.bind({ panel, context, panelsContext, updatePanelContext, ...panelContext })(fieldData, updatedClassNames);
+					props.events.onElementChange.bind({ panel, context, components:panelsContext, updatePanelContext, ...panelContext })(fieldData, updatedClassNames);
 				}
-			}).bind(null, { fieldData: fieldData.node, updatedClassNames, panel: props, context, panelsContext, updatePanelContext, panelContext }), 1000)
+			}).bind(null, { fieldData: fieldData.node, updatedClassNames, panel: props, context, components:panelsContext, updatePanelContext, panelContext }), 1000)
 		);
 	}, [flexDirection, width, flexJustify, flexAlign, textSize, fontWeight, padding]);
 

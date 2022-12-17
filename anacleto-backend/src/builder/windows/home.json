@@ -2,7 +2,7 @@
 	"id": "home",
 	"component": "GridContainer",
 	"isCard": true,
-	"items": [
+	"components": [
 		{
 			"id": "home_panel",
 			"component": "Label",

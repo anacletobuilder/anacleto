@@ -3,7 +3,7 @@
 	"component": "GridContainer",
 	
 	"className": "flex-1",
-	"items": [
+	"components": [
 		{
 			"id": "window_tabview",
 			"component": "TabView",
@@ -17,25 +17,25 @@
 					"icon": "pi pi-save",
 					"events": {
 						"onClick": {
-							"body": "const _this = this;_this.panelsContext.window_tabview.setIsToolbarLoading(true);var activeTab = _this.panelsContext.window_tabview.getActiveIndex();var windowId = window.utils.getSearchParam('window');var windowMap;var body = {data: ''};var canSave = false;if(activeTab == 0) {/*Design*/windowMap = _this.panelsContext.window_flow_builder.flowToMap(windowId);body.data = utils._stringifyJsonWithFunctions(windowMap);canSave = true;}else if (activeTab == 1) {/*Code*/var record = _this.panelsContext.window_editor_code.getRecord();body.data = record.source;canSave = true;}else {utils.showToast({severity:'warn', summary: 'TODO', detail:'Non implementato', life: 3000});}if(canSave) {window.utils.callServer({url: '/window',method: 'patch',params: {application: this.context.destApplication,window: windowId},data: body}).then(function (response) {_this.panelsContext.window_tabview.setIsToolbarLoading(false);if(response.data?.success == true) {window.utils.showToast({ severity: 'success', summary: 'Window updated', detail: JSON.stringify(response.data), life: 3000 });}else {window.utils.showToast({ severity: 'error', summary: 'Error', detail: JSON.stringify(response.data), sticky: true });}}).catch(function (error) {_this.panelsContext.window_tabview.setIsToolbarLoading(false);window.utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + error || 'Error', sticky: true });});/*_this.panelsContext.preview_panel.setPreviewItems(window.utils._parseJsonWithFunctions(window.utils._stringifyJsonWithFunctions(windowMap)).items);*/}"
+							"body": "const _this = this;_this.components.window_tabview.setIsToolbarLoading(true);var activeTab = _this.components.window_tabview.getActiveIndex();var windowId = window.utils.getSearchParam('window');var windowMap;var body = {data: ''};var canSave = false;if(activeTab == 0) {/*Design*/windowMap = _this.components.window_flow_builder.flowToMap(windowId);body.data = utils._stringifyJsonWithFunctions(windowMap);canSave = true;}else if (activeTab == 1) {/*Code*/var record = _this.components.window_editor_code.getRecord();body.data = record.source;canSave = true;}else {utils.showToast({severity:'warn', summary: 'TODO', detail:'Non implementato', life: 3000});}if(canSave) {window.utils.callServer({url: '/window',method: 'patch',params: {application: this.context.destApplication,window: windowId},data: body}).then(function (response) {_this.components.window_tabview.setIsToolbarLoading(false);if(response.data?.success == true) {window.utils.showToast({ severity: 'success', summary: 'Window updated', detail: JSON.stringify(response.data), life: 3000 });}else {window.utils.showToast({ severity: 'error', summary: 'Error', detail: JSON.stringify(response.data), sticky: true });}}).catch(function (error) {_this.components.window_tabview.setIsToolbarLoading(false);window.utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + error || 'Error', sticky: true });});/*_this.components.preview_panel.setPreviewItems(window.utils._parseJsonWithFunctions(window.utils._stringifyJsonWithFunctions(windowMap)).items);*/}"
 						}
 					}
 				}
 			],
-			"items": [
+			"components": [
 				{
 					"id": "window_editor_design",
 					"component": "GridContainer",
 					"layout": "flex",
 					"title": "Design",
 					"className": "h-full flex flex-auto flex-column md:flex-row",
-					"items": [
+					"components": [
 						{
 							"id": "flow_container",
 							"component": "GridContainer",
 							"layout": "flex",
 							"className": "flex-column flex-auto",
-							"items": [
+							"components": [
 								{
 									"id": "window_flow_builder",
 									"title": "Builder",
@@ -43,7 +43,7 @@
 									"events": {
 										"onNodeClick": {
 											"parameters": "event, forwardData",
-											"body": "debugger;const _this = this;if(forwardData.node.type === 'itemnode'){this.panelsContext.field_editor_container.setClassName('w-full md:w-4');}this.panelsContext.field_editor.setFieldData(forwardData);"
+											"body": "\nconst _this = this;\nif(forwardData.node.type === 'itemnode'){this.components.field_editor_container.setClassName('w-full md:w-4');}this.components.field_editor.setFieldData(forwardData);"
 										}
 									}
 								}
@@ -55,7 +55,7 @@
 							"layout": "flex",
 							"className": "flex-column transition-all h-full",
 							"style": { "width": 0 },
-							"items": [
+							"components": [
 								{
 									"id": "field_editor",
 									"component": "FieldEditor",
@@ -63,7 +63,7 @@
 									"events": {
 										"onElementChange": {
 											"parameters": "node,newClassNames",
-											"body": "this.panelsContext.window_flow_builder.setNodes((prev) => { const substituteIndex = prev.map((p) => p.id === node.id).indexOf(true); return [...prev.slice(0, substituteIndex), { ...prev[substituteIndex], attributes: { ...prev[substituteIndex].attributes, className: newClassNames }},...prev.slice(substituteIndex + 1)]});"
+											"body": "this.components.window_flow_builder.setNodes((prev) => { const substituteIndex = prev.map((p) => p.id === node.id).indexOf(true); return [...prev.slice(0, substituteIndex), { ...prev[substituteIndex], attributes: { ...prev[substituteIndex].attributes, className: newClassNames }},...prev.slice(substituteIndex + 1)]});"
 										}
 									}
 								}
@@ -77,7 +77,7 @@
 					"showTitle": true,
 					"component": "Preview",
 					"className": "flex-auto align-content-start p-2",
-					"items": [],
+					"components": [],
 					"events": {
 						"afterRender": {
 							"parameters": "event, context",
@@ -91,7 +91,7 @@
 					"component": "Form",
 					"containerClassName": "flex flex-auto",
 					"className": "flex flex-auto",
-					"items": [
+					"components": [
 						{
 							"component": "CodeEditor",
 							"className": "align-self-stretch flex flex-auto",

@@ -130,7 +130,7 @@ function Sidebar(props) {
 
                 <MemoGridContainer
                     key={props.windowId + "_container"}
-                    items={sidebarMetadata?.items ? sidebarMetadata.items : null}
+                    components={sidebarMetadata?.components ? sidebarMetadata.components : null}
                     layout={sidebarMetadata.layout}
                     className={sidebarMetadata.className}
                     context={context || {}}>

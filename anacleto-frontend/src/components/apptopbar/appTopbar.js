@@ -18,10 +18,10 @@ const recurseParseMenuFunctions = (menuArray) => {
 	return menuArray.map((e) => {
 		if(e.command){
 			e.command = getFunctionFromMetadata(e.command);
-		}else if(e.items){
+		}else if(e.components){
 			return {
 				...e,
-				items: recurseParseMenuFunctions(e.items)
+				items: recurseParseMenuFunctions(e.components)
 			};
 		}
 		return e;

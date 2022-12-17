@@ -198,7 +198,7 @@ function last(myArray) {
 
 
 function showAutocompletion(monaco, options) {
-    // Register object that will return autocomplete items
+    // Register object that will return autocomplete components
     return monaco?.languages.registerCompletionItemProvider(
         "javascript",
         getSuggestions(monaco, options)

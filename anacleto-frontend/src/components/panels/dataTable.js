@@ -73,7 +73,7 @@ function DataTable({ context, panelContext, ...props }) {
 
 	useEffect(() => {
 		if(props.events.onLoad){
-			props.events.onLoad.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(list);
+			props.events.onLoad.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(list);
 		}
 	}, [list]);
 
@@ -182,13 +182,13 @@ function DataTable({ context, panelContext, ...props }) {
 	 *   "props": {
 	 *     "className": "flex flex-column"
 	 *   },
-	 *   "items": [
+	 *   "components": [
 	 *     {
 	 *       "tag": "span",
 	 *       "props": {
 	 *         "className": "p-text"
 	 *       },
-	 *       "items": [
+	 *       "components": [
 	 *         "bla bla"
 	 *       ]
 	 *     },
@@ -197,7 +197,7 @@ function DataTable({ context, panelContext, ...props }) {
 	 *       "props": {
 	 *         "className": "p-text"
 	 *       },
-	 *       "items": [
+	 *       "components": [
 	 *         "bla bla"
 	 *       ]
 	 *     }
@@ -221,7 +221,7 @@ function DataTable({ context, panelContext, ...props }) {
 		return React.createElement(
 			node.type,
 			node.props,
-			node.items?.map((_node) => {
+			node.components?.map((_node) => {
 				if (typeof _node === "object") {
 					return generateTemplateFromNodeStructure(_node);
 				}

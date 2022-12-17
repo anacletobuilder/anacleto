@@ -18,7 +18,7 @@ const Splitter = ({ id, context, panelContext, ...props }) => {
 	
 	return (
 		<PrimeSplitter className={classNames("anacleto-splitter border-none", props.className)}>
-			{ props.items && props.items.map((c) => 
+			{ props.components && props.components.map((c) => 
 				<SplitterPanel key={c.id || uuidv4()} size={ c.size } className="flex">
 					<MemoComponent component={c} context={props.context} {...c} />
 				</SplitterPanel>
@@ -40,7 +40,7 @@ Splitter.propTypes = {
 record: PropTypes.object,
 setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,
-	items: PropTypes.array,
+	components: PropTypes.array,
 	className: PropTypes.string,
 	isCard: PropTypes.bool,
 	title: PropTypes.string,

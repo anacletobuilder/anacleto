@@ -5,14 +5,14 @@
 	"isCard": true,
 	"layout": "flex",
 	"className": "flex-column flex-auto",
-	"items": [
+	"components": [
 		{
 			"id": "settings_editor",
 			"component": "Form",
 			"containerClassName": "flex flex-auto",
 			"className": "flex flex-auto",
 			"toggleable": false,
-			"items": [
+			"components": [
 				{
 					"id": "source",
 					"component": "CodeEditor",

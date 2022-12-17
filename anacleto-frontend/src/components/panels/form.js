@@ -19,7 +19,7 @@ function Form({ id, context, panelContext, ...props }) {
 	const tenant = context.tenant;
 
 	const [record, setRecord] = useState(props.record || {}); //contiene il record associato al pannello
-	const [items, setItems] = useState(props.items);
+	const [components, setComponents] = useState(props.components);
 	const [mode, setMode] = useState(props.mode || FormMode.FREE);
 
 	const _setRecord = useCallback((payload) => { setRecord((prev) => ({...prev, ...payload})) });
@@ -115,7 +115,7 @@ function Form({ id, context, panelContext, ...props }) {
 						reject(error);
 					})
 			})),
-			setItems: (_items) => (setItems(_items)),
+			setComponents: (_items) => (setComponents(_items)),
 		})
 	}, []);
 
@@ -124,7 +124,7 @@ function Form({ id, context, panelContext, ...props }) {
 		if(record){
 			updatePanelContext({ id, getRecord: () => (record) });
 			if(props.events.onRecordChange){
-				props.events.onRecordChange.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(record);
+				props.events.onRecordChange.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(record);
 			}
 		}
 	}, [record]);
@@ -136,14 +136,14 @@ function Form({ id, context, panelContext, ...props }) {
 	}, [props.record]);
 	
 	useEffect(() => {
-		if(items?.length){
+		if(components?.length){
 			let itemsObj = {};
-			items.map(i => (
+			components.map(i => (
 				i.id ? itemsObj[i.id] = i : ''
 			));
-			updatePanelContext({ id, items: itemsObj });
+			updatePanelContext({ id, components: itemsObj });
 		}
-	}, [items]);
+	}, [components]);
 
 	if(panelContext._status !== PANEL_STATUS_READY) return;
 
@@ -193,7 +193,7 @@ Form.propTypes = {
 	dataModel: PropTypes.string,
 	events: PropTypes.object,
 	actions: PropTypes.array,
-	items: PropTypes.array,
+	components: PropTypes.array,
 	isCard: PropTypes.bool,
 	toggleable: PropTypes.bool,
 	layout: PropTypes.oneOf(["grid", "flex"]),

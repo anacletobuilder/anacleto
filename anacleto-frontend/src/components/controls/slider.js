@@ -15,7 +15,7 @@ const Slider = ({ id, context, panelContext, ...props }) => {
 
 	const onChange = (event) => {
 		if(props.onChange){
-			props.onChange.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(event.value);
+			props.onChange.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(event.value);
 		}
 		
 		setValue(event.value);
