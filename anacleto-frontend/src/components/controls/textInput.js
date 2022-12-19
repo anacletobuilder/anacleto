@@ -22,7 +22,7 @@ import { defaultMemoizeFunction } from "../../utils/utils";
  * @param {Object} props.context: struttura della finestra
  * @returns
  */
-function TextInput({ id, context, panelContext, ...props }) {
+function TextInput({ id, context, panelContext, windowData, ...props }) {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 	const [inputValue, setInputValue] = useState(props.value || (typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id]) || "");
 	const [isValidInput, setIsValidInput] = useState(false);
@@ -83,7 +83,7 @@ function TextInput({ id, context, panelContext, ...props }) {
 			clearTimeout(changeTimeout);
 			setChangeTimeout(
 				setTimeout(() => {
-					const validationRes = props.events.validate.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(_event) || { success: false };
+					const validationRes = props.events.validate.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(_event) || { success: false };
 					//È una promise
 					if(validationRes.then instanceof Function){
 						validationRes
@@ -184,7 +184,7 @@ TextInput.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,

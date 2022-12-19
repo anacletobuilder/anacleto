@@ -87,7 +87,6 @@ function Sidebar(props) {
 
     const onHide = () => {
         {
-            window.utils.setForwardData({});
             props.setSidebarSettings({ visible: false, position: props.settings.position || "right", style: props.settings.style })
         }
     }

@@ -15,12 +15,12 @@ import EditorPreview from "./editor/editorPreview";
 import { TEXT_SIZES } from "./editor/editorTextSize";
 const { v4: uuidv4 } = require("uuid");
 
-const FieldEditor = ({ id, context, panelContext, ...props }) => {
+const FieldEditor = ({ id, context, panelContext, windowData, ...props }) => {
 	const application = context.application;
 	const destApplication = context.destApplication;
 	const tenant = context.tenant;
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
-	const [fieldData, setFieldData] = useState(props.forwardData || { node: { attributes: {}}});
+	const [fieldData, setFieldData] = useState(props.windowData || { node: { attributes: {}}});
 	useEffect(() => {
 		updatePanelContext({
 			id,
@@ -183,9 +183,9 @@ const FieldEditor = ({ id, context, panelContext, ...props }) => {
 				}));*/
 				//Update flow nodes
 				if(props.events.onElementChange){
-					props.events.onElementChange.bind({ panel, context, components:panelsContext, updatePanelContext, ...panelContext })(fieldData, updatedClassNames);
+					props.events.onElementChange.bind({ panel, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(fieldData, updatedClassNames);
 				}
-			}).bind(null, { fieldData: fieldData.node, updatedClassNames, panel: props, context, components:panelsContext, updatePanelContext, panelContext }), 1000)
+			}).bind(null, { fieldData: fieldData.node, updatedClassNames, panel: props, context, windowData, components:panelsContext, updatePanelContext, panelContext }), 1000)
 		);
 	}, [flexDirection, width, flexJustify, flexAlign, textSize, fontWeight, padding]);
 
@@ -300,7 +300,7 @@ FieldEditor.propTypes = {
 	id: PropTypes.string.isRequired,
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	className: PropTypes.string,
 	setIsLoading: PropTypes.func,
 	record: PropTypes.object,

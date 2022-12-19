@@ -8,7 +8,7 @@ import { PanelsContext, PANEL_STATUS_READY } from "../../contexts/panelsContext"
 import { showAutocompletion } from "./codeEditorUtils";
 
 
-function CodeEditor({ id, context, panelContext, ...props }) {
+function CodeEditor({ id, context, panelContext, windowData, ...props }) {
 	const { updatePanelContext } = useContext(PanelsContext);
 	const [disabled, setDisabled] = useState(props.disabled);
 	const monaco = useMonaco();
@@ -67,7 +67,7 @@ function CodeEditor({ id, context, panelContext, ...props }) {
 			{props.children}
 			<Editor
 				defaultValue={props.defaultValue}
-				value={props.record[id] || ""}
+				value={props?.record && props.record[id] || ""}
 				theme={props.theme || "light"}
 				language={props.language || "javascript"}
 				locale={"it"}
@@ -89,7 +89,7 @@ const MemoCodeEditor = React.memo(CodeEditor, (prev, next) => {
 CodeEditor.propTypes = {
 	id: PropTypes.string.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	panelContext: PropTypes.object.isRequired,

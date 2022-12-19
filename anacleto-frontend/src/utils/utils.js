@@ -17,7 +17,6 @@ class Utils {
 		this.setDialogSettings = params.setDialogSettings;
 		this.setInputDialogSettings = params.setInputDialogSettings;
 		this.setSidebarSettings = params.setSidebarSettings
-		this.setDialogForwardData = params.setDialogForwardData;
 		this.context = params.context;
 		return this;
 	}
@@ -237,23 +236,25 @@ class Utils {
 		const searchParams = { ...{ tenant: this.context.tenant, application: this.context.application }, ...params.searchParams };
 		const type = params.type || "window";
 		var settings = params.settings || {};
-		this.setDialogForwardData(params.forwardData || {});
 
 		switch (type) {
 			case 'modal':
 			case 'dialog':
 				settings.windowId = window;
 				settings.visible = true;
+				settings.windowData = params.windowData;
 				this.setDialogSettings(settings);
 				break;
 			case 'sidebar':
 				settings.windowId = window;
 				settings.visible = true;
+				settings.windowData = params.windowData;
 				this.setSidebarSettings(settings);
 				break;
 			default:
 				const options = {
 					searchParams: searchParams,
+					windowData : params.windowData
 				};
 				this.navigate(window, options);
 				break;

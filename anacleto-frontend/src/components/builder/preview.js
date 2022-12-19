@@ -6,7 +6,7 @@ import { PanelsContext, PANEL_STATUS_READY } from "../../contexts/panelsContext"
 import { defaultMemoizeFunction } from "../../utils/utils";
 import { classNames } from "primereact/utils";
 
-const Preview = ({ id, context, panelContext, ...props }) => {
+const Preview = ({ id, context, panelContext, windowData, ...props }) => {
 	const { updatePanelContext } = useContext(PanelsContext);
 	const [contentRef, setContentRef] = useState(null);
 	const mountNode = contentRef?.contentWindow?.document?.body;
@@ -98,7 +98,7 @@ Preview.propTypes = {
 	id: PropTypes.string,
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	components: PropTypes.array,

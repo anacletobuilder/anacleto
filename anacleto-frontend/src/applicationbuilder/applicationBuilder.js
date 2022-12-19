@@ -35,31 +35,30 @@ const ApplicationBuilder = (props) => {
 	const destApplication = useSelector(selectDestApplication);
 	const tenant = useSelector(selectTenant);
 	const userCredentials = useSelector(selectUserCredentials);
-	
+
 	//Metadata
 	const metadata = useSelector(selectMetadata);
 	const applications = useSelector(selectApplications);
 	const tenants = useSelector(selectTenants);
-	
+
 	const toast = useRef(null);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [_appChange, changeApp] = useState();
 	const [metadataError, setMetadataError] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [dialogSettings, setDialogSettings] = useState({});
-	const [dialogForwardData, setDialogForwardData] = useState({});
 	const [inputDialogSettings, setInputDialogSettings] = useState({});
 	const [sidebarSettings, setSidebarSettings] = useState({});
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if(props.application && props.application !== application){
+		if (props.application && props.application !== application) {
 			dispatch(setApplication(props.application));
 		}
 	}, [props.application]);
 
 	useEffect(() => {
-		if(!_appChange) return;
+		if (!_appChange) return;
 		if (application === "BUILDER") {
 			//dal builder non cambio app, cambio solo app di destinazione
 			dispatch(setDestApplication(_appChange));
@@ -91,11 +90,12 @@ const ApplicationBuilder = (props) => {
 			};
 
 			setSearchParams((prev) => ({ ...prev, navigateSearchParams }));
-
-			navigate({
-				pathname: _window,
-				search: createSearchParams(navigateSearchParams).toString(),
-			});
+			navigate(
+				`${_window}?${createSearchParams(navigateSearchParams).toString()}`,
+				{
+					state: _options.windowData
+				}
+			)
 		};
 		const utilsArgs = {
 			userCredential: userCredentials,
@@ -107,7 +107,6 @@ const ApplicationBuilder = (props) => {
 			setInputDialogSettings,
 			setSidebarSettings,
 			context,
-			setDialogForwardData,
 		};
 		window.utils = utils.init(utilsArgs);
 		window.DateTime = DateTime;
@@ -123,7 +122,7 @@ const ApplicationBuilder = (props) => {
 				searchParams.get("destapplication") !== destApplication) //è cambiato qualcosa
 		) {
 			let params = Object.fromEntries(searchParams.entries());
-			
+
 			const newParams = {};
 			if (tenant && tenant !== "null" && tenant !== "undefined") {
 				newParams.tenant = tenant;
@@ -225,7 +224,7 @@ const ApplicationBuilder = (props) => {
 
 				dispatch(setApplications(availableApps));
 				dispatch(setTenants(availableTenants));
-				
+
 				if (!tenant && availableTenants && availableTenants[0]) {
 					//At least 1 tenant, set it as the active tenant
 					dispatch(setTenant(availableTenants[0].tenant));
@@ -249,14 +248,14 @@ const ApplicationBuilder = (props) => {
 
 						//se l'app di destinazione non è stata specificata la setto
 						const tempDestApp = destApplication || availableApps[0].application;
-						if (searchParams.get("application") !== _metadata.application || searchParams.get("destapplication") !== tempDestApp) {}
+						if (searchParams.get("application") !== _metadata.application || searchParams.get("destapplication") !== tempDestApp) { }
 
 						dispatch(setDestApplication(destApplication || availableApps[0].application));
 					}
 
 					setMetadataError(false);
 				} else {
-					if(!waitingApp){
+					if (!waitingApp) {
 						//If there is no metadata and no application can be selected, show error
 						dispatch(resetMetadata());
 						setMetadataError(true);
@@ -336,7 +335,6 @@ const ApplicationBuilder = (props) => {
 									settings={dialogSettings}
 									setDialogSettings={setDialogSettings}
 									metadata={metadata}
-									forwardData={dialogForwardData}
 									userCredential={userCredentials}
 									confirmDialog={confirmDialog}
 									toast={toast}
@@ -361,22 +359,22 @@ const ApplicationBuilder = (props) => {
 				</React.Fragment>
 			)}
 
-			<AppFooter metadata={ metadata } />
+			<AppFooter metadata={metadata} />
 		</React.Fragment>
 	);
 }
 
 /* Register component listener (could not listen inside of ApplicationBuilder because it must be a children of the ComponentsContext) */
 const RegisterComponentListener = ({ application, children }) => {
-	const {registerComponents} = useContext(ComponentsContext);
+	const { registerComponents } = useContext(ComponentsContext);
 	useEffect(() => {
 		(async () => {
-			if(application === 'BUILDER'){
+			if (application === 'BUILDER') {
 				//If application is BUILDER, import register the builder-only components
 				const { default: MemoFlow } = await import('../components/builder/flow');
 				const { default: MemoPreview } = await import('../components/builder/preview');
 				const { default: MemoFieldEditor } = await import('../components/builder/fieldEditor');
-				
+
 				registerComponents({
 					MemoFlow,
 					MemoPreview,

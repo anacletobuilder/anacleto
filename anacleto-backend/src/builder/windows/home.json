@@ -1,14 +1,1 @@
-{
-	"id": "home",
-	"component": "GridContainer",
-	"isCard": true,
-	"components": [
-		{
-			"id": "home_panel",
-			"component": "Label",
-			"label": "Riprendi da dove avevi lasciato",
-			"width": "col-12",
-			"className": "bg-primary-reverse"
-		}
-	]
-}
+{"id":"home","windowName":"Home","component":"GridContainer","components":[{"id":"home_sample_form","component":"Form","isCard":true,"toggleable":false,"title":"Welcome form","containerClassName":"col-12 md:col-6","className":"mt-0 md:mt-4","components":[{"component":"Label","className":"col-12 font-bold text-3xl","id":"title","label":"ANACLETO_SAMPLE"},{"component":"Label","className":"col-12 mt-3","id":"subtitle","label":"Thank you for installing Anacleto Builder! 🦉"},{"component":"Label","className":" mt-3 col-12 justify-content-start align-components-center text-base font-bold","id":"subtitle-2","label":"This is an example window created using Anacleto, use the Builder to customize it and start building your application."},{"component":"Button","containerClassName":"col-auto mt-5","className":"col-12 md:col-6","id":"btnBuilder","label":"Go to Builder 👷‍♂️","events":{"onClick":{"body":"window.open('/admin', '_blank').focus();"}}},{"component":"Label","className":"col-12 mt-5","id":"subtitle-3","label":"If you have any questions check out the Docs or contact us on GitHub. 🧐"},{"component":"Button","containerClassName":"col-12 md:col-6 mt-5","className":"col-12","id":"btnDocs","label":"Docs 📖","events":{"onClick":{"body":"window.open('https://github.com/lucabiasotto/Anacleto.wiki.git', '_blank').focus();"}}},{"component":"Button","containerClassName":"col-12 md:col-6 mt-5","className":"col-12","id":"btnGit","label":"GitHub 🗂","events":{"onClick":{"body":"window.open('https://github.com/lucabiasotto/Anacleto', '_blank').focus();"}}}]},{"id":"home_sample_grid","component":"DataTable","store":"sample_store","emptyMessage":"No owls","isCard":true,"toggleable":false,"title":"Owls","containerClassName":"col-12 md:col-6","className":"mt-0 md:mt-4","sortable":true,"stripedRows":true,"skeletonRow":5,"paginator":true,"paginationType":"client","globalFilterMode":"client","globalFilterFields":["name","scientificName","type"],"columns":[{"field":"name","header":"Name","sortable":true},{"field":"scientificName","header":"Scientific Name","sortable":true},{"field":"type","header":"Owl type","sortable":true,"pugTemplate":"return `div.flex.flex-row\n\tspan.flex-shrink-0.p-tag.surface-300\n\t\tspan.text-600.flex-shrink-0 ${data['type']}`;"},{"field":"dangerOfExtinction","header":"Danger of extinction","sortable":true,"pugTemplate":"let emoj = '😊';\nif(data['dangerOfExtinction']===1){emoj='😨'}\nif(data['dangerOfExtinction']===2){emoj='😱'}\nreturn `span ${emoj}`"}],"events":{"onSelectionChange":{"parameters":"event","body":"if(event.value){ alert(`${event.value.name} is so cute!`) } ;"},"afterRender":{"body":"this.load();"}}}]}

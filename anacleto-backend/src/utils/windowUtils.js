@@ -138,40 +138,40 @@ class WindowUtils {
         return Promise.resolve(windows);
     }
 
-/**
-     * Return window translations
-     * 
-     * @param {string} appId application id
-     * @param {string} window  window name
-     * @param {string} language  language
-     * @returns translation object
-     */
- getWindowTranslationsRawData(application, window, language) {
-    if (!application) {
-        throw "Application required!";
-    }
-    if (!window) {
-        throw "Window required!";
-    }
-    if (!language) {
-        throw "Language required!";
-    }
+    /**
+         * Return window translations
+         * 
+         * @param {string} appId application id
+         * @param {string} window  window name
+         * @param {string} language  language
+         * @returns translation object
+         */
+    getWindowTranslationsRawData(application, window, language) {
+        if (!application) {
+            throw "Application required!";
+        }
+        if (!window) {
+            throw "Window required!";
+        }
+        if (!language) {
+            throw "Language required!";
+        }
 
-    const appConfigration = appUtils.getAppConfiguration(application);
-    if (!appConfigration) {
-        console.error(`App ${application} not found in .env file`);
-        return null;
+        const appConfigration = appUtils.getAppConfiguration(application);
+        if (!appConfigration) {
+            console.error(`App ${application} not found in .env file`);
+            return null;
+        }
+
+        const windowTranslationsPath = this.getWindowTranslationsAbsolutePath(application, window, language);
+
+        if (fs.existsSync(windowTranslationsPath)) {
+            const translationsData = fs.readFileSync(windowTranslationsPath, 'utf8');
+            return translationsData
+        }
+
+        return JSON.stringify({})
     }
-
-    const windowTranslationsPath = this.getWindowTranslationsAbsolutePath(application, window, language);
-
-    if (fs.existsSync(windowTranslationsPath)) {
-        const translationsData =  fs.readFileSync(windowTranslationsPath, 'utf8');
-        return translationsData
-    }
-
-    return JSON.stringify({})
-}
 
     /**
      * Return window translations

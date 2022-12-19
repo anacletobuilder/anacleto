@@ -12,7 +12,7 @@ const FormMode = Object.freeze({
 	UPDATE: "update",
 	FREE: "free",
 });
-function Form({ id, context, panelContext, ...props }) {
+function Form({ id, context, panelContext, windowData, ...props }) {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 	const application = context.application;
 	const destApplication = context.destApplication;
@@ -124,7 +124,7 @@ function Form({ id, context, panelContext, ...props }) {
 		if(record){
 			updatePanelContext({ id, getRecord: () => (record) });
 			if(props.events.onRecordChange){
-				props.events.onRecordChange.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(record);
+				props.events.onRecordChange.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(record);
 			}
 		}
 	}, [record]);
@@ -167,7 +167,7 @@ function Form({ id, context, panelContext, ...props }) {
 							record,
 							setRecord:
 							_setRecord,
-							forwardData: props.forwardData,
+							//windowData: props.windowData,
 						} : {})
 					))
 				}
@@ -184,7 +184,7 @@ Form.propTypes = {
 	updatePanelContext: PropTypes.func,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	panelContext: PropTypes.object.isRequired,
 	setIsLoading: PropTypes.func,
 	context: PropTypes.object.isRequired,

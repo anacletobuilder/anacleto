@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { selectApplication, selectWindow } from "../../reducers/context";
 import { getTranslator } from '../../utils/translator';
 
-const Label = ({ id, context, panelContext, ...props }) => {
+const Label = ({ id, context, panelContext, windowData, ...props }) => {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 	const [label, setLabel] = useState(props.label);
 	const application = useSelector(selectApplication);
@@ -46,7 +46,7 @@ Label.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,

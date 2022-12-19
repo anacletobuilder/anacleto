@@ -10,7 +10,7 @@ module.exports = function (app) {
 			const window = req.query.window;
 			const requiredAppWindow = req.query.application || application;
 
-			console.info(`Get window data ${window} for application ${requiredAppWindow}`);
+			console.info(`Get window ${window} for application ${requiredAppWindow}`);
 
 			let ret, windowRawData;
 			if (requiredAppWindow == "BUILDER") {

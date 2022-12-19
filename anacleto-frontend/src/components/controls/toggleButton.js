@@ -4,7 +4,7 @@ import { PanelsContext, PANEL_STATUS_READY } from '../../contexts/panelsContext'
 import { defaultMemoizeFunction } from '../../utils/utils';
 import PropTypes from 'prop-types';
 
-const ToggleButton = ({ id, context, panelContext, ...props }) => {
+const ToggleButton = ({ id, context, panelContext, windowData, ...props }) => {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
     const [checked, setChecked] = useState(props.value === true || props.value === false ? props.value : props.record[id] || false);
 
@@ -23,7 +23,7 @@ const ToggleButton = ({ id, context, panelContext, ...props }) => {
 
     const onChange = (_event) => {
         if (props.events?.onChange) {
-            props.events.onChange.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(_event);
+            props.events.onChange.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(_event);
         }
         setChecked(_event.value);
     }
@@ -55,7 +55,7 @@ ToggleButton.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,

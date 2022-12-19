@@ -19,7 +19,7 @@
 				},
 				"onRecordChange": {
 					"parameters": "record",
-					"body": "this.components.userPhoto.setImage(record.photoURL)"
+					"body": "this.panelsContext.userPhoto.setImage(record.photoURL)"
 				}
 			},
 			"components": [

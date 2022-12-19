@@ -113,7 +113,7 @@
                 "isCard": true,
                 "toggleable": true,
                 "title": "Colonna1",
-                "items" : [
+                "components" : [
                     {
                         "id": "column_1_position",
                         "type": "numberInput",

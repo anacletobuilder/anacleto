@@ -7,7 +7,7 @@ import { PanelsContext, PANEL_STATUS_READY } from "../../contexts/panelsContext"
 import { defaultMemoizeFunction } from "../../utils/utils";
 const { v4: uuidv4 } = require('uuid');
 
-const Splitter = ({ id, context, panelContext, ...props }) => {
+const Splitter = ({ id, context, panelContext, windowData, ...props }) => {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 
 	useEffect(() => {
@@ -36,7 +36,7 @@ Splitter.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 record: PropTypes.object,
 setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,

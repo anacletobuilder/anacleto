@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require("uuid");
  * ComponentTemplate - Can be copy-pasted to initialize new Components
  */
 
-const ComponentTemplate = ({ id, context, panelContext, ...props }) => {
+const ComponentTemplate = ({ id, context, panelContext, windowData, ...props }) => {
 	//Context variables for server calls
 	const application = context.application;
 	const destApplication = context.destApplication;

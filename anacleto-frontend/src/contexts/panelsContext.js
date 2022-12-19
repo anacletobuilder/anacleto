@@ -16,7 +16,6 @@ const PanelsContextComponent = (props) => {
 	const [panelsContext, setPanelsContext] = useState({});
 
 	const updatePanelContext = useCallback((payload) => {
-		debugger;
 		if(!payload.id){
 			console.error("payload.id missing - Cannot update panelContext without providing a panel ID!");
 			return;

@@ -14,7 +14,7 @@ import { defaultMemoizeFunction } from "../../utils/utils";
  * @param {Object} props.context: struttura della finestra
  * @returns
  */
-const TabView = ({ id, context, panelContext, ...props }) => {
+const TabView = ({ id, context, panelContext, windowData, ...props }) => {
 	const { updatePanelContext } = useContext(PanelsContext);
 	const [activeIndex, setActiveIndex] = useState(0); //default è 0, cambiare qui se si vuole pilotare da metadati
 
@@ -76,7 +76,7 @@ TabView.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,

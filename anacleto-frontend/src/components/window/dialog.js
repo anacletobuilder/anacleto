@@ -11,44 +11,47 @@ import { PanelsContext, PANEL_STATUS_READY } from "../../contexts/panelsContext"
 import PropTypes from "prop-types";
 import MemoComponent from "../component";
 import MemoButton from "../controls/button";
-import {getFunctionFromMetadata} from "../../utils/utils";
+import { getFunctionFromMetadata } from "../../utils/utils";
 
-const Dialog = ({ id, context, forwardData, ...props }) => {
+const Dialog = ({ id, context, ...props }) => {
 	const { panelsContext, updatePanelContext, resetPanelContext } = useContext(PanelsContext);
 	const [panelContext, setPanelContext] = useState({});
 	const [dialogMetadata, setDialogMetadata] = useState(null);
 	const navigate = useNavigate();
 	const dialogScript = document.createElement("script");
 
+	console.log(`windowData for dialog ${id}`, props.settings.windowData)
+
 	const onHide = () => {
-		props.setDialogSettings((prev) => ({...prev, visible: false}));
+		props.setDialogSettings((prev) => ({ ...prev, visible: false }));
 	};
 	useEffect(() => {
 		updatePanelContext({
 			id,
 			_status: PANEL_STATUS_READY,
 			closeWindow: onHide,
-			forwardData
+			//windowData
 		});
 	}, []);
 
+	/*
 	useEffect(() => {
 		debugger
 		updatePanelContext({
 			id,
-			forwardData
+			windowData
 		});
-	}, [forwardData]);
-
+	}, [windowData]);
+*/
 	useEffect(() => {
-		if(!panelsContext || typeof panelsContext[id] === typeof undefined) return;
-		if(panelContext !== panelsContext[id]){
+		if (!panelsContext || typeof panelsContext[id] === typeof undefined) return;
+		if (panelContext !== panelsContext[id]) {
 			setPanelContext(panelsContext[id]);
 		}
 	}, [panelsContext]);
 
 	useEffect(() => {
-		if(props.settings.visible){
+		if (props.settings.visible) {
 			fetchData(props.settings.windowId);
 		}
 	}, [
@@ -76,22 +79,22 @@ const Dialog = ({ id, context, forwardData, ...props }) => {
 			}).then((res) => {
 				setDialogMetadata(res.data);
 			})
-			.catch((e) => {
-				console.error(e);
-			});
+				.catch((e) => {
+					console.error(e);
+				});
 		} else {
 			setDialogMetadata(null);
 		}
 	};
 
 	let footer = <React.Fragment />;
-	if(props.settings.actions){
+	if (props.settings.actions) {
 		var btns = [];
 		props.settings.actions.map((atn) => {
 			const onClick = function (_event) {
-				if (atn.events?.onClick){
+				if (atn.events?.onClick) {
 					//Convert and execute the function
-					getFunctionFromMetadata(atn.events.onClick).bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(_event);
+					getFunctionFromMetadata(atn.events.onClick).bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(_event);
 				}
 			};
 			btns.push(
@@ -104,7 +107,7 @@ const Dialog = ({ id, context, forwardData, ...props }) => {
 					containerClassName="flex-none"
 					className={classNames(atn.className)}
 					context={context}
-					panelContext = {{ /* Nothing to initialize here */ _status: PANEL_STATUS_READY }}
+					panelContext={{ /* Nothing to initialize here */ _status: PANEL_STATUS_READY }}
 				/>
 			)
 		});
@@ -153,7 +156,7 @@ const Dialog = ({ id, context, forwardData, ...props }) => {
 		>
 			{dialogMetadata ? (
 				<div className="layout-main flex flex-1">
-					<MemoComponent {...dialogMetadata} forwardData={forwardData} />
+					<MemoComponent {...dialogMetadata} windowData={props.settings.windowData} />
 				</div>
 			) : (
 				//caricamento in corso

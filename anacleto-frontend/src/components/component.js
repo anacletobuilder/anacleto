@@ -17,7 +17,10 @@ import { useErrorBoundary, withErrorBoundary } from "react-use-error-boundary";
 const { v4: uuidv4 } = require('uuid');
 
 
-const Component = withErrorBoundary(({ component, ...props }) => {
+const Component = withErrorBoundary(({ component, windowData, ...props }) => {
+
+	console.log(`windowData for component ${props.id}`, windowData)
+
 	const context = useSelector(selectContext);
 	const [error, resetError] = useErrorBoundary(
 		//(error, errorInfo) => console.error(error, errorInfo)
@@ -72,7 +75,7 @@ const Component = withErrorBoundary(({ component, ...props }) => {
 
 			if (events.onUnload) {
 				try {
-					events.onUnload.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })();
+					events.onUnload.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })();
 				} catch (e) {
 					console.error(e);
 				}
@@ -90,8 +93,6 @@ const Component = withErrorBoundary(({ component, ...props }) => {
 
 
 	useEffect(() => {
-		let statuses = { 1: "INITIALIZING", 2: "RENDERING", 3: "READY" };
-		//if(panelContext._status) console.log("Component - Status", component, props.id, statuses[panelContext._status]);
 		if (panelContext._status === PANEL_STATUS_RENDERING) {
 			//panelContext should now contain all the necessary methods used by events
 			let _evts = {}
@@ -103,33 +104,31 @@ const Component = withErrorBoundary(({ component, ...props }) => {
 		}
 	}, [panelContext?._status]);
 
+
 	useEffect(() => {
 		// After render
 		if (events?._status === PANEL_STATUS_READY && panelContext?._status === PANEL_STATUS_RENDERING) {
 			if (events.afterRender) {
-				console.log(`Calling method afterRender for component ${component} (ID: ${props.id}). Context, event: `, panelContext, events.afterRender);
+				//console.log(`Calling method afterRender for component '${component}' whit id: ${props.id}. Context:`, panelContext);
 				try {
-					events.afterRender.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })();
-					updatePanelContext({
-						id: props.id,
-						_status: PANEL_STATUS_READY
-					});
+					events.afterRender.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })();
 				} catch (e) {
-					console.warn(`Method afterRender for component ${component} (ID: ${props.id}) threw an error. Maybe a method is not yet defined in the panelContext, in that case the afterRender will retry when new events are defined until it is successfull. Error: `, e);
+					console.error(`Method afterRender for component '${component}' whit id: ${props.id} threw an error.`, e)
 				}
-			} else {
-				//No afterRender event, panel is ready
-				updatePanelContext({
-					id: props.id,
-					_status: PANEL_STATUS_READY
-				});
 			}
+
+			updatePanelContext({
+				id: props.id,
+				_status: PANEL_STATUS_READY
+			});
 		}
 	}, [events, panelContext]);
 
 	useEffect(() => {
 		setComponents(props.components);
 	}, [props.components]);
+
+
 	/*
 		HELPER CHECKS
 		This section is used to trigger warning or errors depending on how components are implemented
@@ -169,6 +168,10 @@ const Component = withErrorBoundary(({ component, ...props }) => {
 		END OF HELPER CHECKS
 	*/
 
+
+	/*
+		LOADER SPINNER
+	*/
 	const loadingSpinner = <div className={classNames("spinner-wrapper absolute w-full h-full top-0 left-0 z-5 border-round")} style={{
 		background: "rgba(0, 0, 0, 0.1)",
 		backdropFilter: "blur(1px)"
@@ -181,6 +184,11 @@ const Component = withErrorBoundary(({ component, ...props }) => {
 	</div>;
 
 
+
+	/*
+		COMPONENT CREATION
+		Create component
+	*/
 	const defaultProps = {
 		context,
 		panelContext,
@@ -189,18 +197,18 @@ const Component = withErrorBoundary(({ component, ...props }) => {
 		events,
 	}
 
-
-	//Use forwardData to forward input data to children components
 	const content = <React.Fragment>
 		{props.isCard && isLoading && loadingSpinner}
 		{RenderComponent && <RenderComponent {...props} {...defaultProps} key={props.id} className={classNames(`component-${props.id} relative`, className)}>
 			{!props.isCard && isLoading && loadingSpinner}
 			{components?.map(({ component, ...compProps }) => (
-				<MemoComponent {...compProps} key={compProps.id || uuidv4()} component={component} setIsLoading={setIsLoading} />
+				//Use windowData to forward input data to children components
+				<MemoComponent {...compProps} key={compProps.id || uuidv4()} component={component} windowData={windowData} setIsLoading={setIsLoading} />
 			))}
 			{props.children}
 		</RenderComponent>}
 	</React.Fragment>;
+
 
 	let container;
 	if (props.isCard) {
@@ -211,7 +219,7 @@ const Component = withErrorBoundary(({ component, ...props }) => {
 				const onClick = function (_event) {
 					if (_splitButton.events?.onClick) {
 						//Convert and execute the function
-						getFunctionFromMetadata(_splitButton.events.onClick).bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(_event);
+						getFunctionFromMetadata(_splitButton.events.onClick).bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(_event);
 					}
 				};
 
@@ -222,7 +230,7 @@ const Component = withErrorBoundary(({ component, ...props }) => {
 						_action.command = function (_event) {
 							if (_action.events?.onClick) {
 								//Convert and execute the function
-								getFunctionFromMetadata(_action.events.onClick).bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(_event);
+								getFunctionFromMetadata(_action.events.onClick).bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(_event);
 							}
 						};
 
@@ -285,6 +293,7 @@ const Component = withErrorBoundary(({ component, ...props }) => {
 			<pre className="h-full w-full overflow-auto text-sm text-left">{error.stack}
 			</pre>
 		</div>
+
 		return <ErrorPage
 			code=" "
 			title="Component rendering error"
@@ -292,6 +301,7 @@ const Component = withErrorBoundary(({ component, ...props }) => {
 			showHomeButton={false}
 		/>
 	}
+
 	return container;
 });
 

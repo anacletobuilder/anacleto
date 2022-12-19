@@ -24,7 +24,7 @@ import { getTranslator } from '../../utils/translator';
 
 const { v4: uuidv4 } = require("uuid");
 
-function DataTable({ context, panelContext, ...props }) {
+function DataTable({ context, panelContext, windowData, ...props }) {
 	const application = useSelector(selectApplication)
 	const destApplication = useSelector(selectDestApplication)
 	const tenant = useSelector(selectTenant)
@@ -73,7 +73,7 @@ function DataTable({ context, panelContext, ...props }) {
 
 	useEffect(() => {
 		if(props.events.onLoad){
-			props.events.onLoad.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(list);
+			props.events.onLoad.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(list);
 		}
 	}, [list]);
 
@@ -670,7 +670,7 @@ DataTable.propTypes = {
 	id: PropTypes.string.isRequired,
 	context: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	panelContext: PropTypes.object.isRequired,

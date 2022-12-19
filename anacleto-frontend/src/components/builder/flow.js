@@ -29,7 +29,7 @@ import { defaultMemoizeFunction } from "../../utils/utils";
 const initNodes = [];
 const initEdges = [];
 
-function Flow({ id, context, panelContext, ...props }) {
+function Flow({ id, context, panelContext, windowData, ...props }) {
 	const destApplication = useSelector(selectDestApplication);
 
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
@@ -71,6 +71,11 @@ function Flow({ id, context, panelContext, ...props }) {
 		var elem = nodeArr.filter(function (n) {
 			return n.id == id;
 		});
+
+		if(!elem[0]){
+			console.error(`Cannot find component with id:${id}`, nodeArr)
+		}
+
 		var obj = elem[0].attributes;
 		var itemChilds = nodeArr.filter(function (n) {
 			return n.ancestorNode == id && n.type == "itemnode";
@@ -350,7 +355,7 @@ function Flow({ id, context, panelContext, ...props }) {
 	}, []);
 	
 	const onNodeClick = (event, node) => {
-		const forwardData = {
+		const windowData = {
 			node,
 			rfInstance,
 			convertMapToFlow,
@@ -362,10 +367,9 @@ function Flow({ id, context, panelContext, ...props }) {
 			},
 		};
 		if(props.events.onNodeClick){
-			props.events.onNodeClick.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(event, forwardData);
+			props.events.onNodeClick.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(event, windowData);
 		}
 		if (node.type == "addnode") {
-			//alert("Aggiungi controllo");
 			var parentNode = node.id.replace("_ADDNEWITM", "");
 			window.utils.openWindow({
 				window: "add_node",
@@ -373,7 +377,7 @@ function Flow({ id, context, panelContext, ...props }) {
 				settings: {
 					header: `Add node to: ${parentNode}`,
 				},
-				forwardData: { ...forwardData, parentNode}
+				windowData: { ...windowData, parentNode}
 			});
 		} else if (node.type == "addeventnode") {
 			var parentNode = node.id.replace("_ADDEVENT", "");
@@ -384,10 +388,9 @@ function Flow({ id, context, panelContext, ...props }) {
 					header: `Add event to: ${parentNode}`,
 					maximizable: true,
 				},
-				forwardData: { ...forwardData, parentNode}
+				windowData: { ...windowData, parentNode}
 			});
 		} else if (node.type == "eventnode") {
-			debugger;
 			window.utils.openWindow({
 				window: "add_event",
 				type: "modal",
@@ -396,7 +399,7 @@ function Flow({ id, context, panelContext, ...props }) {
 					maximizable: true,
 					contentClassName: "flex-column",
 				},
-				forwardData: { ...forwardData, parentNode}
+				windowData: { ...windowData, parentNode}
 			});
 		} else if (node.type == "addaction") {
 			var parentNode = node.id.replace("_ADDACTION", "");
@@ -406,45 +409,9 @@ function Flow({ id, context, panelContext, ...props }) {
 				settings: {
 					header: `Add action to: ${parentNode}`,
 				},
-				forwardData: { ...forwardData, parentNode}
+				windowData: { ...windowData, parentNode}
 			});
-		}/* else {
-			window.utils.openWindow({
-				window: "node_info",
-				type: "dialog",
-				settings: {
-					header: "Informazioni",
-					actions: [
-						{
-							"id": "windows_node_footer_save",
-							"component": "Button",
-							"containerClassName": "col-12 h-3rem",
-							"icon":"pi pi-save",
-							"label": "SAVE",
-							"events" : {
-								"onClick": {
-									"body": "console.log('saving');"
-								}
-							}
-						},
-						{
-							"id": "windows_node_footer_delete",
-							"component": "Button",
-							"containerClassName": "col-12 h-3rem",
-							"className":"p-button-outlined p-button-danger",
-							"icon":"pi pi-trash",
-							"label": "DELETE",
-							"events" : {
-								"onClick": {
-									"body": "const _this = this;utils.showConfirmDialog({ message: 'Do you want to delete this node?', header: 'Delete Confirmation', icon: 'pi pi-info-circle', acceptClassName: 'p-button-danger', accept: function () { var forwardData = this.forwardData; var currentNode = forwardData.node; var instance = forwardData.rfInstance; var nodes = instance.getNodes(); var edges = instance.getEdges(); const removeChildNodes = function (parentNode) { var childNodes = nodes.filter(el => el.ancestorNode == parentNode); if(childNodes.length > 0) { for(var i = 0; i < childNodes.length; i++) { var nIndex = nodes.findIndex(el => el.id == childNodes[i].id); if(nIndex > -1) { nodes.splice(nIndex,1); removeChildNodes(childNodes[i].id); filterEdges(childNodes[i].id); } } } }; const filterEdges = function(nodeId) { console.log('filterEdges',nodeId); edges = edges.filter(el => el.target != nodeId); }; var currentNodeIndex = nodes.findIndex(el => el.id == currentNode.id); if(currentNodeIndex > -1) { nodes.splice(currentNodeIndex,1); filterEdges(currentNode.id); removeChildNodes(currentNode.id); var siblingNodes = nodes.filter(el => el.ancestorNode == currentNode.ancestorNode); console.log(siblingNodes); for(var i = 0; i < siblingNodes.length; i++) { var siblingIndex = nodes.findIndex(el => el.id == siblingNodes[i].id); if(nodes[siblingIndex].itemPosition > currentNode.itemPosition) { nodes[siblingIndex].itemPosition--; } } } const windowId = utils.getSearchParam('window'); const windowMap = forwardData.convertFlowToMap(windowId,nodes); forwardData.convertMapToFlow(windowMap); _this.closeWindow(); }, reject: function () { }});"
-								}
-							}
-						}
-					]
-				},
-				forwardData
-			});
-		}*/
+		}
 	};
 
 	const metaAndKPressed = useKeyPress(["Meta+Shift+o", "Strg+Shift+o"]);
@@ -457,7 +424,7 @@ function Flow({ id, context, panelContext, ...props }) {
 				settings: {
 					header: "Search node",
 				},
-				forwardData: {
+				windowData: {
 					rfInstance: rfInstance,
 				},
 			});
@@ -524,7 +491,7 @@ Flow.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,

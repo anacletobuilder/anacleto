@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { PanelsContext, PANEL_STATUS_READY } from "../../contexts/panelsContext";
 import { defaultMemoizeFunction } from "../../utils/utils";
 
-const Checkbox = ({ id, context, panelContext, ...props }) => {
+const Checkbox = ({ id, context, panelContext, windowData, ...props }) => {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 	const [checked, setChecked] = useState(props.value === true || props.value === false ? props.value : props.record[id] || false);
 	
@@ -30,7 +30,7 @@ const Checkbox = ({ id, context, panelContext, ...props }) => {
 
 		//chiama l'eventuale eventuale custom definita dall'utente
 		if (props.onChange) {
-			props.onChange.bind({ panel: props, context, components:panelsContext, updatePanelContext, ...panelContext })(_event, newValue);
+			props.onChange.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(_event, newValue);
 		}
 	};
 	const onBlur = props.onBlur ? props.onBlur : () => {};
@@ -59,7 +59,7 @@ Checkbox.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,
