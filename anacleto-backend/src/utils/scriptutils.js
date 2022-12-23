@@ -266,7 +266,7 @@ class ScriptUtils {
             } else {
                 return val;
             }
-        });
+        },4);
     }
 
     /**

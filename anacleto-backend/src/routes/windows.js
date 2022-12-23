@@ -139,7 +139,7 @@ module.exports = function (app) {
 					res.send({ success: true });
 				})
 				.catch((error) => {
-					console.error(`Delete window ${scriptName} error`, error);
+					console.error(`Delete window ${windowName} error`, error);
 					//res.send({ success: false, message: error.message });
 					res.sendStatus(500);
 				});

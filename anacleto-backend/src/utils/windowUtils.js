@@ -115,7 +115,7 @@ class WindowUtils {
 
         if (!fs.existsSync(windowPathAbs)) {
             //lo script non esiste
-            return Promise.reject(new Error('script not exists'));
+            return Promise.reject(new Error('window not exists'));
         }
         return gitConnector.deleteFile(application, user, windowPathRel);
     }

@@ -78,7 +78,7 @@ const HOME = {
           "label": "Docs 📖",
           "events": {
             "onClick": {
-              "body": "window.open('https://github.com/anacletobuilder/anacleto.wiki.git', '_blank').focus();"
+              "body": "window.open('https://anacleto.gitbook.io/anacleto/', '_blank').focus();"
             }
           }
         },

@@ -14,15 +14,15 @@ const Slider = ({ id, context, panelContext, windowData, ...props }) => {
 	const [value, setValue] = useState(props.value);
 
 	const onChange = (event) => {
-		if(props.onChange){
-			props.onChange.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(event.value);
+		if (props.onChange) {
+			props.onChange.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(event.value);
 		}
-		
+
 		setValue(event.value);
 	}
 
 	useEffect(() => {
-		if(props.value != null){
+		if (props.value != null) {
 			setValue(props.value);
 		}
 	}, [props.value]);
@@ -34,7 +34,7 @@ const Slider = ({ id, context, panelContext, windowData, ...props }) => {
 		});
 	}, []);
 
-	if(panelContext._status !== PANEL_STATUS_READY) return;
+	if (panelContext._status !== PANEL_STATUS_READY) return;
 
 	return (
 		<PrimeSlider

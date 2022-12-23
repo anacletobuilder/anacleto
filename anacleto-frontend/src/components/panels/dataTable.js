@@ -29,7 +29,7 @@ function DataTable({ context, panelContext, windowData, ...props }) {
 	const destApplication = useSelector(selectDestApplication)
 	const tenant = useSelector(selectTenant)
 	const window = useSelector(selectWindow)
-	const t = getTranslator({application, window})
+	const t = getTranslator({ application, window })
 
 	const [list, setList] = useState([]);
 	const [selectionMode, setSelectionMode] = useState(null);
@@ -44,7 +44,7 @@ function DataTable({ context, panelContext, windowData, ...props }) {
 	const [pageShowNext, setPageShowNext] = useState(false);
 	const [filters, setFilters] = useState(null);
 	const [globalFilterValue, setGlobalFilterValue] = useState("");
-	const { updatePanelContext } = useContext(PanelsContext);
+	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 	const { componentHasProps } = useContext(ComponentsContext);
 
 	useEffect(() => {
@@ -58,7 +58,7 @@ function DataTable({ context, panelContext, windowData, ...props }) {
 	}, [])
 
 	useEffect(() => {
-		if(panelContext._status === PANEL_STATUS_READY){
+		if (panelContext._status === PANEL_STATUS_READY) {
 			if (props.isMultipleSelection) {
 				setSelectionMode("multiple");
 			} else if (props.events?.onSelectionChange) {
@@ -72,12 +72,13 @@ function DataTable({ context, panelContext, windowData, ...props }) {
 	}, [panelContext._status]);
 
 	useEffect(() => {
-		if(props.events.onLoad){
-			props.events.onLoad.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(list);
+		if (props.events.onLoad) {
+			props.events.onLoad.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(list);
 		}
 	}, [list]);
 
-	if(!panelContext._status === PANEL_STATUS_READY) return;
+
+	if (!panelContext._status === PANEL_STATUS_READY) return;
 
 	const fetchData = async (_storeParams, _pageFirst, _pageRows) => {
 		if (!props.store) {
@@ -156,15 +157,15 @@ function DataTable({ context, panelContext, windowData, ...props }) {
 		try {
 			const imageFiled = params.column.props.field;
 			image = rowData[imageFiled];
-		} catch (e) {}
+		} catch (e) { }
 
 		//referrerPolicy mi serve eventualmente per caricare le immagini senza header
 		return (
 			<img
 				src={`${image}`}
 				onError={(e) =>
-					(e.target.src =
-						"https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+				(e.target.src =
+					"https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
 				}
 				alt={rowData.imageLocation}
 				className="image"
@@ -277,7 +278,7 @@ function DataTable({ context, panelContext, windowData, ...props }) {
 	const onContextMenu = function (_event) {
 		let contextMenuItem = [];
 		if (props.events?.onContextMenu) {
-			contextMenuItem = props.events.onContextMenu(_event, props.context);
+			contextMenuItem = props.events.onContextMenu.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(_event);
 		}
 
 		if (contextMenuItem && contextMenuItem.length > 0) {
@@ -384,8 +385,8 @@ function DataTable({ context, panelContext, windowData, ...props }) {
 				{ label: 20, value: 20 },
 				{ label: 50, value: 50 },
 				/*{ label: 100, value: 100 },
-                { label: 1000, value: 1000 },
-                { label: 10000, value: 10000 },*/
+				{ label: 1000, value: 1000 },
+				{ label: 10000, value: 10000 },*/
 			];
 
 			return (
@@ -515,7 +516,7 @@ function DataTable({ context, panelContext, windowData, ...props }) {
 			/**
 			 * Gestione del template, ricorda...è assolutamente vietato usare renderHtmlString o peggio dangerouslySetInnerHTML, pena la perdita delle falangi :)
 			 */
-			if(col.component){
+			if (col.component) {
 				//If component is specified, use the component as template, passing all the necessary props
 				template = (rowData, columnOptions) => {
 					/*
@@ -529,14 +530,14 @@ function DataTable({ context, panelContext, windowData, ...props }) {
 						otherProp: "Just a string"	rowData["Just a string"] is empty, so the original props value is passed on
 					*/
 					let otherProps = {};
-					for(let f in col){
-						if(componentHasProps(col.component, f)){
+					for (let f in col) {
+						if (componentHasProps(col.component, f)) {
 							otherProps[f] = col[f] != null ? (rowData[col[f]] || col[f]) : col[f];
 						}
 					}
 					return <React.Fragment><MemoComponent id={col.field + columnOptions.rowIndex} component={col.component} {...otherProps} /></React.Fragment>
 				}
-			}else{
+			} else {
 				if (col.pugTemplate) {
 					//è stato definito un modello tramite pub, lo converto in un oggetto compatibile con model
 					template = (rowData, columnOptions) => {
@@ -557,7 +558,7 @@ function DataTable({ context, panelContext, windowData, ...props }) {
 								e
 							);
 						}
-	
+
 						return null;
 					};
 				} else if (col.nodesTemplate) {

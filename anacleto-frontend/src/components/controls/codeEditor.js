@@ -9,8 +9,9 @@ import { showAutocompletion } from "./codeEditorUtils";
 
 
 function CodeEditor({ id, context, panelContext, windowData, ...props }) {
-	const { updatePanelContext } = useContext(PanelsContext);
+	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 	const [disabled, setDisabled] = useState(props.disabled);
+	const [editor, setEditor] = useState(null);
 	const monaco = useMonaco();
 
 	loader.config({ "vs/nls": { availableLanguages: { "*": "it" } } });
@@ -32,32 +33,82 @@ function CodeEditor({ id, context, panelContext, windowData, ...props }) {
 	}, [props.disabled]);
 
 
+	useEffect(() => {
+		if (editor) {
+			//save contest on editor for addAction
+			editor._context = context
+			editor._windowData = windowData
+			editor._panelsContext = panelsContext
+			editor._updatePanelContext = updatePanelContext
+			editor._panelContext = panelContext
+		}
+	}, [editor, panelsContext, windowData]);
+
+
 
 	useEffect(() => {
-		//load autocompletion
-
+		//load autocompletion function
 		const options = { scope: props.scope }
-
 		const disposable = showAutocompletion(monaco, options);
 		return disposable?.dispose;
 	}, [monaco]);
 
-	if(panelContext._status !== PANEL_STATUS_READY) return;
-	
-	const onMount = (editor, monaco) => {
-		//editor mount, ex monaco.focus()
+
+	if (panelContext._status !== PANEL_STATUS_READY) return;
+
+
+
+
+	const onMount = (_editor, _monaco) => {
+		setEditor(_editor)
+
+		const blockContext = "editorTextFocus && !suggestWidgetVisible && !renameInputVisible && !inSnippetMode && !quickFixWidgetVisible";
+		//Add save action
+		_editor.addAction({
+			id: "commandSave",
+			label: "Save",
+			keybindings: [_monaco.KeyMod.CtrlCmd | _monaco.KeyCode.KeyS],
+			contextMenuGroupId: "2_execution",
+			precondition: blockContext,
+			run: (ed) => {
+				if (props.events.onSave) {
+					//Questa soluzione non mi piace ma sono stato costretto ad aggangiare tutto nell'editor perchè il contesto qui non è aggiornato 
+					props.events.onSave.bind({ panel: props, context: ed._context, windowData: ed._windowData, components: ed._panelsContext, updatePanelContext: ed._updatePanelContext, ...ed._panelContext })();
+					//props.events.onSave.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })();
+					//this.executeCurrentContext(false, true);
+				}
+			},
+		});
+
+		//Add action delete
+		_editor.addAction({
+			id: "commandDelete",
+			label: "Delete",
+			//keybindings: [_monaco.KeyMod.CtrlCmd | _monaco.KeyCode.KeyD],
+			contextMenuGroupId: "2_execution",
+			precondition: blockContext,
+			run: (ed) => {
+				if (props.events.onDelete) {
+					//Questa soluzione non mi piace ma sono stato costretto ad aggangiare tutto nell'editor perchè il contesto qui non è aggiornato 
+					props.events.onDelete.bind({ panel: props, context: ed._context, windowData: ed._windowData, components: ed._panelsContext, updatePanelContext: ed._updatePanelContext, ...ed._panelContext })();
+					//props.events.onDelete.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })();
+					//this.executeCurrentContext(false, true);
+				}
+			},
+		});
+
 	}
 
 	function onChange(_newValue, _event) {
 		if (props.setRecord) {
-			props.setRecord({ [id]: _newValue });
+			props.setRecord({ ...props.record, [id]: _newValue });
 		}
 		if (props.onChange) {
 			props.onChange(_event, _newValue); //imposta il valore nella context
 		}
 	}
 
-	//altre opzioni https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html
+	//more docs: https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneEditorConstructionOptions.html
 	return (
 		<div
 			id={"editor-container-" + id}
@@ -104,8 +155,8 @@ CodeEditor.propTypes = {
 	language: PropTypes.string,
 	defaultValue: PropTypes.string,
 	height: PropTypes.string,
-	setRecord: PropTypes.func,
 	style: PropTypes.object,
 	scope: PropTypes.string,
+	events: PropTypes.object,
 }
 export default MemoCodeEditor;

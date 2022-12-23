@@ -37,18 +37,18 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 	const [edges, setEdges, onEdgesChange] = useEdgesState(initEdges);
 	const [rfInstance, setRfInstance] = useState(null);
 	const edgeTypes = useMemo(() => ({
-			addbuttonedge: addButtonEdge,
-		}), []
+		addbuttonedge: addButtonEdge,
+	}), []
 	);
 	const nodeTypes = useMemo(() => ({
-			itemnode: itemNode,
-			windownode: windowNode,
-			eventnode: eventNode,
-			addnode: addNode,
-			addeventnode: addEventNode,
-			addaction: addAction,
-			action: action,
-		}), []
+		itemnode: itemNode,
+		windownode: windowNode,
+		eventnode: eventNode,
+		addnode: addNode,
+		addeventnode: addEventNode,
+		addaction: addAction,
+		action: action,
+	}), []
 	);
 
 	useEffect(() => {
@@ -72,7 +72,7 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 			return n.id == id;
 		});
 
-		if(!elem[0]){
+		if (!elem[0]) {
 			console.error(`Cannot find component with id:${id}`, nodeArr)
 		}
 
@@ -339,21 +339,21 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 		});
 
 		window.utils
-		.callServer({
-			url: "/window",
-			method: "get",
-			contentType: "application/javascript",
-			params: {
-				application: destApplication,
-				window: window.utils.getSearchParam("window"),
-				getRawData: true,
-			},
-		})
-		.then(function (response) {
-			convertMapToFlow(response.data);
-		});
+			.callServer({
+				url: "/window",
+				method: "get",
+				contentType: "application/javascript",
+				params: {
+					application: destApplication,
+					window: window.utils.getSearchParam("window"),
+					getRawData: true,
+				},
+			})
+			.then(function (response) {
+				convertMapToFlow(response.data);
+			});
 	}, []);
-	
+
 	const onNodeClick = (event, node) => {
 		const windowData = {
 			node,
@@ -366,8 +366,8 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 				context,
 			},
 		};
-		if(props.events.onNodeClick){
-			props.events.onNodeClick.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(event, windowData);
+		if (props.events.onNodeClick) {
+			props.events.onNodeClick.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(event, windowData);
 		}
 		if (node.type == "addnode") {
 			var parentNode = node.id.replace("_ADDNEWITM", "");
@@ -377,7 +377,7 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 				settings: {
 					header: `Add node to: ${parentNode}`,
 				},
-				windowData: { ...windowData, parentNode}
+				windowData: { ...windowData, parentNode }
 			});
 		} else if (node.type == "addeventnode") {
 			var parentNode = node.id.replace("_ADDEVENT", "");
@@ -388,18 +388,18 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 					header: `Add event to: ${parentNode}`,
 					maximizable: true,
 				},
-				windowData: { ...windowData, parentNode}
+				windowData: { ...windowData, parentNode }
 			});
 		} else if (node.type == "eventnode") {
 			window.utils.openWindow({
 				window: "add_event",
 				type: "modal",
 				settings: {
-					header: `Modify event`,
+					header: node.attributes.eventType || `Modify event`,
 					maximizable: true,
 					contentClassName: "flex-column",
 				},
-				windowData: { ...windowData, parentNode}
+				windowData: { ...windowData, parentNode }
 			});
 		} else if (node.type == "addaction") {
 			var parentNode = node.id.replace("_ADDACTION", "");
@@ -409,7 +409,7 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 				settings: {
 					header: `Add action to: ${parentNode}`,
 				},
-				windowData: { ...windowData, parentNode}
+				windowData: { ...windowData, parentNode }
 			});
 		}
 	};

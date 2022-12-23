@@ -199,10 +199,11 @@ const Component = withErrorBoundary(({ component, windowData, ...props }) => {
 
 	const content = <React.Fragment>
 		{props.isCard && isLoading && loadingSpinner}
-		{RenderComponent && <RenderComponent {...props} {...defaultProps} key={props.id} className={classNames(`component-${props.id} relative`, className)}>
+		{RenderComponent && <RenderComponent {...props} {...defaultProps} key={props.id} windowData={windowData} className={classNames(`component-${props.id} relative`, className)}>
 			{!props.isCard && isLoading && loadingSpinner}
 			{components?.map(({ component, ...compProps }) => (
-				//Use windowData to forward input data to children components
+				//creates the childrens of the component by calling component recursively
+				//remember: MemoComponent is the Memo version of Component
 				<MemoComponent {...compProps} key={compProps.id || uuidv4()} component={component} windowData={windowData} setIsLoading={setIsLoading} />
 			))}
 			{props.children}
@@ -274,6 +275,8 @@ const Component = withErrorBoundary(({ component, windowData, ...props }) => {
 				{showToolbar && toolbarSplitButtons}
 			</div>
 		};
+
+		
 		container = <div className={classNames("flex flex-auto", props.containerClassName)}>
 			<Card
 				header={getHeaderTemplate}

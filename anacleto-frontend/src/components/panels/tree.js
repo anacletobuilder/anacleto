@@ -29,7 +29,7 @@ function Tree({ id, context, panelContext, windowData, ...props }) {
 			updatePanelContext({
 				id,
 				setNodes,
-				setExpandedKeys: (expKeys) => setExpandedKeys(prev =>({ ...prev, ...expKeys })),
+				setExpandedKeys: (expKeys) => setExpandedKeys(prev => ({ ...prev, ...expKeys })),
 				load: function (_params) {
 					//TODO gestire parametri
 					fetchData();
@@ -50,7 +50,7 @@ function Tree({ id, context, panelContext, windowData, ...props }) {
 		});
 
 		if (props.events.onLoad) {
-			props.events.onLoad.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(nodes);
+			props.events.onLoad.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(nodes);
 		}
 
 	}, [nodes]);
@@ -101,29 +101,29 @@ function Tree({ id, context, panelContext, windowData, ...props }) {
 
 	const onExpand = useCallback((_event) => {
 		if (props.events?.onExpand) {
-			props.events?.onExpand.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(_event);
+			props.events?.onExpand.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(_event);
 		}
 	}, [props.events, context, panelContext, panelsContext]);
 	const onCollapse = useCallback((_event) => {
 		if (props.events?.onCollapse) {
-			props.events.events.onCollapse.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(_event);
+			props.events.events.onCollapse.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(_event);
 		}
 	}, [props.events, context, panelContext, panelsContext]);
 	const onSelect = useCallback((_event) => {
 		if (props.events?.onSelect) {
-			props.events.onSelect.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(_event);
+			props.events.onSelect.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(_event);
 		}
 	}, [props.events, context, panelContext, panelsContext]);
 	const onUnselect = useCallback((_event) => {
 		if (props.events.onUnselect) {
-			props.events?.onUnselect.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(_event);
+			props.events?.onUnselect.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(_event);
 		}
 	}, [props.events, context, panelContext, panelsContext]);
 
 	const onContextMenu = useCallback((_event) => {
 		let contextMenuItem = [];
 		if (props.events.onContextMenu) {
-			contextMenuItem = props.events.onContextMenu.bind({ panel: props, context, windowData, components:panelsContext, updatePanelContext, ...panelContext })(_event);
+			contextMenuItem = props.events.onContextMenu.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(_event);
 		}
 
 		if (contextMenuItem && contextMenuItem.length > 0) {

@@ -155,9 +155,7 @@ const Dialog = ({ id, context, ...props }) => {
 			onHide={onHide}
 		>
 			{dialogMetadata ? (
-				<div className="layout-main flex flex-1">
-					<MemoComponent {...dialogMetadata} windowData={props.settings.windowData} />
-				</div>
+				<MemoComponent {...dialogMetadata} windowData={props.settings.windowData} />
 			) : (
 				//caricamento in corso
 				<div className="layout-main h-full flex"></div>
