@@ -18,9 +18,6 @@ const { v4: uuidv4 } = require('uuid');
 
 
 const Component = withErrorBoundary(({ component, windowData, ...props }) => {
-
-	console.log(`windowData for component ${props.id}`, windowData)
-
 	const context = useSelector(selectContext);
 	const [error, resetError] = useErrorBoundary(
 		//(error, errorInfo) => console.error(error, errorInfo)
@@ -214,7 +211,7 @@ const Component = withErrorBoundary(({ component, windowData, ...props }) => {
 	let container;
 	if (props.isCard) {
 		const getHeaderTemplate = (options) => {
-			//buttoni della toolbar
+			//add panel header buttons
 			const toolbarItems = props.actions || [];
 			const toolbarSplitButtons = toolbarItems.map((_splitButton, _i) => {
 				const onClick = function (_event) {
@@ -225,8 +222,7 @@ const Component = withErrorBoundary(({ component, windowData, ...props }) => {
 				};
 
 				if (_splitButton.actions && _splitButton.actions.length > 0) {
-					//bottone con sottomenù
-
+					//button with sub-buttons
 					const model = _splitButton.actions.map((_action) => {
 						_action.command = function (_event) {
 							if (_action.events?.onClick) {
@@ -250,7 +246,7 @@ const Component = withErrorBoundary(({ component, windowData, ...props }) => {
 						/>
 					);
 				} else {
-					//bottone singolo
+					//single button
 					return (
 						<MemoButton
 							id={_splitButton.id}

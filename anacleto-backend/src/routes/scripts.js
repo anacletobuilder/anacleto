@@ -3,6 +3,7 @@ const logger = require("../utils/logger");
 const path = require("path");
 const scriptEvaluator = require("../businesslogic/scriptEvaluator");
 const scriptUtils = require("../utils/scriptutils");
+const fileUtils = require("../utils/fileUtils");
 
 module.exports = function (app, {mySqlConnector, datastoreConnector}) {
 
@@ -53,7 +54,7 @@ module.exports = function (app, {mySqlConnector, datastoreConnector}) {
 					req.body.data
 				)
 				.then((data) => {
-					res.send({ success: true, sha: scriptUtils.getFileSha(req.body.data) });
+					res.send({ success: true, sha: fileUtils.getFileSha(req.body.data) });
 				})
 				.catch((error) => {
 					console.error(`Create script ${scriptName} error`, error);
@@ -86,7 +87,7 @@ module.exports = function (app, {mySqlConnector, datastoreConnector}) {
 					req.body.sha
 				)
 				.then((data) => {
-					res.send({ success: true, sha: scriptUtils.getFileSha(req.body.data) });
+					res.send({ success: true, sha: fileUtils.getFileSha(req.body.data) });
 				})
 				.catch((error) => {
 					console.error(`Update script ${scriptName} error`, error);

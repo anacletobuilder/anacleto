@@ -31,6 +31,7 @@ const ret = {
     uid: user.uid,
     displayName: user.displayName,
 	photoURL: user.photoURL,
+    userPhoto:user.photoURL,
     email: user.email,
     emailVerified: user.emailVerified,
     disabled: user.user ? user.user.disabled : false,

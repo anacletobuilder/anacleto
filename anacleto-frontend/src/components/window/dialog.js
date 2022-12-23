@@ -20,8 +20,6 @@ const Dialog = ({ id, context, ...props }) => {
 	const navigate = useNavigate();
 	const dialogScript = document.createElement("script");
 
-	console.log(`windowData for dialog ${id}`, props.settings.windowData)
-
 	const onHide = () => {
 		props.setDialogSettings((prev) => ({ ...prev, visible: false }));
 	};
@@ -30,19 +28,9 @@ const Dialog = ({ id, context, ...props }) => {
 			id,
 			_status: PANEL_STATUS_READY,
 			closeWindow: onHide,
-			//windowData
 		});
 	}, []);
 
-	/*
-	useEffect(() => {
-		debugger
-		updatePanelContext({
-			id,
-			windowData
-		});
-	}, [windowData]);
-*/
 	useEffect(() => {
 		if (!panelsContext || typeof panelsContext[id] === typeof undefined) return;
 		if (panelContext !== panelsContext[id]) {

@@ -26,6 +26,10 @@ const Avatar = ({ id, context, panelContext, windowData, ...props }) => {
 		});
 	}, []);
 
+	useEffect(() => {
+		setImage(typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id] || props.image);
+	}, [props.record]);
+
 	if(panelContext._status !== PANEL_STATUS_READY) return;
 	
 	let additionalProps = {};
