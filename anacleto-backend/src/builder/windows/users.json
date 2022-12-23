@@ -5,7 +5,7 @@
 	"isCard": true,
 	"layout": "flex",
 	"className": "flex-column flex-auto",
-	"items": [
+	"components": [
 		{
 			"id": "users",
 			"store": "users/list",

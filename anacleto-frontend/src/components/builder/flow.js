@@ -29,7 +29,7 @@ import { defaultMemoizeFunction } from "../../utils/utils";
 const initNodes = [];
 const initEdges = [];
 
-function Flow({ id, context, panelContext, ...props }) {
+function Flow({ id, context, panelContext, windowData, ...props }) {
 	const destApplication = useSelector(selectDestApplication);
 
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
@@ -37,18 +37,18 @@ function Flow({ id, context, panelContext, ...props }) {
 	const [edges, setEdges, onEdgesChange] = useEdgesState(initEdges);
 	const [rfInstance, setRfInstance] = useState(null);
 	const edgeTypes = useMemo(() => ({
-			addbuttonedge: addButtonEdge,
-		}), []
+		addbuttonedge: addButtonEdge,
+	}), []
 	);
 	const nodeTypes = useMemo(() => ({
-			itemnode: itemNode,
-			windownode: windowNode,
-			eventnode: eventNode,
-			addnode: addNode,
-			addeventnode: addEventNode,
-			addaction: addAction,
-			action: action,
-		}), []
+		itemnode: itemNode,
+		windownode: windowNode,
+		eventnode: eventNode,
+		addnode: addNode,
+		addeventnode: addEventNode,
+		addaction: addAction,
+		action: action,
+	}), []
 	);
 
 	useEffect(() => {
@@ -71,6 +71,11 @@ function Flow({ id, context, panelContext, ...props }) {
 		var elem = nodeArr.filter(function (n) {
 			return n.id == id;
 		});
+
+		if (!elem[0]) {
+			console.error(`Cannot find component with id:${id}`, nodeArr)
+		}
+
 		var obj = elem[0].attributes;
 		var itemChilds = nodeArr.filter(function (n) {
 			return n.ancestorNode == id && n.type == "itemnode";
@@ -79,9 +84,9 @@ function Flow({ id, context, panelContext, ...props }) {
 			return a.itemPosition - b.itemPosition;
 		});
 		if (itemChilds.length > 0) {
-			obj.items = [];
+			obj.components = [];
 			for (var i in itemChilds) {
-				obj.items.push(convertFlowToMap(itemChilds[i].id, nodeArr));
+				obj.components.push(convertFlowToMap(itemChilds[i].id, nodeArr));
 			}
 		}
 		var events = nodeArr.filter(function (n) {
@@ -144,7 +149,7 @@ function Flow({ id, context, panelContext, ...props }) {
 				if (attr == "itemPosition") {
 					node.itemPosition = obj[attr];
 				} else if (
-					attr == "items" ||
+					attr == "components" ||
 					attr == "events" ||
 					attr == "actions"
 				) {
@@ -188,12 +193,12 @@ function Flow({ id, context, panelContext, ...props }) {
 			initialNodes.push(node);
 
 			if (
-				!obj.items &&
+				!obj.components &&
 				itm.id?.indexOf("ADDNEWITM") < 0 &&
 				itm.id?.indexOf("_EVENT_") < 0 &&
 				itm.id?.indexOf("_ADDEVENT") < 0
 			) {
-				//Se non ho items non devo avere possibilità di aggiungere figli
+				//Se non ho components non devo avere possibilità di aggiungere figli
 			}
 
 			if (parentNode) {
@@ -207,9 +212,9 @@ function Flow({ id, context, panelContext, ...props }) {
 
 			var siblingPosition = 0;
 
-			if (obj.items) {
-				for (var i = 0; i < obj.items.length; i++) {
-					var currItm = obj.items[i];
+			if (obj.components) {
+				for (var i = 0; i < obj.components.length; i++) {
+					var currItm = obj.components[i];
 					currItm.itemPosition = siblingPosition;
 					siblingPosition++;
 					composeNodesAndEdges(currItm, node.id);
@@ -219,7 +224,7 @@ function Flow({ id, context, panelContext, ...props }) {
 						id: node.id + "_ADDNEWITM",
 						title: "Add object",
 						nodeType: "addnode",
-						itemPosition: obj.items.length,
+						itemPosition: obj.components.length,
 					},
 					node.id
 				);
@@ -334,23 +339,23 @@ function Flow({ id, context, panelContext, ...props }) {
 		});
 
 		window.utils
-		.callServer({
-			url: "/window",
-			method: "get",
-			contentType: "application/javascript",
-			params: {
-				application: destApplication,
-				window: window.utils.getSearchParam("window"),
-				getRawData: true,
-			},
-		})
-		.then(function (response) {
-			convertMapToFlow(response.data);
-		});
+			.callServer({
+				url: "/window",
+				method: "get",
+				contentType: "application/javascript",
+				params: {
+					application: destApplication,
+					window: window.utils.getSearchParam("window"),
+					getRawData: true,
+				},
+			})
+			.then(function (response) {
+				convertMapToFlow(response.data);
+			});
 	}, []);
-	
+
 	const onNodeClick = (event, node) => {
-		const forwardData = {
+		const windowData = {
 			node,
 			rfInstance,
 			convertMapToFlow,
@@ -361,11 +366,10 @@ function Flow({ id, context, panelContext, ...props }) {
 				context,
 			},
 		};
-		if(props.events.onNodeClick){
-			props.events.onNodeClick.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(event, forwardData);
+		if (props.events.onNodeClick) {
+			props.events.onNodeClick.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(event, windowData);
 		}
 		if (node.type == "addnode") {
-			//alert("Aggiungi controllo");
 			var parentNode = node.id.replace("_ADDNEWITM", "");
 			window.utils.openWindow({
 				window: "add_node",
@@ -373,7 +377,7 @@ function Flow({ id, context, panelContext, ...props }) {
 				settings: {
 					header: `Add node to: ${parentNode}`,
 				},
-				forwardData: { ...forwardData, parentNode}
+				windowData: { ...windowData, parentNode }
 			});
 		} else if (node.type == "addeventnode") {
 			var parentNode = node.id.replace("_ADDEVENT", "");
@@ -384,18 +388,18 @@ function Flow({ id, context, panelContext, ...props }) {
 					header: `Add event to: ${parentNode}`,
 					maximizable: true,
 				},
-				forwardData: { ...forwardData, parentNode}
+				windowData: { ...windowData, parentNode }
 			});
 		} else if (node.type == "eventnode") {
 			window.utils.openWindow({
 				window: "add_event",
 				type: "modal",
 				settings: {
-					header: `Modify event`,
+					header: node.attributes.eventType || `Modify event`,
 					maximizable: true,
 					contentClassName: "flex-column",
 				},
-				forwardData: { ...forwardData, parentNode}
+				windowData: { ...windowData, parentNode }
 			});
 		} else if (node.type == "addaction") {
 			var parentNode = node.id.replace("_ADDACTION", "");
@@ -405,45 +409,9 @@ function Flow({ id, context, panelContext, ...props }) {
 				settings: {
 					header: `Add action to: ${parentNode}`,
 				},
-				forwardData: { ...forwardData, parentNode}
+				windowData: { ...windowData, parentNode }
 			});
-		}/* else {
-			window.utils.openWindow({
-				window: "node_info",
-				type: "dialog",
-				settings: {
-					header: "Informazioni",
-					actions: [
-						{
-							"id": "windows_node_footer_save",
-							"component": "Button",
-							"containerClassName": "col-12 h-3rem",
-							"icon":"pi pi-save",
-							"label": "SAVE",
-							"events" : {
-								"onClick": {
-									"body": "console.log('saving');"
-								}
-							}
-						},
-						{
-							"id": "windows_node_footer_delete",
-							"component": "Button",
-							"containerClassName": "col-12 h-3rem",
-							"className":"p-button-outlined p-button-danger",
-							"icon":"pi pi-trash",
-							"label": "DELETE",
-							"events" : {
-								"onClick": {
-									"body": "const _this = this;utils.showConfirmDialog({ message: 'Do you want to delete this node?', header: 'Delete Confirmation', icon: 'pi pi-info-circle', acceptClassName: 'p-button-danger', accept: function () { var forwardData = this.forwardData; var currentNode = forwardData.node; var instance = forwardData.rfInstance; var nodes = instance.getNodes(); var edges = instance.getEdges(); const removeChildNodes = function (parentNode) { var childNodes = nodes.filter(el => el.ancestorNode == parentNode); if(childNodes.length > 0) { for(var i = 0; i < childNodes.length; i++) { var nIndex = nodes.findIndex(el => el.id == childNodes[i].id); if(nIndex > -1) { nodes.splice(nIndex,1); removeChildNodes(childNodes[i].id); filterEdges(childNodes[i].id); } } } }; const filterEdges = function(nodeId) { console.log('filterEdges',nodeId); edges = edges.filter(el => el.target != nodeId); }; var currentNodeIndex = nodes.findIndex(el => el.id == currentNode.id); if(currentNodeIndex > -1) { nodes.splice(currentNodeIndex,1); filterEdges(currentNode.id); removeChildNodes(currentNode.id); var siblingNodes = nodes.filter(el => el.ancestorNode == currentNode.ancestorNode); console.log(siblingNodes); for(var i = 0; i < siblingNodes.length; i++) { var siblingIndex = nodes.findIndex(el => el.id == siblingNodes[i].id); if(nodes[siblingIndex].itemPosition > currentNode.itemPosition) { nodes[siblingIndex].itemPosition--; } } } const windowId = utils.getSearchParam('window'); const windowMap = forwardData.convertFlowToMap(windowId,nodes); forwardData.convertMapToFlow(windowMap); _this.closeWindow(); }, reject: function () { }});"
-								}
-							}
-						}
-					]
-				},
-				forwardData
-			});
-		}*/
+		}
 	};
 
 	const metaAndKPressed = useKeyPress(["Meta+Shift+o", "Strg+Shift+o"]);
@@ -456,7 +424,7 @@ function Flow({ id, context, panelContext, ...props }) {
 				settings: {
 					header: "Search node",
 				},
-				forwardData: {
+				windowData: {
 					rfInstance: rfInstance,
 				},
 			});
@@ -523,7 +491,7 @@ Flow.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,

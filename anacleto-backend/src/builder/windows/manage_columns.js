@@ -1,7 +1,7 @@
 {
     "window": "manage_columns",
     "className": "flex-column w-full",
-    items: [{
+    components: [{
             "id": "manage_columns_container",
             "type": "gridcontainer",
             "title": "Query",
@@ -9,14 +9,14 @@
             "layout": "grid",
             "isCard": true,
             "className": "flex-column h-full",
-            "items": [{
+            "components": [{
                 "id": "columns_query",
                 "title": "Code",
                 "type": "form",
                 "showTitle": false,
                 "toggleable":true,
                 "className": "no-padding",
-                "items": [{
+                "components": [{
                     "id": "db",
                     "fieldColumn": "col-4 md:col-6",
                     "fieldMargin": "m-0 mt-2",
@@ -105,7 +105,7 @@
             "layout": "grid",
             "isCard": true,
             "className": "flex-column h-full",
-            "items": [{
+            "components": [{
                 "id": "column_1",
                 "type": "form",
                 "width": "col-12",
@@ -113,7 +113,7 @@
                 "isCard": true,
                 "toggleable": true,
                 "title": "Colonna1",
-                "items" : [
+                "components" : [
                     {
                         "id": "column_1_position",
                         "type": "numberInput",

@@ -6,7 +6,7 @@ import { PanelsContext, PANEL_STATUS_READY } from "../../contexts/panelsContext"
 import { defaultMemoizeFunction } from "../../utils/utils";
 import { classNames } from "primereact/utils";
 
-const Preview = ({ id, context, panelContext, ...props }) => {
+const Preview = ({ id, context, panelContext, windowData, ...props }) => {
 	const { updatePanelContext } = useContext(PanelsContext);
 	const [contentRef, setContentRef] = useState(null);
 	const mountNode = contentRef?.contentWindow?.document?.body;
@@ -47,8 +47,8 @@ const Preview = ({ id, context, panelContext, ...props }) => {
 		});
 	}
 	useEffect(() => {
-		_setPreviewItems(props.items || []);
-	}, [props.items]);
+		_setPreviewItems(props.components || []);
+	}, [props.components]);
 	
 	useEffect(() => {
 		updatePanelContext({
@@ -61,14 +61,14 @@ const Preview = ({ id, context, panelContext, ...props }) => {
 	const purgeOnClickEvent = (_items) => {
 		return _items.map((i) => {
 			delete i.events?.onClick;
-			if(i.items){
-				purgeOnClickEvent(i.items);
+			if(i.components){
+				purgeOnClickEvent(i.components);
 			}
 			return i;
 		});
 	}
 
-	const [previewItems, setPreviewItems] = useState(purgeOnClickEvent(props.items || []));
+	const [previewItems, setPreviewItems] = useState(purgeOnClickEvent(props.components || []));
 	
 	if(panelContext._status !== PANEL_STATUS_READY) return;
 
@@ -98,10 +98,10 @@ Preview.propTypes = {
 	id: PropTypes.string,
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
-	items: PropTypes.array,
+	components: PropTypes.array,
 	className: PropTypes.string,
 	setIsLoading: PropTypes.func,
 	panelBaseMethods: PropTypes.object,

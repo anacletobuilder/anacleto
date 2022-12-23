@@ -12,17 +12,17 @@ const FormMode = Object.freeze({
 	UPDATE: "update",
 	FREE: "free",
 });
-function Form({ id, context, panelContext, ...props }) {
+function Form({ id, context, panelContext, windowData, ...props }) {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 	const application = context.application;
 	const destApplication = context.destApplication;
 	const tenant = context.tenant;
 
 	const [record, setRecord] = useState(props.record || {}); //contiene il record associato al pannello
-	const [items, setItems] = useState(props.items);
+	const [components, setComponents] = useState(props.components);
 	const [mode, setMode] = useState(props.mode || FormMode.FREE);
-
-	const _setRecord = useCallback((payload) => { setRecord((prev) => ({...prev, ...payload})) });
+	const _setRecord = useCallback((payload) => { setRecord((prev) => ({ ...prev, ...payload })) });
+	
 	useEffect(() => {
 		updatePanelContext({
 			id,
@@ -90,7 +90,7 @@ function Form({ id, context, panelContext, ...props }) {
 								timeout: 60000,
 								params: params,
 								headers: {
-									Authorization:token,
+									Authorization: token,
 									application: application,
 									destapplication: destApplication,
 									tenant: tenant,
@@ -115,63 +115,57 @@ function Form({ id, context, panelContext, ...props }) {
 						reject(error);
 					})
 			})),
-			setItems: (_items) => (setItems(_items)),
+			setComponents: (_items) => (setComponents(_items)),
 		})
 	}, []);
 
 	useEffect(() => {
 		//Set the getRecord function again otherwise it won't get the updated record object
-		if(record){
+		if (record) {
 			updatePanelContext({ id, getRecord: () => (record) });
-			if(props.events.onRecordChange){
-				props.events.onRecordChange.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(record);
+			if (props.events.onRecordChange) {
+				props.events.onRecordChange.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(record);
 			}
 		}
 	}, [record]);
 
 	useEffect(() => {
-		if(props.record && props.record !== record){
+		if (props.record && props.record !== record) {
 			setRecord(props.record);
 		}
 	}, [props.record]);
-	
+
 	useEffect(() => {
-		if(items?.length){
+		if (components?.length) {
 			let itemsObj = {};
-			items.map(i => (
+			components.map(i => (
 				i.id ? itemsObj[i.id] = i : ''
 			));
-			updatePanelContext({ id, items: itemsObj });
+			updatePanelContext({ id, components: itemsObj });
 		}
-	}, [items]);
+	}, [components]);
 
-	if(panelContext._status !== PANEL_STATUS_READY) return;
+	if (panelContext._status !== PANEL_STATUS_READY) return;
 
 	return (
-		<div className={classNames(
-			"anacleto-form-container p-0",
-			props.isCard ? "flex flex-auto" : props.containerClassName
-		)}>
-			{props.title && <div className="text-xl font-bold">{props.title}</div>}
-			<div
-				className={classNames(
-					"anacleto-form",
-					props.layout === "flex" ? "flex" : "grid formgrid align-content-start",
-					props.className
-				)}
-			>
-				{
-					React.Children.toArray
-					(props.children).filter(c => c ).map(c => (
+		<div
+			className={classNames(
+				"anacleto-form",
+				props.layout === "flex" ? "flex" : "grid formgrid align-content-start",
+				props.className
+			)}
+		>
+			{
+				React.Children.toArray
+					(props.children).filter(c => c).map(c => (
+						//use cloneElement for add props to element
 						React.cloneElement(c, c.type?.type?.name ? {
 							record,
-							setRecord:
-							_setRecord,
-							forwardData: props.forwardData,
+							setRecord:_setRecord,
+							//[@lucabiasotto 2022-12-23] windowData is already in props, here it's undefined windowData: windowData,
 						} : {})
 					))
-				}
-			</div>
+			}
 		</div>
 	);
 }
@@ -184,7 +178,7 @@ Form.propTypes = {
 	updatePanelContext: PropTypes.func,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	panelContext: PropTypes.object.isRequired,
 	setIsLoading: PropTypes.func,
 	context: PropTypes.object.isRequired,
@@ -193,7 +187,7 @@ Form.propTypes = {
 	dataModel: PropTypes.string,
 	events: PropTypes.object,
 	actions: PropTypes.array,
-	items: PropTypes.array,
+	components: PropTypes.array,
 	isCard: PropTypes.bool,
 	toggleable: PropTypes.bool,
 	layout: PropTypes.oneOf(["grid", "flex"]),

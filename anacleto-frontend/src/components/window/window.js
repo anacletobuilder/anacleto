@@ -7,7 +7,8 @@ import { getToken } from "../../login/loginUtils";
 import i18n from "../../i18n";
 import MemoComponent from "../component";
 
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
+
 import { useDispatch, useSelector } from "react-redux";
 import { selectApplication, selectDestApplication, selectTenant, setWindow } from "../../reducers/context";
 
@@ -17,12 +18,15 @@ function Window(props) {
 	const application = useSelector(selectApplication);
 	const destApplication = useSelector(selectDestApplication);
 
-	 const params = useParams()
-	 const windowId = params.windowId || 'home'
+	const params = useParams()
+	const windowId = params.windowId || 'home'
 
 	const [windowMetadata, setWindowMetadata] = useState(null);
 	const [loadError, setLoadError] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
+	const location = useLocation();
+	const windowData = location.state;
+
 
 	useEffect(() => {
 		fetchData(windowId);
@@ -128,7 +132,7 @@ function Window(props) {
 			</div>
 		}
 		{!isLoading && !loadError && windowMetadata &&
-			<MemoComponent {...windowMetadata} />
+			<MemoComponent {...windowMetadata} windowData={windowData}/>
 		}
 	</div>
 }

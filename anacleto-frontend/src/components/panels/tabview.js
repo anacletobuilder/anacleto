@@ -14,7 +14,7 @@ import { defaultMemoizeFunction } from "../../utils/utils";
  * @param {Object} props.context: struttura della finestra
  * @returns
  */
-const TabView = ({ id, context, panelContext, ...props }) => {
+const TabView = ({ id, context, panelContext, windowData, ...props }) => {
 	const { updatePanelContext } = useContext(PanelsContext);
 	const [activeIndex, setActiveIndex] = useState(0); //default è 0, cambiare qui se si vuole pilotare da metadati
 
@@ -28,12 +28,12 @@ const TabView = ({ id, context, panelContext, ...props }) => {
 	if(panelContext._status !== PANEL_STATUS_READY) return;
 	
 	const getItems = () => {
-		if (!props.items) {
+		if (!props.components) {
 			//no subpanel set
 			return <PrimeTabPanel key={"no_item"} />;
 		}
 
-		const items = props.items.map((item) => {
+		const components = props.components.map((item) => {
 			return (
 				<PrimeTabPanel
 					className={classNames("p-0")}
@@ -50,7 +50,7 @@ const TabView = ({ id, context, panelContext, ...props }) => {
 				</PrimeTabPanel>
 			);
 		});
-		return items;
+		return components;
 	};
 
 	return (
@@ -76,11 +76,11 @@ TabView.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,
-	items: PropTypes.array,
+	components: PropTypes.array,
 	panelBaseMethods: PropTypes.object,
 	style: PropTypes.object,
 	title: PropTypes.string,

@@ -1,71 +1,57 @@
 {
-	"id": "add_event",
-	"component": "GridContainer",
-	"layout": "grid",
-	"isCard": true,
-	"className": "flex-column h-full",
-	"items": [{
-		"id": "add_event_info",
-		"title": "Event type",
-		"dataModel": "Window",
-		"component": "Form",
-		"layout": "flex",
-		"className": "flex-column",
-		"items": [{
-			"id": "eventType",
-			"component": "Dropdown",
-			"className": "mt-2",
-			"optionLabel": "description",
-			"optionValue": "code",
-			"options": [],
-			"placeholder": "Select an event type",
-			"label": "Event type",
-			"events" : {
-				"afterRender" : {
-					"body": "const _this = this; forwardData = this.panelsContext.dialogWindow.forwardData; var parentNode; if(forwardData.node) { parentNode = forwardData.rfInstance.getNode(forwardData.node.ancestorNode); _this.panelsContext.add_event_info.setRecord({eventType:forwardData.node.attributes.eventType}); }else { parentNode = forwardData.rfInstance.getNode(forwardData.parentNode); } this.setOptions(utils.getDefaultControlsConfig(parentNode.attributes.type,'events'));"
-				}
-			}
-		}]
-		},
-		{
-			"id": "add_event_code",
-			"title": "Code",
-			"component": "Form",
-			"layout": "flex",
-			"containerClassName": "mt-4 flex flex-column flex-auto",
-			"className": "flex-auto",
-			"items": [
-				{
-					"component": "CodeEditor",
-					"id": "source",
-					"className": "flex flex-auto border-1 surface-border mt-2"
-				}
-			],
-			"events": {
-				"afterRender": {
-					"body": "const _this = this; forwardData = this.panelsContext.dialogWindow.forwardData; if(forwardData.node) {var sourceValue = forwardData.node.attributes.value.body || '';sourceValue = sourceValue.replace(`const _this = this; /* Use _this on async callbacks */\n`, '');_this.panelsContext.add_event_code.setRecord({source: sourceValue});}"
-				}
-			}
-		}
-	],
-	"actions": [{
-		"id": "save_button",
-		"label": "Save",
-		"icon": "pi pi-save",
-		"events" : {
-			"onClick": {
-				"body": "const _this = this;_this.panelsContext.add_event.setIsToolbarLoading(true);forwardData = this.panelsContext.dialogWindow.forwardData;if (forwardData.node) { var functionStr = _this.panelsContext.add_event_code.getRecord().source; forwardData.node.attributes.value.body = `const _this = this; /* Use _this on async callbacks */\n${functionStr}`, _this.panelsContext.add_event.setIsToolbarLoading(false); _this.panelsContext.dialogWindow.closeWindow();} else { let nodes = forwardData.rfInstance.getNodes(); let edges = forwardData.rfInstance.getEdges(); var eventType = _this.panelsContext.add_event_info.getRecord().eventType; if (eventType) { var functionStr = _this.panelsContext.add_event_code.getRecord().source; var eventNode = JSON.parse(JSON.stringify(forwardData.emptyNode)); var eventId = forwardData.parentNode + '_EVENT_' + eventType; eventNode = {...eventNode, data: { label: eventType, attributeType: 'EVENT' }, id: eventId, component: 'eventnode', ancestorNode: forwardData.parentNode, attributes: { id: eventId, component: 'EVENT', title: eventType, eventType: eventType, value: `const _this = this; /* Use _this on async callbacks */\n${functionStr}`, }, }; const getItmSiblingPos = function (nodes, parentNode) { return nodes.findIndex((n) => n.id === parentNode + '_ADDEVENT'); }; let addItmSiblingPos = getItmSiblingPos(nodes, forwardData.parentNode); if (addItmSiblingPos > -1) { eventNode.itemPosition = nodes[addItmSiblingPos].itemPosition || 0; nodes[addItmSiblingPos].itemPosition++; } else { eventNode.itemPosition = 0; } nodes.push(eventNode); var edge = { id: forwardData.parentNode + '|' + eventId, source: forwardData.parentNode, target: eventId, component: 'smoothstep', }; edges.push(edge); const windowId = utils.getSearchParam('window'); const windowMap = forwardData.convertFlowToMap(windowId, nodes); forwardData.convertMapToFlow(windowMap); } _this.panelsContext.add_event.setIsToolbarLoading(false); _this.panelsContext.dialogWindow.closeWindow();}"
-			}
-		},
-		"actions": [{
-			"id":"delete_button",
-			"label": "Delete",
-			"icon": "pi pi-trash",
-			"events": {
-				"onClick": {
-					"body": "const _this = this;let forwardData = this.forwardData; if(forwardData.node) { var nodes = forwardData.rfInstance.getNodes(); var nodes = nodes.filter((el) => {return el.id != forwardData.node.id}); const windowId = utils.getSearchParam('window'); const windowMap = forwardData.convertFlowToMap(windowId,nodes); forwardData.convertMapToFlow(windowMap); } _this.panelsContext.dialogWindow.closeWindow();"
-				}
-			}
-		}]
-	}]
+    "id": "add_event",
+    "component": "GridContainer",
+    "layout": "flex",
+    "isCard": false,
+    "className": "flex-1 h-full pippo",
+    "components": [
+        {
+            "id": "add_event_code",
+            "title": "Code",
+            "isCard": false,
+            "component": "Form",
+            "layout": "flex",
+            "containerClassName": "mt-4 flex flex-column flex-auto",
+            "className": "flex-auto",
+            "components": [
+                {
+                    "component": "CodeEditor",
+                    "id": "source",
+                    "className": "flex flex-auto border-1 surface-border mt-2",
+                    "events": {
+                        "onSave": {
+                            "params": "event",
+                            "body": "const _this = this;\nwindowData = this.windowData;\nif (windowData.node) {\n    var functionStr = _this.components.add_event_code.getRecord().source;\n    windowData.node.attributes.value.body = functionStr; \n    _this.components.dialogWindow.closeWindow();\n} else {\n    let nodes = windowData.rfInstance.getNodes();\n    let edges = windowData.rfInstance.getEdges();\n    var eventType = _this.components.add_event_info.getRecord().eventType;\n    if (eventType) {\n        var functionStr = _this.components.add_event_code.getRecord().source;\n        var eventNode = JSON.parse(JSON.stringify(windowData.emptyNode));\n        var eventId = windowData.parentNode + '_EVENT_' + eventType;\n        eventNode = {\n            ...eventNode,\n            data: {\n                label: eventType,\n                attributeType: 'EVENT'\n            },\n            id: eventId,\n            component: 'eventnode',\n            ancestorNode: windowData.parentNode,\n            attributes: {\n                id: eventId,\n                component: 'EVENT',\n                title: eventType,\n                eventType: eventType,\n                value: `${functionStr}`,\n            },\n        };\n        const getItmSiblingPos = function(nodes, parentNode) {\n            return nodes.findIndex((n) => n.id === parentNode + '_ADDEVENT');\n        };\n        let addItmSiblingPos = getItmSiblingPos(nodes, windowData.parentNode);\n        if (addItmSiblingPos > -1) {\n            eventNode.itemPosition = nodes[addItmSiblingPos].itemPosition || 0;\n            nodes[addItmSiblingPos].itemPosition++;\n        } else {\n            eventNode.itemPosition = 0;\n        }\n        nodes.push(eventNode);\n        var edge = {\n            id: windowData.parentNode + '|' + eventId,\n            source: windowData.parentNode,\n            target: eventId,\n            component: 'smoothstep',\n        };\n        edges.push(edge);\n        const windowId = utils.getSearchParam('window');\n        const windowMap = windowData.convertFlowToMap(windowId, nodes);\n        windowData.convertMapToFlow(windowMap);\n    };\n    //_this.components.dialogWindow.closeWindow();\n}"
+                        },
+                        "onDelete": {
+                            "body": "let windowData = this.windowData;\nif (windowData.node) {\n    var nodes = windowData.rfInstance.getNodes();\n    var nodes = nodes.filter((el) => {\n        return el.id != windowData.node.id\n    });\n    const windowId = utils.getSearchParam('window');\n    const windowMap = windowData.convertFlowToMap(windowId, nodes);\n    windowData.convertMapToFlow(windowMap);\n}\nthis.components.dialogWindow.closeWindow();"
+                        }
+                    }
+                }
+            ],
+            "events": {
+                "afterRender": {
+                    "body": "windowData = this.windowData;\nif(windowData.node) {\nvar sourceValue = windowData.node.attributes.value.body || '';\nthis.setRecord({source: sourceValue});\n}"
+                }
+            }
+        }
+    ],
+    "actions": [
+        {
+            "id": "save_button",
+            "label": "Save",
+            "icon": "pi pi-save",
+            "type": "action",
+            "events": {},
+            "actions": [
+                {
+                    "id": "delete_button",
+                    "label": "Delete",
+                    "icon": "pi pi-trash",
+                    "type": "action",
+                    "events": {}
+                }
+            ]
+        }
+    ]
 }

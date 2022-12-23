@@ -1,14 +1,14 @@
 {
 	"id": "search_node",
 	"component": "GridContainer",
-	"items": [
+	"components": [
 		{
 			"id": "search_form",
 			"title": "Search",
 			"dataModel": "Window",
 			"component": "Form",
 			"className": "p-0 pt-5 col-12",
-			"items": [
+			"components": [
 				{
 					"colNumber": "col-12 md:col-9",
 					"component": "TextInput",

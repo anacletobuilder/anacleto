@@ -7,7 +7,7 @@ import { PanelsContext, PANEL_STATUS_READY } from "../../contexts/panelsContext"
 import { defaultMemoizeFunction } from "../../utils/utils";
 const { v4: uuidv4 } = require('uuid');
 
-const Splitter = ({ id, context, panelContext, ...props }) => {
+const Splitter = ({ id, context, panelContext, windowData, ...props }) => {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 
 	useEffect(() => {
@@ -18,7 +18,7 @@ const Splitter = ({ id, context, panelContext, ...props }) => {
 	
 	return (
 		<PrimeSplitter className={classNames("anacleto-splitter border-none", props.className)}>
-			{ props.items && props.items.map((c) => 
+			{ props.components && props.components.map((c) => 
 				<SplitterPanel key={c.id || uuidv4()} size={ c.size } className="flex">
 					<MemoComponent component={c} context={props.context} {...c} />
 				</SplitterPanel>
@@ -36,11 +36,11 @@ Splitter.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 record: PropTypes.object,
 setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,
-	items: PropTypes.array,
+	components: PropTypes.array,
 	className: PropTypes.string,
 	isCard: PropTypes.bool,
 	title: PropTypes.string,

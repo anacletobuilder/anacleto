@@ -160,7 +160,7 @@ class ScriptUtils {
         }
 
         //check versione
-        const serverSha = this.getFileSha(source);
+        const serverSha = fileUtils.getFileSha(source);
         if(clientSha != serverSha){
             return Promise.reject(new Error('fail_sha'));
         }
@@ -266,7 +266,7 @@ class ScriptUtils {
             } else {
                 return val;
             }
-        });
+        },4);
     }
 
     /**

@@ -6,7 +6,7 @@ import { PanelsContext, PANEL_STATUS_READY } from "../../contexts/panelsContext"
 import { classNames } from "primereact/utils";
 const { v4: uuidv4 } = require("uuid");
 
-const Slider = ({ id, context, panelContext, ...props }) => {
+const Slider = ({ id, context, panelContext, windowData, ...props }) => {
 	const application = context.application;
 	const destApplication = context.destApplication;
 	const tenant = context.tenant;
@@ -14,15 +14,15 @@ const Slider = ({ id, context, panelContext, ...props }) => {
 	const [value, setValue] = useState(props.value);
 
 	const onChange = (event) => {
-		if(props.onChange){
-			props.onChange.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(event.value);
+		if (props.onChange) {
+			props.onChange.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(event.value);
 		}
-		
+
 		setValue(event.value);
 	}
 
 	useEffect(() => {
-		if(props.value != null){
+		if (props.value != null) {
 			setValue(props.value);
 		}
 	}, [props.value]);
@@ -34,7 +34,7 @@ const Slider = ({ id, context, panelContext, ...props }) => {
 		});
 	}, []);
 
-	if(panelContext._status !== PANEL_STATUS_READY) return;
+	if (panelContext._status !== PANEL_STATUS_READY) return;
 
 	return (
 		<PrimeSlider

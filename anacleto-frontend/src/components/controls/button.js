@@ -8,8 +8,8 @@ import { getTranslator } from '../../utils/translator';
 import { useSelector } from 'react-redux';
 import { selectApplication, selectWindow } from '../../reducers/context';
 
-const Button = ({ id, context, panelContext, ...props }) => {
-	const { updatePanelContext } = useContext(PanelsContext);
+const Button = ({ id, context, panelContext, windowData, ...props }) => {
+	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 	const application = useSelector(selectApplication);
 	const window = useSelector(selectWindow)
 	const t = getTranslator({application, window})
@@ -20,9 +20,9 @@ const Button = ({ id, context, panelContext, ...props }) => {
 
 	const onClick = function (_event) {
 		if (props.onClick) {
-			props.onClick(_event, props.context);
+			props.onClick.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(_event);
 		} else if (props.events.onClick) {
-			props.events.onClick(_event, props.context);
+			props.events.onClick.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(_event);
 		}
 	};
 
@@ -63,7 +63,7 @@ Button.propTypes = {
 	context: PropTypes.object,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,

@@ -1,121 +1,121 @@
 {
-	"id": "user_detail_window",
-	"component": "GridContainer",
-	"title": "User",
-	"isCard": true,
-	"layout": "flex",
-	"className": "flex-column flex-auto",
-	"items": [
-		{
-			"id": "user_detail",
-			"store": "users/detail",
-			"mode": "insert",
-			"dataModel": "Window",
-			"component": "Form",
-			"className": "p-4 col-12 p-1",
-			"events": {
-				"afterRender": {
-					"body": "const _this = this;const uid = utils.getSearchParam('uid'); this.load({uid: uid})"
-				},
-				"onRecordChange": {
-					"parameters": "record",
-					"body": "this.panelsContext.userPhoto.setImage(record.photoURL)"
-				}
-			},
-			"items": [
-				{
-					"id": "userPhoto",
-					"component": "Avatar",
-					"size": "xlarge",
-					"containerClassName": "mr-3"
-				},
-				{
-					"id": "nameContainer",
-					"component": "GridContainer",
-					"layout": "flex",
-					"className": "col-9 flex-column mb-5",
-					"items": [
-						{
-							"component": "Label",
-							"id": "displayName",
-							"label": "displayName",
-							"className": "text-900 font-medium text-3xl"
-						},
-						{
-							"component": "Label",
-							"id": "email",
-							"label": "email",
-							"className": "font-medium text-500 -mt-2"
-						}
-					]
-				},
-				{
-					"containerClassName": "col-12 md:col-4",
-					"component": "TextInput",
-					"hasFloatingLabel": true,
-					"id": "uid",
-					"disabled": true,
-					"label": "UID"
-				},
-				{
-					"className": "col-12",
-					"component": "Checkbox",
-					"id": "disabled",
-					"disabled": true,
-					"label": "Disabled"
-				},
-				{
-					"className": "col-12 mb-4",
-					"component": "Checkbox",
-					"id": "emailVerified",
-					"disabled": true,
-					"label": "Email verified"
-				},
-				{
-					"containerClassName": "col-12 md:col-4",
-					"component": "TextInput",
-					"hasFloatingLabel": true,
-					"id": "creationTime",
-					"disabled": true,
-					"label": "Creation time"
-				},
-				{
-					"containerClassName": "col-12 md:col-4",
-					"component": "TextInput",
-					"hasFloatingLabel": true,
-					"id": "lastSignInTime",
-					"disabled": true,
-					"label": "Last login"
-				},
-				{
-					"id": "userRoles",
-					"component": "AutoComplete",
-					"label": "Roles",
-					"containerClassName": "col-12 md:col-9",
-					"descriptionField": "description",
-					"availableValuesField": "rolesAvailable",
-					"filterField": "description",
-					"hasFloatingLabel": true,
-					"disabled": true,
-					"events": {
-						"afterRender": {
-							"body": "this.setLabel(`Roles for application: ${this.context.destApplication} tenant: ${this.context.tenant}`)"
-						}
-					}
-				},
-				{
-					"component": "Button",
-					"className": "mt-6 col-12 md:col-4 md:col-offset-4",
-					"containerClassName": "w-full",
-					"id": "save",
-					"label": "Update roles",
-					"events": {
-						"onClick": {
-							"body": "const _this = this;context.panels.user_detail.setIsLoading(true);var record = context.panels.user_detail.getRecord();var body = {data: record.userRoles };utils.callServer({url: '/userRoles',method: 'patch',params: {userUid: record.uid,destapplication : _this.context.destApplication},data: body}).then(function (response) {if(response.data.success){utils.showToast({ severity: 'success', summary: 'Roles updated', detail: JSON.stringify(response.data), life: 3000 });}else{utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + response.data.message || 'Error', sticky: true }); }context.panels.user_detail.setIsLoading(false);}).catch(function (error) {utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + error || 'Error', sticky: true });context.panels.user_detail.setIsLoading(false);});"
-						}
-					}
-				}
-			]
-		}
-	]
+    "id": "user",
+    "component": "GridContainer",
+    "title": "User",
+    "isCard": true,
+    "layout": "flex",
+    "className": "flex-column flex-auto",
+    "components": [
+        {
+            "id": "user_detail",
+            "store": "users/detail",
+            "mode": "insert",
+            "dataModel": "Window",
+            "component": "Form",
+            "className": "p-4 col-12 p-1",
+            "components": [
+                {
+                    "id": "userPhoto",
+                    "component": "Avatar",
+                    "size": "xlarge",
+                    "containerClassName": "mr-3"
+                },
+                {
+                    "id": "nameContainer",
+                    "component": "GridContainer",
+                    "layout": "flex",
+                    "className": "col-9 flex-column mb-5",
+                    "components": [
+                        {
+                            "component": "Label",
+                            "id": "displayName",
+                            "label": "displayName",
+                            "className": "text-900 font-medium text-3xl"
+                        },
+                        {
+                            "component": "Label",
+                            "id": "email",
+                            "label": "email",
+                            "className": "font-medium text-500 -mt-2"
+                        }
+                    ]
+                },
+                {
+                    "containerClassName": "col-12 md:col-4",
+                    "component": "TextInput",
+                    "hasFloatingLabel": true,
+                    "id": "uid",
+                    "disabled": true,
+                    "label": "UID"
+                },
+                {
+                    "className": "col-12",
+                    "component": "Checkbox",
+                    "id": "disabled",
+                    "disabled": true,
+                    "label": "Disabled"
+                },
+                {
+                    "className": "col-12 mb-4",
+                    "component": "Checkbox",
+                    "id": "emailVerified",
+                    "disabled": true,
+                    "label": "Email verified"
+                },
+                {
+                    "containerClassName": "col-12 md:col-4",
+                    "component": "TextInput",
+                    "hasFloatingLabel": true,
+                    "id": "creationTime",
+                    "disabled": true,
+                    "label": "Creation time"
+                },
+                {
+                    "containerClassName": "col-12 md:col-4",
+                    "component": "TextInput",
+                    "hasFloatingLabel": true,
+                    "id": "lastSignInTime",
+                    "disabled": true,
+                    "label": "Last login"
+                },
+                {
+                    "id": "userRoles",
+                    "component": "AutoComplete",
+                    "label": "Roles",
+                    "containerClassName": "col-12 md:col-9",
+                    "descriptionField": "description",
+                    "availableValuesField": "rolesAvailable",
+                    "filterField": "description",
+                    "hasFloatingLabel": true,
+                    "disabled": true,
+                    "events": {
+                        "afterRender": {
+                            "body": "this.setLabel(`Roles for application: ${this.context.destApplication} tenant: ${this.context.tenant}`)"
+                        }
+                    }
+                },
+                {
+                    "component": "Button",
+                    "className": "mt-6 col-12 md:col-4 md:col-offset-4",
+                    "containerClassName": "w-full",
+                    "id": "save",
+                    "label": "Update roles",
+                    "events": {
+                        "onClick": {
+                            "body": "const _this = this;\ncontext.panels.user_detail.setIsLoading(true);\nvar record = context.panels.user_detail.getRecord();\nvar body = {\n    data: record.userRoles\n};\nutils.callServer({\n    url: '/userRoles',\n    method: 'patch',\n    params: {\n        userUid: record.uid,\n        destapplication: _this.context.destApplication\n    },\n    data: body\n}).then(function(response) {\n    if (response.data.success) {\n        utils.showToast({\n            severity: 'success',\n            summary: 'Roles updated',\n            detail: JSON.stringify(response.data),\n            life: 3000\n        });\n    } else {\n        utils.showToast({\n            severity: 'error',\n            summary: 'Error',\n            detail: 'Server error: ' + response.data.message || 'Error',\n            sticky: true\n        });\n    }\n    context.panels.user_detail.setIsLoading(false);\n}).catch(function(error) {\n    utils.showToast({\n        severity: 'error',\n        summary: 'Error',\n        detail: 'Server error: ' + error || 'Error',\n        sticky: true\n    });\n    context.panels.user_detail.setIsLoading(false);\n});"
+                        }
+                    }
+                }
+            ],
+            "events": {
+                "afterRender": {
+                    "body": "const uid = utils.getSearchParam('uid');\n this.load({uid: uid})"
+                },
+                "onRecordChange": {
+                    "parameters": "record",
+                    "body": "debugger;\n//this.components.userPhoto.setImage(record.photoURL)"
+                }
+            }
+        }
+    ]
 }

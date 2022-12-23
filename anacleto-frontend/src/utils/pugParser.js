@@ -13,13 +13,13 @@
  *   "props": {
  *     "className": "flex flex-column"
  *   },
- *   "items": [
+ *   "components": [
  *     {
  *       "tag": "span",
  *       "props": {
  *         "className": "p-text"
  *       },
- *       "items": [
+ *       "components": [
  *         "pippo"
  *       ]
  *     },
@@ -28,7 +28,7 @@
  *       "props": {
  *         "className": "p-text"
  *       },
- *       "items": [
+ *       "components": [
  *         "pluto"
  *       ]
  *     }
@@ -85,7 +85,7 @@ class PubParser {
                 const tag = {
                     type : tagType,
                     props : {},
-                    items : []
+                    components : []
                 }
                 if(tagId){
                     tag.props.id = tagId;
@@ -94,7 +94,7 @@ class PubParser {
                     tag.props.className = tagClasses;
                 }
                 if(content){
-                    tag.items.push(content);
+                    tag.components.push(content);
                 }
 
 
@@ -106,15 +106,15 @@ class PubParser {
                     if(_previusDeep === rowDeep){
                         //sono allo stesso livello
                         _tagStack.pop(); //butto via l'ultimo, sto passando a un altro nodo padre
-                        _tagStack.slice(-1)[0].items.push(tag); //aggiungo questo tag al nodo in cima allo stack
+                        _tagStack.slice(-1)[0].components.push(tag); //aggiungo questo tag al nodo in cima allo stack
                     }else if(_previusDeep < rowDeep){
                         //sto scendendo
-                        _tagStack.slice(-1)[0].items.push(tag); //aggiungo questo tag al nodo in cima allo stack
+                        _tagStack.slice(-1)[0].components.push(tag); //aggiungo questo tag al nodo in cima allo stack
                     }else if(_previusDeep > rowDeep){
                         //sto salendo
-                        //_tagStack.slice(rowDeep-_previusDeep)[0].items.push(tag); 
+                        //_tagStack.slice(rowDeep-_previusDeep)[0].components.push(tag); 
                         _tagStack.splice(rowDeep); //tengo i primi elementi
-                        _tagStack.slice(-1)[0].items.push(tag); //aggiungo questo tag al nodo in cima allo stack
+                        _tagStack.slice(-1)[0].components.push(tag); //aggiungo questo tag al nodo in cima allo stack
                     }
 
                 }

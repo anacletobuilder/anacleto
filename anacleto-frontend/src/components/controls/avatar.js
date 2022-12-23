@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { PanelsContext, PANEL_STATUS_READY } from "../../contexts/panelsContext";
 import { defaultMemoizeFunction } from "../../utils/utils";
 
-const Avatar = ({ id, context, panelContext, ...props }) => {
+const Avatar = ({ id, context, panelContext, windowData, ...props }) => {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 	const [label, setLabel] = useState(props.label);
 	const [icon, setIcon] = useState(props.icon);
@@ -25,6 +25,10 @@ const Avatar = ({ id, context, panelContext, ...props }) => {
 			setImage
 		});
 	}, []);
+
+	useEffect(() => {
+		setImage(typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id] || props.image);
+	}, [props.record]);
 
 	if(panelContext._status !== PANEL_STATUS_READY) return;
 	
@@ -59,7 +63,7 @@ MemoAvatar.displayName = "Avatar";
 Avatar.propTypes = {
 	id: PropTypes.string.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	panelContext: PropTypes.object.isRequired,

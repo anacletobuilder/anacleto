@@ -8,43 +8,45 @@ import { defaultMemoizeFunction } from "../../utils/utils";
 /**
  * Contenitore pannelli con struttura a griglia
  */
-function GridContainer({ id, context, panelContext, ...props }) {
+function GridContainer({ id, context, panelContext, windowData, ...props }) {
 	const { updatePanelContext } = useContext(PanelsContext);
 
 	useEffect(() => {
 		updatePanelContext({ id });
 	}, []);
 
-	if(panelContext._status !== PANEL_STATUS_READY) return;
+	if (panelContext._status !== PANEL_STATUS_READY) return;
 
-	return (<React.Fragment>
-		{ props.items &&
-			<div
-				className={classNames(props.layout == "flex" ? "flex gap-3" : "grid", props.className)}
-				style={props.style || {}}
-			>
-				{
-					React.Children.toArray
-					(props.children).filter(c => c ).map(c => (
-						React.cloneElement(c, c.type?.type?.name ? {
-							record: props.record,
-							setRecord: props.setRecord,
-							forwardData: props.forwardData,
-						} : {})
-					))
-				}
-			</div>
-		}
-		{ !props.items && <div className="layout-main-container">
-			<div className="card">
-				<div className="grid">
-					<div className="col-12">
-						<Message severity="error" text="No items" />
+	return (
+		<React.Fragment>
+			{props.components &&
+				<div
+					className={classNames(props.layout == "flex" ? "flex gap-3" : "grid", props.className)}
+					style={props.style || {}}>
+					{
+						React.Children.toArray
+							(props.children).filter(c => c).map(c => (
+								//use cloneElement for add props to element
+								React.cloneElement(c, c.type?.type?.name ? {
+									//[@lucabiasotto 2022-12-23] grid not has record record: props.record,
+									//[@lucabiasotto 2022-12-23] grid not has record setRecord: props.setRecord,
+									//[@lucabiasotto 2022-12-23] windowData is already in props, here it's undefined windowData: props.windowData,
+								} : {})
+							))
+					}
+				</div>
+			}
+			{!props.components && <div className="layout-main-container">
+				<div className="card">
+					<div className="grid">
+						<div className="col-12">
+							<Message severity="error" text={`Grid container '${id}' has not components.`} />
+						</div>
 					</div>
 				</div>
-			</div>
-		</div>}
-	</React.Fragment>);
+			</div>}
+		</React.Fragment>
+	);
 }
 
 const MemoGridContainer = React.memo(GridContainer, (prev, next) => {
@@ -56,10 +58,10 @@ GridContainer.propTypes = {
 	id: PropTypes.string,
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
-	items: PropTypes.array,
+	components: PropTypes.array,
 	isCard: PropTypes.bool,
 	toggleable: PropTypes.bool,
 	events: PropTypes.object,

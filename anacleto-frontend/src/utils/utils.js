@@ -1,4 +1,4 @@
-import {getToken as getLoginToken} from '../login/loginUtils'
+import { getToken as getLoginToken } from '../login/loginUtils'
 /**
  * Classe di utilità lato client, singola istanza
  *
@@ -7,7 +7,7 @@ import {getToken as getLoginToken} from '../login/loginUtils'
  * @param {object} searchParams
  */
 class Utils {
-	constructor() {}
+	constructor() { }
 	init(params) {
 		this.userCredential = params.userCredential;
 		this.navigate = params.navigate;
@@ -17,7 +17,6 @@ class Utils {
 		this.setDialogSettings = params.setDialogSettings;
 		this.setInputDialogSettings = params.setInputDialogSettings;
 		this.setSidebarSettings = params.setSidebarSettings
-		this.setDialogForwardData = params.setDialogForwardData;
 		this.context = params.context;
 		return this;
 	}
@@ -45,7 +44,7 @@ class Utils {
 	 */
 	getToken = () => {
 		return getLoginToken();
-		
+
 		//ho fatto un tentativo per fare l'autorefresh
 		// // Verify the ID token while checking if the token is revoked by passing
 		// // checkRevoked true.
@@ -180,7 +179,7 @@ class Utils {
 			} else {
 				return val;
 			}
-		});
+		},4);
 	};
 
 	/**
@@ -237,26 +236,28 @@ class Utils {
 		const searchParams = { ...{ tenant: this.context.tenant, application: this.context.application }, ...params.searchParams };
 		const type = params.type || "window";
 		var settings = params.settings || {};
-		this.setDialogForwardData(params.forwardData || {});
 
-		switch(type){
-			case 'modal': case 'dialog':{
+		switch (type) {
+			case 'modal':
+			case 'dialog':
 				settings.windowId = window;
 				settings.visible = true;
+				settings.windowData = params.windowData;
 				this.setDialogSettings(settings);
-			}break;
-			case 'sidebar':{
+				break;
+			case 'sidebar':
 				settings.windowId = window;
 				settings.visible = true;
+				settings.windowData = params.windowData;
 				this.setSidebarSettings(settings);
-			}break;
-			default:{
+				break;
+			default:
 				const options = {
 					searchParams: searchParams,
+					windowData : params.windowData
 				};
-		
 				this.navigate(window, options);
-			}
+				break;
 		}
 	};
 
@@ -330,7 +331,7 @@ class Utils {
 		switch (type) {
 			//Finestre
 			case "window":
-				config = { window: "", items: [], events: {} };
+				config = { window: "", components: [], events: {} };
 				events = [];
 				break;
 			//Tipi di pannelli
@@ -346,7 +347,7 @@ class Utils {
 					dataModel: "",
 					className: "",
 					events: {},
-					items: [],
+					components: [],
 				};
 				events = [{ code: "afterRender", description: "afterRender" }];
 				break;
@@ -372,7 +373,7 @@ class Utils {
 					dataKey: "id",
 					emptyMessage: "No data",
 					events: {},
-					items: [],
+					components: [],
 				};
 				events = [
 					{
@@ -391,7 +392,7 @@ class Utils {
 					isCard: false,
 					toggleable: false,
 					events: {},
-					items: [],
+					components: [],
 				};
 				events = [];
 				break;
@@ -407,7 +408,7 @@ class Utils {
 					toggleable: false,
 					className: "",
 					events: {},
-					items: [],
+					components: [],
 				};
 				events = [
 					{ code: "onExpand", description: "onExpand" },
@@ -424,7 +425,7 @@ class Utils {
 					layout: "grid",
 					title: "",
 					events: {},
-					items: [],
+					components: [],
 				};
 				events = [];
 				break;
@@ -676,19 +677,19 @@ export const defaultMemoizeFunction = (propTypes, prevProps, nextProps) => {
 }
 //Internal function to convert metadata events to JS Functions
 export const getFunctionFromMetadata = (functionObj) => {
-	if(functionObj.constructor == Function){
+	if (functionObj.constructor == Function) {
 		//Is already a function, just return it
 		return functionObj;
-	}else if(!functionObj.body){
+	} else if (!functionObj.body) {
 		let msg = 'Events must be defined as eventName: { parameters: "parameter1, parameter2, ..., parameterN", body: "return ..." }.';
 		console.warn(msg);
 		return () => (console.warn(msg));
-	}else{
+	} else {
 		//console.log("Converting metadata to function for component " + component, functionObj);
-		try{
+		try {
 			return new Function(functionObj.parameters || "", functionObj.body);
-		}catch(e){
-			console.error(`Invalid event script\n${functionObj.body}\n`,e);
+		} catch (e) {
+			console.error(`Invalid event script\n${functionObj.body}\n`, e);
 			return () => (console.error(e));
 		}
 	}

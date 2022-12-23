@@ -1,14 +1,48 @@
 {
-	"id": "home",
-	"component": "GridContainer",
-	"isCard": true,
-	"items": [
-		{
-			"id": "home_panel",
-			"component": "Label",
-			"label": "Riprendi da dove avevi lasciato",
-			"width": "col-12",
-			"className": "bg-primary-reverse"
-		}
-	]
+    "id": "home",
+    "windowName": "Home",
+    "component": "GridContainer",
+    "components": [
+        {
+            "id": "home_sample_form",
+            "component": "Form",
+            "isCard": true,
+            "toggleable": false,
+            "title": "Welcome to Anacleto Builder",
+            "containerClassName": "col-12 md:col-6",
+            "className": "mt-0 md:mt-4",
+            "components": [
+                {
+                    "component": "Label",
+                    "className": "col-12 mt-5",
+                    "id": "subtitle",
+                    "label": "If you have any questions check out the Docs or contact us on GitHub. 🧐"
+                },
+                {
+                    "component": "Button",
+                    "containerClassName": "col-12 md:col-6 mt-5",
+                    "className": "col-12",
+                    "id": "btnDocs",
+                    "label": "Docs 📖",
+                    "events": {
+                        "onClick": {
+                            "body": "window.open('https://anacleto.gitbook.io/anacleto/', '_blank').focus();"
+                        }
+                    }
+                },
+                {
+                    "component": "Button",
+                    "containerClassName": "col-12 md:col-6 mt-5",
+                    "className": "col-12",
+                    "id": "btnGit",
+                    "label": "GitHub 🗂",
+                    "events": {
+                        "onClick": {
+                            "body": "window.open('https://github.com/anacletobuilder/anacleto', '_blank').focus();"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
 }

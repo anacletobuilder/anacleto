@@ -15,8 +15,8 @@ function listToTree(_list) {
         return {
             key: leave.key || utils.uuid(),
             label: leave.label,
-            icon: leave.icon || (leave.items ? "pi pi-fw pi-sitemap" : "pi pi-fw pi-circle-fill"),
-            children: listToTree(leave.items),
+            icon: leave.icon || (leave.components ? "pi pi-fw pi-sitemap" : "pi pi-fw pi-circle-fill"),
+            children: listToTree(leave.components),
             //Perchè riportare l'oggetto in ingresso se creo quello nuovo? leave: leave, 
             command: leave.command
         }

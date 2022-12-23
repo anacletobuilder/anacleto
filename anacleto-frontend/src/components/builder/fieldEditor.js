@@ -15,12 +15,12 @@ import EditorPreview from "./editor/editorPreview";
 import { TEXT_SIZES } from "./editor/editorTextSize";
 const { v4: uuidv4 } = require("uuid");
 
-const FieldEditor = ({ id, context, panelContext, ...props }) => {
+const FieldEditor = ({ id, context, panelContext, windowData, ...props }) => {
 	const application = context.application;
 	const destApplication = context.destApplication;
 	const tenant = context.tenant;
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
-	const [fieldData, setFieldData] = useState(props.forwardData || { node: { attributes: {}}});
+	const [fieldData, setFieldData] = useState(props.windowData || { node: { attributes: {} } });
 	useEffect(() => {
 		updatePanelContext({
 			id,
@@ -30,28 +30,28 @@ const FieldEditor = ({ id, context, panelContext, ...props }) => {
 
 	let classNameBreakpoints = { xs: [], sm: [], md: [], lg: [], xl: [] };
 	fieldData.node.attributes.className?.split(" ").map((cl) => {
-		if(cl.startsWith("sm:")){ classNameBreakpoints.sm.push(cl.replace("sm:", "")); }
-		else if(cl.startsWith("md:")){ classNameBreakpoints.md.push(cl.replace("md:", "")); }
-		else if(cl.startsWith("lg:")){ classNameBreakpoints.lg.push(cl.replace("lg:", "")); }
-		else if(cl.startsWith("xl:")){ classNameBreakpoints.xl.push(cl.replace("xl:", "")); }
-		else{ classNameBreakpoints.xs.push(cl.replace("xs:", "")); }
+		if (cl.startsWith("sm:")) { classNameBreakpoints.sm.push(cl.replace("sm:", "")); }
+		else if (cl.startsWith("md:")) { classNameBreakpoints.md.push(cl.replace("md:", "")); }
+		else if (cl.startsWith("lg:")) { classNameBreakpoints.lg.push(cl.replace("lg:", "")); }
+		else if (cl.startsWith("xl:")) { classNameBreakpoints.xl.push(cl.replace("xl:", "")); }
+		else { classNameBreakpoints.xs.push(cl.replace("xs:", "")); }
 	});
 	const getClassnamesFromBreakpoints = useCallback((className) => {
-		return Object.keys(classNameBreakpoints).map((bp) => ({[bp]: classNameBreakpoints[bp].filter((cl) => cl.startsWith(className))})).reduce((p, n) => ({ ...p, ...n }), {});
+		return Object.keys(classNameBreakpoints).map((bp) => ({ [bp]: classNameBreakpoints[bp].filter((cl) => cl.startsWith(className)) })).reduce((p, n) => ({ ...p, ...n }), {});
 	}, [classNameBreakpoints]);
 
 	const getFlexDirection = () =>
-	FLEX_DIRECTIONS[
+		FLEX_DIRECTIONS[
 		getClassnamesFromBreakpoints('flex-').xs.filter(
 			(fd) =>
-			[
-				FLEX_DIRECTIONS[FLEX_ROW],
-				FLEX_DIRECTIONS[FLEX_COLUMN],
-				FLEX_DIRECTIONS[FLEX_ROW_REVERSE],
-				FLEX_DIRECTIONS[FLEX_COLUMN_REVERSE],
-			].indexOf(fd) >= 0
+				[
+					FLEX_DIRECTIONS[FLEX_ROW],
+					FLEX_DIRECTIONS[FLEX_COLUMN],
+					FLEX_DIRECTIONS[FLEX_ROW_REVERSE],
+					FLEX_DIRECTIONS[FLEX_COLUMN_REVERSE],
+				].indexOf(fd) >= 0
 		)[0]
-	];
+		];
 	const getFlexJustify = () => (
 		FLEX_JUSTIFICATION[getClassnamesFromBreakpoints("justify-content-").xs[0]] || JUSTIFY_START
 	);
@@ -65,31 +65,31 @@ const FieldEditor = ({ id, context, panelContext, ...props }) => {
 		PADDINGS[getClassnamesFromBreakpoints("p-").xs[0] || PADDING_0]
 	);
 	const getTextSize = () =>
-	TEXT_SIZES[
+		TEXT_SIZES[
 		getClassnamesFromBreakpoints('text-').xs.filter(
 			(fs) =>
-			[
-				TEXT_SIZES[TEXT_XS],
-				TEXT_SIZES[TEXT_SM],
-				TEXT_SIZES[TEXT_BASE],
-				TEXT_SIZES[TEXT_LG],
-				TEXT_SIZES[TEXT_XL],
-			].indexOf(fs) >= 0
+				[
+					TEXT_SIZES[TEXT_XS],
+					TEXT_SIZES[TEXT_SM],
+					TEXT_SIZES[TEXT_BASE],
+					TEXT_SIZES[TEXT_LG],
+					TEXT_SIZES[TEXT_XL],
+				].indexOf(fs) >= 0
 		)[0] || 'text-base'
-	];
+		];
 	const getFontWeight = () =>
-	FONT_WEIGHTS[
+		FONT_WEIGHTS[
 		getClassnamesFromBreakpoints('font-').xs.filter(
 			(fw) =>
-			[
-				FONT_WEIGHTS[FONT_LIGHT],
-				FONT_WEIGHTS[FONT_NORMAL],
-				FONT_WEIGHTS[FONT_MEDIUM],
-				FONT_WEIGHTS[FONT_SEMIBOLD],
-				FONT_WEIGHTS[FONT_BOLD],
-			].indexOf(fw) >= 0
+				[
+					FONT_WEIGHTS[FONT_LIGHT],
+					FONT_WEIGHTS[FONT_NORMAL],
+					FONT_WEIGHTS[FONT_MEDIUM],
+					FONT_WEIGHTS[FONT_SEMIBOLD],
+					FONT_WEIGHTS[FONT_BOLD],
+				].indexOf(fw) >= 0
 		)[0] || 'font-normal'
-	];
+		];
 
 	/* EDITOR STATES */
 	const [previewBreakpoint, setPreviewBreakpoint] = useState("xs");
@@ -105,12 +105,12 @@ const FieldEditor = ({ id, context, panelContext, ...props }) => {
 		let classnames = "";
 		//Add all breakpoints classes to classnames, except for the current breakpoing
 		Object.keys(classNameBreakpoints)
-		.filter((bp) => bp !== previewBreakpoint)
-		.map((bp) =>
-			classNameBreakpoints[bp]
-			.map((cl) => (classnames += `${bp !== 'xs' ? bp + ':' : ''}${cl}`))
-			.join(' ')
-		);
+			.filter((bp) => bp !== previewBreakpoint)
+			.map((bp) =>
+				classNameBreakpoints[bp]
+					.map((cl) => (classnames += `${bp !== 'xs' ? bp + ':' : ''}${cl}`))
+					.join(' ')
+			);
 
 		const allClassesRegex = [
 			Object.keys(FLEX_DIRECTIONS).filter((p) => parseInt(p) != p).join("|"),
@@ -123,7 +123,7 @@ const FieldEditor = ({ id, context, panelContext, ...props }) => {
 		].join("|");
 
 		classNameBreakpoints[previewBreakpoint].map((cl) => {
-			if(new RegExp(allClassesRegex.replace(/^|(\|)/g, "$1^")).test(cl) === false){
+			if (new RegExp(allClassesRegex.replace(/^|(\|)/g, "$1^")).test(cl) === false) {
 				classnames += ` ${previewBreakpoint !== 'xs' ? previewBreakpoint + ':' : ''}${cl}`;
 			}
 		});
@@ -137,13 +137,12 @@ const FieldEditor = ({ id, context, panelContext, ...props }) => {
 			FONT_WEIGHTS[fontWeight],
 			PADDINGS[padding],
 		]
-		.filter(Boolean)
-		.map(
-			(cl) =>
-			(classnames += ` ${
-				previewBreakpoint !== 'xs' ? previewBreakpoint + ':' : ''
-			}${cl}`)
-		);
+			.filter(Boolean)
+			.map(
+				(cl) =>
+				(classnames += ` ${previewBreakpoint !== 'xs' ? previewBreakpoint + ':' : ''
+					}${cl}`)
+			);
 
 		return classnames;
 	}
@@ -163,12 +162,12 @@ const FieldEditor = ({ id, context, panelContext, ...props }) => {
 	//Listen to state changes to update element className
 	const [stateDebounceTimeout, setStateDebounceTimeout] = useState(null);
 	useEffect(() => {
-		if(!fieldData.node.attributes.component) return;
+		if (!fieldData.node.attributes.component) return;
 		clearTimeout(stateDebounceTimeout);
 
 		const updatedClassNames = getClassNames();
 		setStateDebounceTimeout(
-			setTimeout((({ fieldData, updatedClassNames, panel, context, panelsContext, updatePanelContext, panelContext}) => {
+			setTimeout((({ fieldData, updatedClassNames, panel, context, panelsContext, updatePanelContext, panelContext }) => {
 
 				//Update record classnames
 				/*setFieldData((prev) => ({
@@ -182,43 +181,43 @@ const FieldEditor = ({ id, context, panelContext, ...props }) => {
 					}
 				}));*/
 				//Update flow nodes
-				if(props.events.onElementChange){
-					props.events.onElementChange.bind({ panel, context, panelsContext, updatePanelContext, ...panelContext })(fieldData, updatedClassNames);
+				if (props.events.onElementChange) {
+					props.events.onElementChange.bind({ panel, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(fieldData, updatedClassNames);
 				}
-			}).bind(null, { fieldData: fieldData.node, updatedClassNames, panel: props, context, panelsContext, updatePanelContext, panelContext }), 1000)
+			}).bind(null, { fieldData: fieldData.node, updatedClassNames, panel: props, context, windowData, components: panelsContext, updatePanelContext, panelContext }), 1000)
 		);
 	}, [flexDirection, width, flexJustify, flexAlign, textSize, fontWeight, padding]);
 
 	const onChange = (value) => {
 		setWidth(value);
 	}
-	
+
 	const handleFlexDirectionChange = useCallback((direction) => {
 		setFlexDirection(direction);
-	},[]);
+	}, []);
 
 	const handleFlexAlignmentChange = useCallback((justify, align) => {
 		setFlexJustify(justify);
 		setFlexAlign(align);
-	},[]);
+	}, []);
 
 	const handleWidthChange = useCallback((width) => {
 		setWidth(width);
-	},[]);
+	}, []);
 
 	const handleTextSizeChange = useCallback((size) => {
 		setTextSize(size);
-	},[]);
+	}, []);
 
 	const handleFontWeightChange = useCallback((weight) => {
 		setFontWeight(weight);
-	},[]);
+	}, []);
 
 	const handlePaddingChange = useCallback((padding) => {
 		setPadding(padding);
-	},[]);
+	}, []);
 
-	if(panelContext._status !== PANEL_STATUS_READY || !fieldData.node.attributes.component) return <React.Fragment />;
+	if (panelContext._status !== PANEL_STATUS_READY || !fieldData.node.attributes.component) return <React.Fragment />;
 	const sections = [
 		{
 			title: "Flex Direction",
@@ -266,10 +265,10 @@ const FieldEditor = ({ id, context, panelContext, ...props }) => {
 		</div>
 		<div className={classNames((props.className || ""), "flex flex-column flex-auto gap-4 overflow-auto xl:mt-8 xl:pt-8")} style={{ height: 0 }}>
 			<div className={classNames("flex flex-column flex-auto xl:mt-8 xl:pt-6")}>
-				{ sections.map((s, i) => (
+				{sections.map((s, i) => (
 					<React.Fragment key={s.title}>
 						{(typeof s.renderIf === typeof undefined || s.renderIf) && <div className={classNames("flex flex-column mb-6", { [`xl:${PADDINGS[padding]}`]: i === 0 })}>
-							<span className="text-xl font-bold mb-3">{ s.title }</span>
+							<span className="text-xl font-bold mb-3">{s.title}</span>
 							{s.element}
 						</div>}
 					</React.Fragment>
@@ -300,7 +299,7 @@ FieldEditor.propTypes = {
 	id: PropTypes.string.isRequired,
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	className: PropTypes.string,
 	setIsLoading: PropTypes.func,
 	record: PropTypes.object,

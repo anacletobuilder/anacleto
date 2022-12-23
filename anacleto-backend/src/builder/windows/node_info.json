@@ -2,7 +2,7 @@
 	"id": "node_info",
 	"component": "GridContainer",
 	"className": "flex-auto m-0",
-	"items": [{
+	"components": [{
 		"id": "field-editor",
 		"component": "FieldEditor",
 		"className" : "flex-auto"

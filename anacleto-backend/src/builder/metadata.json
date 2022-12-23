@@ -6,7 +6,7 @@
 		{
 			"label": "Apps",
 			"icon": "pi pi-fw pi-th-large",
-			"items": [
+			"components": [
 				{
 					"label": "Settings",
 					"icon": "pi pi-fw pi-cog",
@@ -19,7 +19,7 @@
 		{
 			"label": "UI",
 			"icon": "pi pi-fw pi-desktop",
-			"items": [
+			"components": [
 				{
 					"label": "Menu",
 					"icon": "pi pi-fw pi-sitemap",
@@ -53,7 +53,7 @@
 		{
 			"label": "Code",
 			"icon": "pi pi-fw pi-code",
-			"items": [
+			"components": [
 				{
 					"label": "Scripts",
 					"icon": "pi pi-fw pi-list",
@@ -66,7 +66,7 @@
 		{
 			"label": "Access management",
 			"icon": "pi pi-fw pi-desktop",
-			"items": [
+			"components": [
 				{
 					"label": "Users",
 					"icon": "pi pi-fw pi-users",

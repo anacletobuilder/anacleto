@@ -10,7 +10,7 @@ import { classNames } from "primereact/utils";
  * @param {Object} props.context: struttura della finestra
  * @returns
  */
-function AutoComplete({ id, context, panelContext, ...props }) {
+function AutoComplete({ id, context, panelContext, windowData, ...props }) {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 
 	const [availableValues, setAvailableValues] = useState([]); //Valori disponibili
@@ -97,7 +97,7 @@ AutoComplete.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,

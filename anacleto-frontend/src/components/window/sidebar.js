@@ -87,7 +87,6 @@ function Sidebar(props) {
 
     const onHide = () => {
         {
-            window.utils.setForwardData({});
             props.setSidebarSettings({ visible: false, position: props.settings.position || "right", style: props.settings.style })
         }
     }
@@ -130,7 +129,7 @@ function Sidebar(props) {
 
                 <MemoGridContainer
                     key={props.windowId + "_container"}
-                    items={sidebarMetadata?.items ? sidebarMetadata.items : null}
+                    components={sidebarMetadata?.components ? sidebarMetadata.components : null}
                     layout={sidebarMetadata.layout}
                     className={sidebarMetadata.className}
                     context={context || {}}>

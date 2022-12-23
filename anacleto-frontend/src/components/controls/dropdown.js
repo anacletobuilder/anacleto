@@ -7,7 +7,7 @@ import { PanelsContext, PANEL_STATUS_READY } from '../../contexts/panelsContext'
 import { defaultMemoizeFunction } from '../../utils/utils';
 import PropTypes from 'prop-types';
 
-const Dropdown = ({ id, context, panelContext, ...props }) => {
+const Dropdown = ({ id, context, panelContext, windowData, ...props }) => {
 	//Context variables for server calls
 	const application = context.application;
 	const destApplication = context.destApplication;
@@ -16,7 +16,7 @@ const Dropdown = ({ id, context, panelContext, ...props }) => {
 	//Context for updating panelContext (and make panel methods available for other Components to use)
 	const { updatePanelContext } = useContext(PanelsContext);
 	const [options, setOptions] = useState(props.options || []);
-	const [selected, setSelected] = useState(props.record[id]);
+	const [selected, setSelected] = useState(props.record && props.record[id]);
 	const [lazyLoading, setLazyLoading] = useState(false);
 
 	useEffect(() => {
@@ -85,7 +85,7 @@ const Dropdown = ({ id, context, panelContext, ...props }) => {
     return <PrimeDropdown
         id = {id}
         name = {props.name}
-        value={props.record[id]}
+        value={selected}
         options={options}
         optionLabel = {props.optionLabel}
         optionValue = {props.optionValue}
@@ -139,7 +139,7 @@ Dropdown.propTypes = {
 	events: PropTypes.object,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	setIsLoading: PropTypes.func,
 	isCard: PropTypes.bool,
 	className: PropTypes.string,

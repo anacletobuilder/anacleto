@@ -22,7 +22,7 @@ import { defaultMemoizeFunction } from "../../utils/utils";
  * @param {Object} props.context: struttura della finestra
  * @returns
  */
-function TextInput({ id, context, panelContext, ...props }) {
+function TextInput({ id, context, panelContext, windowData, ...props }) {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
 	const [inputValue, setInputValue] = useState(props.value || (typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id]) || "");
 	const [isValidInput, setIsValidInput] = useState(false);
@@ -33,14 +33,14 @@ function TextInput({ id, context, panelContext, ...props }) {
 	const [changeTimeout, setChangeTimeout] = useState(null);
 
 	useEffect(() => {
-		if(typeof props.disabled !== typeof undefined){
+		if (typeof props.disabled !== typeof undefined) {
 			setDisabled(props.disabled);
 		}
 	}, [props.disabled]);
 
 	useEffect(() => {
 		setInputValue(typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id] || "");
-		if(typeof props.record[id] == 'object'){
+		if (typeof props.record[id] == 'object') {
 			setDisabled(true);
 		}
 	}, [props.record/*, props.value*/]);
@@ -49,25 +49,25 @@ function TextInput({ id, context, panelContext, ...props }) {
 		updatePanelContext({ id, setDisabled });
 	}, []);
 
-	if(panelContext._status !== PANEL_STATUS_READY) return;
+	if (panelContext._status !== PANEL_STATUS_READY) return;
 
 	if (!props.events) {
 		props.events = {};
 	}
 
-	const onChange = async function(_event){
+	const onChange = async function (_event) {
 		const newValue = _event.target.value;
-		
+
 		//Update state value -> Controlled input
 		setInputValue(newValue);
-		
+
 		//Update record value -> Value reflected on parent Form
-		if(props.setRecord){
+		if (props.setRecord) {
 			props.setRecord({ ...props.record, [id]: newValue });
 		}
 
 		//Call onChange if passed by parent Component
-		if(props.onChange){
+		if (props.onChange) {
 			props.onChange(newValue);
 		}
 
@@ -83,28 +83,28 @@ function TextInput({ id, context, panelContext, ...props }) {
 			clearTimeout(changeTimeout);
 			setChangeTimeout(
 				setTimeout(() => {
-					const validationRes = props.events.validate.bind({ panel: props, context, panelsContext, updatePanelContext, ...panelContext })(_event) || { success: false };
+					const validationRes = props.events.validate.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(_event) || { success: false };
 					//È una promise
-					if(validationRes.then instanceof Function){
+					if (validationRes.then instanceof Function) {
 						validationRes
-						.then(() => {
-							setIcon((prev) => ({ ...prev, icon: "pi pi-check-circle" }));
-							setIcon((prev) => ({ ...prev, iconColor: "#68C044" }));
-							
-							setIsValidInput(true);
-							panelContext.setInvalidMessage("");
-						})
-						.catch((e) => {
-							setIcon((prev) => ({ ...prev, icon: "pi pi-times" }));
-							setIcon((prev) => ({ ...prev, iconColor: "#ED4042" }));
-							setIsValidInput(false);
-							panelContext.setInvalidMessage(e.toString() || "");
-						});
-					}else{
+							.then(() => {
+								setIcon((prev) => ({ ...prev, icon: "pi pi-check-circle" }));
+								setIcon((prev) => ({ ...prev, iconColor: "#68C044" }));
+
+								setIsValidInput(true);
+								panelContext.setInvalidMessage("");
+							})
+							.catch((e) => {
+								setIcon((prev) => ({ ...prev, icon: "pi pi-times" }));
+								setIcon((prev) => ({ ...prev, iconColor: "#ED4042" }));
+								setIsValidInput(false);
+								panelContext.setInvalidMessage(e.toString() || "");
+							});
+					} else {
 						if (validationRes.success) {
 							setIcon((prev) => ({ ...prev, icon: "pi pi-check-circle" }));
 							setIcon((prev) => ({ ...prev, iconColor: "#68C044" }));
-							
+
 							setIsValidInput(true);
 							panelContext.setInvalidMessage("");
 						} else {
@@ -143,12 +143,12 @@ function TextInput({ id, context, panelContext, ...props }) {
 				className={classNames("anacleto-input-text-container mt-3 p-fluid field col",
 					props.containerClassName,
 					icon.iconPosition == "left" ? "p-input-icon-left" : "p-input-icon-right", "block",
-					{ "p-float-label": props.hasFloatingLabel}
+					{ "p-float-label": props.hasFloatingLabel }
 				)}
 			>
 				{!props.hasFloatingLabel && labelEl}
 				<i className={icon.icon} style={{ color: icon.iconColor || "inital" }} />
-				
+
 				<InputText
 					id={id}
 					disabled={disabled}
@@ -184,7 +184,7 @@ TextInput.propTypes = {
 	context: PropTypes.object.isRequired,
 	panelContext: PropTypes.object.isRequired,
 	updatePanelContext: PropTypes.func,
-	forwardData: PropTypes.any,
+	windowData: PropTypes.any,
 	record: PropTypes.object,
 	setRecord: PropTypes.func,
 	setIsLoading: PropTypes.func,

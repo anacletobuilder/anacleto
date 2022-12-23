@@ -11,6 +11,7 @@ export const PANEL_STATUS_UNAVAILABLE = 0;
 export const PANEL_STATUS_INITIALIZING = 1;
 export const PANEL_STATUS_RENDERING = 2;
 export const PANEL_STATUS_READY = 3;
+
 const PanelsContextComponent = (props) => {
 	const [panelsContext, setPanelsContext] = useState({});
 

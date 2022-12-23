@@ -1,112 +1,113 @@
 {
-	"id": "window_detail",
-	"component": "GridContainer",
-	
-	"className": "flex-1",
-	"items": [
-		{
-			"id": "window_tabview",
-			"component": "TabView",
-			"title": "Window builder",
-			"toggleable": false,
-			"isCard": true,
-			"actions": [
-				{
-					"id": "save",
-					"label": "Save Window",
-					"icon": "pi pi-save",
-					"events": {
-						"onClick": {
-							"body": "const _this = this;_this.panelsContext.window_tabview.setIsToolbarLoading(true);var activeTab = _this.panelsContext.window_tabview.getActiveIndex();var windowId = window.utils.getSearchParam('window');var windowMap;var body = {data: ''};var canSave = false;if(activeTab == 0) {/*Design*/windowMap = _this.panelsContext.window_flow_builder.flowToMap(windowId);body.data = utils._stringifyJsonWithFunctions(windowMap);canSave = true;}else if (activeTab == 1) {/*Code*/var record = _this.panelsContext.window_editor_code.getRecord();body.data = record.source;canSave = true;}else {utils.showToast({severity:'warn', summary: 'TODO', detail:'Non implementato', life: 3000});}if(canSave) {window.utils.callServer({url: '/window',method: 'patch',params: {application: this.context.destApplication,window: windowId},data: body}).then(function (response) {_this.panelsContext.window_tabview.setIsToolbarLoading(false);if(response.data?.success == true) {window.utils.showToast({ severity: 'success', summary: 'Window updated', detail: JSON.stringify(response.data), life: 3000 });}else {window.utils.showToast({ severity: 'error', summary: 'Error', detail: JSON.stringify(response.data), sticky: true });}}).catch(function (error) {_this.panelsContext.window_tabview.setIsToolbarLoading(false);window.utils.showToast({ severity: 'error', summary: 'Error', detail: 'Server error: ' + error || 'Error', sticky: true });});/*_this.panelsContext.preview_panel.setPreviewItems(window.utils._parseJsonWithFunctions(window.utils._stringifyJsonWithFunctions(windowMap)).items);*/}"
-						}
-					}
-				}
-			],
-			"items": [
-				{
-					"id": "window_editor_design",
-					"component": "GridContainer",
-					"layout": "flex",
-					"title": "Design",
-					"className": "h-full flex flex-auto flex-column md:flex-row",
-					"items": [
-						{
-							"id": "flow_container",
-							"component": "GridContainer",
-							"layout": "flex",
-							"className": "flex-column flex-auto",
-							"items": [
-								{
-									"id": "window_flow_builder",
-									"title": "Builder",
-									"component": "Flow",
-									"events": {
-										"onNodeClick": {
-											"parameters": "event, forwardData",
-											"body": "debugger;const _this = this;if(forwardData.node.type === 'itemnode'){this.panelsContext.field_editor_container.setClassName('w-full md:w-4');}this.panelsContext.field_editor.setFieldData(forwardData);"
-										}
-									}
-								}
-							]
-						},
-						{
-							"id": "field_editor_container",
-							"component": "GridContainer",
-							"layout": "flex",
-							"className": "flex-column transition-all h-full",
-							"style": { "width": 0 },
-							"items": [
-								{
-									"id": "field_editor",
-									"component": "FieldEditor",
-									"className": "p-4",
-									"events": {
-										"onElementChange": {
-											"parameters": "node,newClassNames",
-											"body": "this.panelsContext.window_flow_builder.setNodes((prev) => { const substituteIndex = prev.map((p) => p.id === node.id).indexOf(true); return [...prev.slice(0, substituteIndex), { ...prev[substituteIndex], attributes: { ...prev[substituteIndex].attributes, className: newClassNames }},...prev.slice(substituteIndex + 1)]});"
-										}
-									}
-								}
-							]
-						}
-					]
-				},
-				{
-					"id": "preview_panel",
-					"title": "Preview",
-					"showTitle": true,
-					"component": "Preview",
-					"className": "flex-auto align-content-start p-2",
-					"items": [],
-					"events": {
-						"afterRender": {
-							"parameters": "event, context",
-							"body": "let _this=this;utils.callServer({url: '/window',method: 'get',contentType: 'application/javascript',params: {application: _this.context.destApplication,window: utils.getSearchParam('window'),getRawData: true}}).then(function (response) {if(response.data.items){_this.setPreviewItems([response.data]);}});"
-						}
-					}
-				},
-				{
-					"id": "window_editor_code",
-					"title": "Code",
-					"component": "Form",
-					"containerClassName": "flex flex-auto",
-					"className": "flex flex-auto",
-					"items": [
-						{
-							"component": "CodeEditor",
-							"className": "align-self-stretch flex flex-auto",
-							"id": "source",
-							"language": "json"
-						}
-					],
-					"events": {
-						"afterRender": {
-							"parameters": "event, context",
-							"body": "const _this = this;utils.callServer({url: '/window',method: 'get',params: {application: this.context.destApplication,window: utils.getSearchParam('window'),getRawData:true}}).then(function(response) {_this.setRecord({source: JSON.stringify(response.data,null,4)})})"
-						}
-					}
-				}
-			]
-		}
-	]
+    "id": "window",
+    "component": "GridContainer",
+    "className": "flex-1",
+    "components": [
+        {
+            "id": "window_tabview",
+            "component": "TabView",
+            "title": "Window builder",
+            "toggleable": false,
+            "isCard": true,
+            "components": [
+                {
+                    "id": "window_editor_design",
+                    "component": "GridContainer",
+                    "layout": "flex",
+                    "title": "Design",
+                    "className": "h-full flex flex-auto flex-column md:flex-row",
+                    "components": [
+                        {
+                            "id": "flow_container",
+                            "component": "GridContainer",
+                            "layout": "flex",
+                            "className": "flex-column flex-auto",
+                            "components": [
+                                {
+                                    "id": "window_flow_builder",
+                                    "title": "Builder",
+                                    "component": "Flow",
+                                    "events": {
+                                        "onNodeClick": {
+                                            "parameters": "event, windowData",
+                                            "body": "if (windowData.node.type === 'itemnode') {\n    this.components.field_editor_container.setClassName('w-full md:w-4');\n}\nthis.components.field_editor.setFieldData(windowData);"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "id": "field_editor_container",
+                            "component": "GridContainer",
+                            "layout": "flex",
+                            "className": "flex-column transition-all h-full",
+                            "style": {
+                                "width": 0
+                            },
+                            "components": [
+                                {
+                                    "id": "field_editor",
+                                    "component": "FieldEditor",
+                                    "className": "p-4",
+                                    "events": {
+                                        "onElementChange": {
+                                            "parameters": "node,newClassNames",
+                                            "body": "this.components.window_flow_builder.setNodes((prev) => {\n    const substituteIndex = prev.map((p) => p.id === node.id).indexOf(true);\n    return [...prev.slice(0, substituteIndex), {\n        ...prev[substituteIndex],\n        attributes: {\n            ...prev[substituteIndex].attributes,\n            className: newClassNames\n        }\n    }, ...prev.slice(substituteIndex + 1)]\n});"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "preview_panel",
+                    "title": "Preview",
+                    "showTitle": true,
+                    "component": "Preview",
+                    "className": "flex-auto align-content-start p-2",
+                    "events": {
+                        "afterRender": {
+                            "parameters": "event, context",
+                            "body": "let _this = this;\nutils.callServer({\n    url: '/window',\n    method: 'get',\n    contentType: 'application/javascript',\n    params: {\n        application: _this.context.destApplication,\n        window: utils.getSearchParam('window'),\n        getRawData: true\n    }\n}).then(function(response) {\n    if (response.data.components) {\n        _this.setPreviewItems([response.data]);\n    }\n});"
+                        }
+                    }
+                },
+                {
+                    "id": "window_editor_code",
+                    "title": "Code",
+                    "component": "Form",
+                    "containerClassName": "flex flex-auto",
+                    "className": "flex flex-auto",
+                    "components": [
+                        {
+                            "component": "CodeEditor",
+                            "className": "align-self-stretch flex flex-auto",
+                            "id": "source",
+                            "language": "json"
+                        }
+                    ],
+                    "events": {
+                        "afterRender": {
+                            "parameters": "event, context",
+                            "body": "const _this = this;\nutils.callServer({\n    url: '/window',\n    method: 'get',\n    params: {\n        application: this.context.destApplication,\n        window: utils.getSearchParam('window'),\n        getRawData: true\n    }\n}).then(function(response) {\n    _this.setRecord({\n        source: JSON.stringify(response.data, null, 4)\n    })\n})"
+                        }
+                    }
+                }
+            ],
+            "actions": [
+                {
+                    "id": "save",
+                    "label": "Save Window",
+                    "icon": "pi pi-save",
+                    "type": "action",
+                    "events": {
+                        "onClick": {
+                            "body": "debugger;\nconst _this = this;\n_this.components.window_tabview.setIsToolbarLoading(true);\nvar activeTab = _this.components.window_tabview.getActiveIndex();\nvar windowId = window.utils.getSearchParam('window');\nvar windowMap;\nvar body = {\n    data: ''\n};\nvar canSave = false;\nif (activeTab == 0) {\n    /*Design*/\n    windowMap = _this.components.window_flow_builder.flowToMap(windowId);\n    body.data = utils._stringifyJsonWithFunctions(windowMap);\n    canSave = true;\n} else if (activeTab == 1) {\n    /*Code*/\n    var record = _this.components.window_editor_code.getRecord();\n    body.data = record.source;\n    canSave = true;\n} else {\n    utils.showToast({\n        severity: 'warn',\n        summary: 'TODO',\n        detail: 'Non implementato',\n        life: 3000\n    });\n}\nif (canSave) {\n    window.utils.callServer({\n        url: '/window',\n        method: 'patch',\n        params: {\n            application: this.context.destApplication,\n            window: windowId\n        },\n        data: body\n    }).then(function(response) {\n        _this.components.window_tabview.setIsToolbarLoading(false);\n        if (response.data?.success == true) {\n            window.utils.showToast({\n                severity: 'success',\n                summary: 'Window updated',\n                detail: JSON.stringify(response.data),\n                life: 3000\n            });\n        } else {\n            window.utils.showToast({\n                severity: 'error',\n                summary: 'Error',\n                detail: JSON.stringify(response.data),\n                sticky: true\n            });\n        }\n    }).catch(function(error) {\n        _this.components.window_tabview.setIsToolbarLoading(false);\n        window.utils.showToast({\n            severity: 'error',\n            summary: 'Error',\n            detail: 'Server error: ' + error || 'Error',\n            sticky: true\n        });\n    }); \n}"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
 }
