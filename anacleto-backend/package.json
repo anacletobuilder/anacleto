@@ -22,7 +22,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.17.2",
     "express-winston": "^4.2.0",
-    "firebase-admin": "^10.0.2",
+    "firebase-admin": "^11.4.1",
     "isomorphic-git": "^1.17.0",
     "luxon": "^3.0.1",
     "promise-mysql": "^5.2.0",
