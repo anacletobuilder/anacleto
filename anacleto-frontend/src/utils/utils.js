@@ -179,7 +179,7 @@ class Utils {
 			} else {
 				return val;
 			}
-		},4);
+		}, 4);
 	};
 
 	/**
@@ -254,7 +254,7 @@ class Utils {
 			default:
 				const options = {
 					searchParams: searchParams,
-					windowData : params.windowData
+					windowData: params.windowData
 				};
 				this.navigate(window, options);
 				break;
@@ -325,20 +325,28 @@ class Utils {
 			"avatar",
 		];
 	};
+
+
+	/**
+	 * Get a new node default setting
+	 * @param {*} type 
+	 * @param {string} whatYouWant: 'events' or 'settings'
+	 * @returns 
+	 */
 	getDefaultControlsConfig = (type, whatYouWant) => {
 		let config = {};
 		let events = [];
 		switch (type) {
 			//Finestre
-			case "window":
+			case "Window":
 				config = { window: "", components: [], events: {} };
 				events = [];
 				break;
 			//Tipi di pannelli
-			case "form":
+			case "Form":
 				config = {
 					id: "",
-					type: "form",
+					component: "form",
 					store: "",
 					isCard: false,
 					toggleable: false,
@@ -351,10 +359,10 @@ class Utils {
 				};
 				events = [{ code: "afterRender", description: "afterRender" }];
 				break;
-			case "grid":
+			case "Grid":
 				config = {
 					id: "",
-					type: "grid",
+					component: "grid",
 					store: "",
 					listId: "",
 					title: "",
@@ -383,10 +391,10 @@ class Utils {
 					{ code: "afterRender", description: "afterRender" },
 				];
 				break;
-			case "tabView":
+			case "TabView":
 				config = {
 					id: "",
-					type: "tabView",
+					component: "tabView",
 					title: "",
 					className: "",
 					isCard: false,
@@ -396,10 +404,10 @@ class Utils {
 				};
 				events = [];
 				break;
-			case "tree":
+			case "Tree":
 				config = {
 					id: "",
-					type: "tree",
+					component: "tree",
 					store: "",
 					title: "",
 					background: "",
@@ -418,10 +426,10 @@ class Utils {
 					{ code: "onContextMenu", description: "onContextMenu" },
 				];
 				break;
-			case "gridcontainer":
+			case "Gridcontainer":
 				config = {
 					id: "",
-					type: "gridcontainer",
+					component: "gridcontainer",
 					layout: "grid",
 					title: "",
 					events: {},
@@ -430,10 +438,10 @@ class Utils {
 				events = [];
 				break;
 			//Controlli
-			case "button":
+			case "Button":
 				config = {
 					id: "",
-					type: "button",
+					component: "button",
 					colNumber: "",
 					fieldClassName: "",
 					className: "",
@@ -443,10 +451,10 @@ class Utils {
 				};
 				events = [{ code: "onClick", description: "onClick" }];
 				break;
-			case "toggleButton":
+			case "ToggleButton":
 				config = {
 					id: "",
-					type: "toggleButton",
+					component: "toggleButton",
 					colNumber: "",
 					onIcon: "",
 					offIcon: "",
@@ -463,10 +471,10 @@ class Utils {
 				};
 				events = [{ code: "onChange", description: "onChange" }];
 				break;
-			case "textInput":
+			case "TextInput":
 				config = {
 					id: "",
-					type: "textInput",
+					component: "textInput",
 					colNumber: "",
 					fieldClassName: "",
 					className: "",
@@ -482,10 +490,10 @@ class Utils {
 					{ code: "validate", description: "Validate" },
 				];
 				break;
-			case "textareaInput":
+			case "TextareaInput":
 				config = {
 					id: "",
-					type: "textareaInput",
+					component: "textareaInput",
 					colNumber: "",
 					fieldClassName: "",
 					className: "",
@@ -500,10 +508,10 @@ class Utils {
 					{ code: "onBlur", description: "onBlur" },
 				];
 				break;
-			case "autoComplete":
+			case "AutoComplete":
 				config = {
 					id: "",
-					type: "autoComplete",
+					component: "autoComplete",
 					colNumber: "",
 					fieldClassName: "",
 					className: "",
@@ -517,10 +525,10 @@ class Utils {
 				};
 				events = [];
 				break;
-			case "dropdown":
+			case "Dropdown":
 				config = {
 					id: "",
-					type: "dropdown",
+					component: "dropdown",
 					colNumber: "",
 					name: "",
 					value: "",
@@ -569,10 +577,10 @@ class Utils {
 					{ code: "onFilter", description: "onFilter" },
 				];
 				break;
-			case "numberInput":
+			case "NumberInput":
 				config = {
 					id: "",
-					type: "numberInput",
+					component: "numberInput",
 					colNumber: "",
 					fieldClassName: "",
 					className: "",
@@ -584,14 +592,14 @@ class Utils {
 				};
 				events = [];
 				break;
-			case "switchInput":
+			case "SwitchInput":
 				config = {};
 				events = [];
 				break;
-			case "checkbox":
+			case "Checkbox":
 				config = {
 					id: "",
-					type: "checkbox",
+					component: "checkbox",
 					fieldClassName: "",
 					className: "",
 					hasFloatingLabel: false,
@@ -605,17 +613,22 @@ class Utils {
 					{ code: "onBlur", description: "onBlur" },
 				];
 				break;
-			case "icon":
-				config = { id: "", type: "icon", className: "", fontSize: "" };
-				events = [];
-				break;
-			case "image":
-				config = {};
-				break;
-			case "tag":
+			case "Icon":
 				config = {
 					id: "",
-					type: "tag",
+					component: "icon",
+					className: "",
+					fontSize: ""
+				};
+				events = [];
+				break;
+			case "Image":
+				config = {};
+				break;
+			case "Tag":
+				config = {
+					id: "",
+					component: "tag",
 					fieldClassName: "",
 					className: "",
 					severity: "",
@@ -623,10 +636,10 @@ class Utils {
 					rounded: "",
 				};
 				break;
-			case "avatar":
+			case "Avatar":
 				config = {
 					id: "",
-					type: "avatar",
+					component: "avatar",
 					fieldClassName: "",
 					className: "",
 					size: "large",
@@ -635,14 +648,14 @@ class Utils {
 					image: "",
 				};
 				break;
-			case "action":
+			case "Action":
 				config = { label: "", icon: "", events: {}, actions: [] };
 				events = [{ code: "onClick", description: "onClick" }];
 				break;
 			default:
 				config = {
 					id: "",
-					type: "text",
+					component: "text",
 					fieldClassName: "",
 					className: "",
 					value: "",
@@ -658,13 +671,6 @@ class Utils {
 	renderHtmlString = (htmlString) => {
 		return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
 	};
-	/*
-	shareRenderFunc=function() {
-		ReactDOM.render(
-			<Share/> , document.getElementById('shareContainer')
-		)
-	};
-	*/
 }
 
 export default new Utils();

@@ -1,53 +1,172 @@
 {
-	"id":"add_node",
-	"title": "Add info",
-	"component": "GridContainer",
-	"isCard": true,
-	"layout": "grid",
-	"className": "p-0 pt-2",
-	"components": [
-		{
-			"id": "add_node_info",
-			"dataModel": "Window",
-			"component": "Form",
-			"components": [{
-				"id": "controlId",
-				"component": "TextInput",
-				"hasFloatingLabel": true,
-				"value": "",
-				"label": "ID*",
-				"className": "p-inputtext-sm block col-12 md:col-6 mt-2 w-full",
-				"events": {
-					"validate": {
-						"parameters": "event",
-						"body": "let forwardData = this.components.dialogWindow.forwardData; const value = event.target.value;if (!value || value.length < 1) {return { success: false, message: 'Please specify a valid ID' };}else {var existNode = forwardData.rfInstance.getNode(value);if(existNode) {return { success: false, message: 'Id already set for this window' };}}return {success:true};"
-					}
-				}
-			}]
-		},
-		{
-			"id": "add_node_choose_type",
-			"title": "Control type",
-			"component": "Form",
-			"className": "col-12",
-			"components": [],
-			"events": {
-				"afterRender": {
-					"body": "const _this = this;let nodeType = utils.getControlsList();let itemTypes = [];for (let i = 0; i < nodeType.length; i++) { itemTypes.push({ id: nodeType[i], component: 'ToggleButton', onLabel: nodeType[i].toUpperCase(), offLabel: nodeType[i].toUpperCase(), className: 'col-12 p-button-sm p-button-outlined h-2rem', value: false, tabIndex: i, iconPos: 'right', events: { onChange: { parameters: 'event', body: 'const _this = this;let typeRecord =_this.components.add_node_choose_type.getRecord();let typeSelected = event.target.id;if (typeRecord.selectedType && typeSelected != typeRecord.selectedType) {_this.components[typeRecord.selectedType].setChecked(false);}if (event.value) {_this.components.add_node_choose_type.setRecord({selectedType: typeSelected,});} else {_this.components.add_node_choose_type.setRecord({selectedType: null,});}' }, onClick: { body: 'alert(JSON.stringify(_this.components.window_header.getRecord()));', }, }, });}_this.components.add_node_choose_type.setItems(itemTypes);_this.components.add_node_choose_type.setRecord({ selectedType: null });"
-				}
-			}
-		}
-	],
-	"actions":[
-		{
-			"id": "Save",
-			"label": "Save",
-			"icon": "pi pi-save",
-			"events" : {
-				"onClick": {
-					"body": "const _this = this;if (_this.components.add_node_choose_type.getRecord().selectedType) { let selectedType = _this.components.add_node_choose_type.getRecord().selectedType; let defaultControlConfig = utils.getDefaultControlsConfig(selectedType); let forwardData = this.components.dialogWindow.forwardData; let nodes = forwardData.rfInstance.getNodes(); let edges = forwardData.rfInstance.getEdges(); let newNode = JSON.parse(JSON.stringify(forwardData.emptyNode)); newNode.attributes = defaultControlConfig; newNode.id = _this.components.add_node_info.getRecord().controlId; newNode.attributes.id = newNode.id; newNode.ancestorNode = forwardData.parentNode; const getItmSiblingPos = function (nodes, parentNode) { return nodes.findIndex((n) => { return n.id === parentNode + '_ADDNEWITM'; }); }; let addItmSiblingPos = getItmSiblingPos(nodes, forwardData.parentNode); if (addItmSiblingPos > -1) { newNode.itemPosition = nodes[addItmSiblingPos].itemPosition || 0; nodes[addItmSiblingPos].itemPosition++; siblingNodes = nodes.filter((el) => { return ( el.ancestorNode == forwardData.parentNode && el.type != 'itemnode' && el.type != 'addnode' ); }); for (var i in siblingNodes) { var nodeIndex = nodes.findIndex((el) => { return el.id == siblingNodes[i].id; }); if (nodeIndex > -1) { nodes[nodeIndex].itemPosition++; } } } else { newNode.itemPosition = 0; } newNode.data = { label: newNode.id, attributeType: selectedType }; newNode.type = 'itemnode'; if (addItmSiblingPos > -1) { nodes.splice(addItmSiblingPos, 0, newNode); } else { nodes.push(newNode); } var edge = { id: forwardData.parentNode + '|' + newNode.id, source: forwardData.parentNode, target: newNode.id, type: 'smoothstep', }; edges.push(edge); var childPos = addItmSiblingPos; if (newNode.attributes.components) { let addItmNode = { ...forwardData.emptyNode, data: { label: 'Aggiungi oggetto', attributeType: '' }, id: newNode.id + '_ADDNEWITM', type: 'addnode', attributes: { id: newNode.id + '_ADDNEWITM', title: 'Aggiungi', nodeType: 'addnode', }, }; if (childPos && childPos > -1) { nodes.splice(childPos + 1, 0, addItmNode); childPos++; } else { nodes.push(addItmNode); } edges.push({ id: newNode.id + '|' + addItmNode.id, source: newNode.id, target: addItmNode.id, type: 'smoothstep', }); } if (newNode.attributes.events) { let addEventNode = { ...forwardData.emptyNode, data: { label: 'Aggiungi evento', attributeType: '' }, id: newNode.id + '_ADDEVENT', type: 'addeventnode', attributes: { id: newNode.id + '_ADDEVENT', title: 'Aggiungi', nodeType: 'addeventnode', }, }; if (childPos && childPos > -1) { nodes.splice(childPos + 1, 0, addEventNode); childPos++; } else { nodes.push(addEventNode); } edges.push({ id: newNode.id + '|' + addEventNode.id, source: newNode.id, target: addEventNode.id, type: 'smoothstep', }); } if (newNode.attributes.actions) { let addToolbarItmNode = { ...forwardData.emptyNode, data: { label: 'test5_form_ADDTOOLBARBTN', attributeType: 'TOOLBAR BUTTON', }, id: newNode.id + '_ADDTOOLBARBTN', type: 'addnode', attributes: { id: newNode.id + '_ADDTOOLBARBTN', title: '', nodeType: 'addactions', }, }; if (childPos && childPos > -1) { nodes.splice(childPos + 1, 0, addToolbarItmNode); childPos++; } else { nodes.push(addToolbarItmNode); } edges.push({ id: newNode.id + '|' + addToolbarItmNode.id, source: newNode.id, target: addToolbarItmNode.id, type: 'smoothstep', }); } _this.components.window_flow_builder.setNodes(nodes); _this.components.window_flow_builder.setEdges(edges); const windowId = utils.getSearchParam('window'); const windowMap = forwardData.convertFlowToMap(windowId, nodes); forwardData.convertMapToFlow(windowMap); _this.components.dialogWindow.closeWindow();}"
-				}
-			}
-		}
-	]
+    "id": "add_node",
+    "title": "Add info",
+    "component": "GridContainer",
+    "isCard": false,
+    "layout": "grid",
+    "className": "",
+    "components": [
+        {
+            "id": "form",
+            "component": "Form",
+            "value": "",
+            "label": "",
+            "containerClassName": "",
+            "className": "",
+            "components": [
+                {
+                    "id": "componentId",
+                    "component": "TextInput",
+                    "label": "Component Id",
+                    "hasFloatingLabel": false,
+                    "value": "",
+                    "containerClassName": "col-12 mt-5",
+                    "className": "",
+                    "events": {
+                        "validate": {
+                            "parameters": "event",
+                            "body": "let forwardData = this.components.dialogWindow.forwardData;\nconst value = event.target.value;\nif (!value || value.length < 1) {\n    return {\n        success: false,\n        message: 'Please specify a valid component ID'\n    };\n} else {\n    const value = event.target.value;\n    const checkRegx = new RegExp(/^\\w+$/)\n    if (!checkRegx.test(value)) {\n        return {\n            success: false,\n            message: 'Invalid component ID, you can use alphanumeric characters or underscores'\n        };\n    }\n}\n\n\nreturn {\n    success: true\n};"
+                        }
+                    }
+                },
+                {
+                    "id": "componentType",
+                    "component": "Dropdown",
+                    "label": "Component type",
+                    "hasFloatingLabel": false,
+                    "containerClassName": "col-12 mt-1",
+                    "options": [
+                        {
+                            "value": "AutoComplete",
+                            "label": "AutoComplete"
+                        },
+                        {
+                            "value": "Avatar",
+                            "label": "Avatar"
+                        },
+                        {
+                            "value": "Badge",
+                            "label": "Badge"
+                        },
+                        {
+                            "value": "Calendar",
+                            "label": "Calendar"
+                        },
+                        {
+                            "value": "Checkbox",
+                            "label": "Checkbox"
+                        },
+                        {
+                            "value": "Chips",
+                            "label": "Chips"
+                        },
+                        {
+                            "value": "Divider",
+                            "label": "Divider"
+                        },
+                        {
+                            "value": "Dropdown",
+                            "label": "Dropdown"
+                        },
+                        {
+                            "value": "Icons",
+                            "label": "Icons"
+                        },
+                        {
+                            "value": "Image",
+                            "label": "Image"
+                        },
+                        {
+                            "value": "Button",
+                            "label": "Button"
+                        },
+                        {
+                            "value": "CodeEditor",
+                            "label": "CodeEditor"
+                        },
+                        {
+                            "value": "DataTable",
+                            "label": "DataTable"
+                        },
+                        {
+                            "value": "Form",
+                            "label": "Form"
+                        },
+                        {
+                            "value": "GridContainer",
+                            "label": "GridContainer"
+                        },
+                        {
+                            "value": "Label",
+                            "label": "Label"
+                        },
+                        {
+                            "value": "TextInput",
+                            "label": "TextInput"
+                        },
+                        {
+                            "value": "Tree",
+                            "label": "Tree"
+                        },
+                        {
+                            "value": "NumberInput",
+                            "label": "NumberInput"
+                        },
+                        {
+                            "value": "SelectButton",
+                            "label": "SelectButton"
+                        },
+                        {
+                            "value": "Slider",
+                            "label": "Slider"
+                        },
+                        {
+                            "value": "Splitter",
+                            "label": "Splitter"
+                        },
+                        {
+                            "value": "Stack",
+                            "label": "Stack"
+                        },
+                        {
+                            "value": "SwitchInput",
+                            "label": "SwitchInput"
+                        },
+                        {
+                            "value": "TabView",
+                            "label": "TabView"
+                        },
+                        {
+                            "value": "Tag",
+                            "label": "Tag"
+                        },
+                        {
+                            "value": "TextareaInput",
+                            "label": "TextareaInput"
+                        },
+                        {
+                            "value": "ToggleButton",
+                            "label": "ToggleButton"
+                        }
+                    ],
+                    "optionValue": "value",
+                    "optionLabel": "label",
+                    "className": "",
+                    "events": {}
+                },
+                {
+                    "id": "add",
+                    "component": "Button",
+                    "label": "Add component",
+                    "containerClassName": "",
+                    "className": "col-12 mt-5",
+                    "events": {
+                        "onClick": {
+                            "body": "const componentId = this.components.form.getRecord().componentId\nconst selectedType = this.components.form.getRecord().componentType\n\nif (componentId  && componentType) {\n    //create new node\n\n    const defaultControlConfig = utils.getDefaultControlsConfig(selectedType)\n\n    let forwardData = this.windowData\n    let nodes = forwardData.rfInstance.getNodes()\n    let edges = forwardData.rfInstance.getEdges()\n\n    const newNode = {...forwardData.emptyNode}\n    newNode.attributes = defaultControlConfig\n    newNode.id = componentId\n    newNode.attributes.id = newNode.id\n    newNode.ancestorNode = forwardData.parentNode\n\n    const getItmSiblingPos = function(nodes, parentNode) {\n        return nodes.findIndex((n) => {\n            return n.id === parentNode + '_ADDNEWITM'\n        })\n    }\n\n    let addItmSiblingPos = getItmSiblingPos(nodes, forwardData.parentNode)\n    if (addItmSiblingPos > -1) {\n        newNode.itemPosition = nodes[addItmSiblingPos].itemPosition || 0\n        nodes[addItmSiblingPos].itemPosition++\n        siblingNodes = nodes.filter((el) => {\n            return (el.ancestorNode == forwardData.parentNode && el.type != 'itemnode' && el.type != 'addnode')\n        })\n        for (var i in siblingNodes) {\n            var nodeIndex = nodes.findIndex((el) => {\n                return el.id == siblingNodes[i].id\n            })\n            if (nodeIndex > -1) {\n                nodes[nodeIndex].itemPosition++\n            }\n        }\n    } else {\n        newNode.itemPosition = 0\n    }\n\n    newNode.data = {\n        label: newNode.id,\n        component: selectedType\n    }\n    newNode.type = 'itemnode'\n    if (addItmSiblingPos > -1) {\n        nodes.splice(addItmSiblingPos, 0, newNode)\n    } else {\n        nodes.push(newNode)\n    }\n    var edge = {\n        id: forwardData.parentNode + '|' + newNode.id,\n        source: forwardData.parentNode,\n        target: newNode.id,\n        type: 'smoothstep',\n    }\n    edges.push(edge)\n    var childPos = addItmSiblingPos\n    if (newNode.attributes.components) {\n        let addItmNode = {\n            ...forwardData.emptyNode,\n            data: {\n                label: 'Add component',\n                component: ''\n            },\n            id: newNode.id + '_ADDNEWITM',\n            type: 'addnode',\n            attributes: {\n                id: newNode.id + '_ADDNEWITM',\n                title: 'Add',\n                nodeType: 'addnode',\n            },\n        }\n        if (childPos && childPos > -1) {\n            nodes.splice(childPos + 1, 0, addItmNode)\n            childPos++\n        } else {\n            nodes.push(addItmNode)\n        }\n        edges.push({\n            id: newNode.id + '|' + addItmNode.id,\n            source: newNode.id,\n            target: addItmNode.id,\n            type: 'smoothstep',\n        })\n    }\n    if (newNode.attributes.events) {\n        let addEventNode = {\n            ...forwardData.emptyNode,\n            data: {\n                label: 'Add event',\n                component: ''\n            },\n            id: newNode.id + '_ADDEVENT',\n            type: 'addeventnode',\n            attributes: {\n                id: newNode.id + '_ADDEVENT',\n                title: 'Add',\n                nodeType: 'addeventnode',\n            },\n        }\n        if (childPos && childPos > -1) {\n            nodes.splice(childPos + 1, 0, addEventNode)\n            childPos++\n        } else {\n            nodes.push(addEventNode)\n        }\n        edges.push({\n            id: newNode.id + '|' + addEventNode.id,\n            source: newNode.id,\n            target: addEventNode.id,\n            type: 'smoothstep',\n        })\n    }\n    if (newNode.attributes.actions) {\n        let addToolbarItmNode = {\n            ...forwardData.emptyNode,\n            data: {\n                label: 'test5_form_ADDTOOLBARBTN',\n                component: 'TOOLBAR BUTTON',\n            },\n            id: newNode.id + '_ADDTOOLBARBTN',\n            type: 'addnode',\n            attributes: {\n                id: newNode.id + '_ADDTOOLBARBTN',\n                title: '',\n                nodeType: 'addactions',\n            },\n        }\n        if (childPos && childPos > -1) {\n            nodes.splice(childPos + 1, 0, addToolbarItmNode)\n            childPos++\n        } else {\n            nodes.push(addToolbarItmNode)\n        }\n        edges.push({\n            id: newNode.id + '|' + addToolbarItmNode.id,\n            source: newNode.id,\n            target: addToolbarItmNode.id,\n            type: 'smoothstep',\n        })\n    }\n    this.components.window_flow_builder.setNodes(nodes)\n    this.components.window_flow_builder.setEdges(edges)\n    const windowId = utils.getSearchParam('window')\n    const windowMap = forwardData.convertFlowToMap(windowId, nodes)\n    forwardData.convertMapToFlow(windowMap)\n    this.components.dialogWindow.closeWindow()\n}"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
 }

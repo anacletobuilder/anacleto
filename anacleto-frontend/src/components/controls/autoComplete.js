@@ -62,7 +62,7 @@ function AutoComplete({ id, context, panelContext, windowData, ...props }) {
 
 	const labelEl = <label htmlFor={id} className={classNames("pl-2 w-full", props.labelClassName)}>{props.label}</label>;
 	return (<React.Fragment>
-			<span className={classNames("anacleto-autocomplete-container mt-3 p-fluid", props.containerClassName, {
+			<span className={classNames("anacleto-autocomplete-container p-fluid", props.containerClassName, {
 				"p-float-label": props.hasFloatingLabel,
 				"p-input-icon-left": props.iconPosition === "left",
 				"p-input-icon-right": props.iconPosition === "right",

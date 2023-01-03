@@ -125,7 +125,7 @@ const Dialog = ({ id, context, ...props }) => {
 			dismissableMask={props.settings.dismissableMask || true}
 			rtl={props.settings.rtl}
 			closable={props.settings.closable}
-			style={props.settings.style || { width: "75vw", minHeight: "75vh", maxHeight: "95vh" }}
+			style={props.settings.style}
 			className={props.settings.className}
 			maskStyle={props.settings.maskStyle}
 			maskClassName={props.settings.maskClassName}

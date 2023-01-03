@@ -137,7 +137,23 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 		var initialEdges = [];
 		const composeNodesAndEdges = (obj, parentNode) => {
 			var itm = {};
+			for (var attr in obj) {
+				if (
+					attr == "itemPosition" ||
+					attr == "components" ||
+					attr == "events" ||
+					attr == "actions") {
+					continue;
+				} else {
+					itm[attr] = obj[attr];
+				}
+			}
+
+			//Create flow node
 			var node = {
+				id: itm.id,
+				attributes: itm,
+				itemPosition: itm.itemPosition,
 				position: {
 					x: 0,
 					y: 0,
@@ -145,39 +161,26 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 				draggable: false,
 				context,
 			};
-			for (var attr in obj) {
-				if (attr == "itemPosition") {
-					node.itemPosition = obj[attr];
-				} else if (
-					attr == "components" ||
-					attr == "events" ||
-					attr == "actions"
-				) {
-					continue;
-				} else {
-					itm[attr] = obj[attr];
-				}
-			}
 
+			//node type description
 			var typeDef = "";
-
 			if (itm.window) {
 				typeDef = "WINDOW";
 				itm.id = itm.window;
 			}
-			if (itm.type) {
-				typeDef = itm.type;
+			if (itm.component) {
+				typeDef = itm.component;
 			}
 			if (itm.subtype) {
 				typeDef += " - " + itm.subtype;
 			}
+
+			//node optiona data
 			node.data = {
 				label: itm.title ? itm.title : itm.label ? itm.label : itm.id,
-				attributeType: typeDef,
+				component: typeDef,
 			};
 
-			node.id = itm.id;
-			node.attributes = itm;
 
 			if (!parentNode) {
 				node.type = "windownode";
@@ -375,7 +378,8 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 				window: "add_node",
 				type: "modal",
 				settings: {
-					header: `Add node to: ${parentNode}`,
+					header: `Add component to: ${parentNode}`,
+					//style: { width: "75vw", minHeight: "75vh", maxHeight: "95vh" },
 				},
 				windowData: { ...windowData, parentNode }
 			});
@@ -387,6 +391,7 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 				settings: {
 					header: `Add event to: ${parentNode}`,
 					maximizable: true,
+					style: { width: "75vw", minHeight: "75vh", maxHeight: "95vh" },
 				},
 				windowData: { ...windowData, parentNode }
 			});
@@ -398,6 +403,7 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 					header: node.attributes.eventType || `Modify event`,
 					maximizable: true,
 					contentClassName: "flex-column",
+					style: { width: "75vw", minHeight: "75vh", maxHeight: "95vh" },
 				},
 				windowData: { ...windowData, parentNode }
 			});
@@ -408,6 +414,7 @@ function Flow({ id, context, panelContext, windowData, ...props }) {
 				type: "modal",
 				settings: {
 					header: `Add action to: ${parentNode}`,
+					style: { width: "75vw", minHeight: "75vh", maxHeight: "95vh" },
 				},
 				windowData: { ...windowData, parentNode }
 			});
