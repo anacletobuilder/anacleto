@@ -33,7 +33,7 @@
 					"icon": "pi pi-search",
 					"events": {
 						"onClick": {
-							"body": "var nodeId = this.context.panels.search_form.getRecord().id;var rfInstance = utils.forwardData.rfInstance;if(nodeId != '') {var node = rfInstance.getNode(nodeId);if(node) {const x = node.position.x + node.width / 2;const y = node.position.y + node.height / 2;const zoom = 1.85;rfInstance.setCenter(x, y, { zoom, duration: 1000 });this.context.closeWindow();else {window.utils.showToast({ severity: 'error', summary: 'Node not found', detail: `Node not found for id: ${nodeId}`, life: 3000 });}}"
+							"body": "var nodeId = this.context.panels.search_form.getRecord().id;var rfInstance = utils.windowData.rfInstance;if(nodeId != '') {var node = rfInstance.getNode(nodeId);if(node) {const x = node.position.x + node.width / 2;const y = node.position.y + node.height / 2;const zoom = 1.85;rfInstance.setCenter(x, y, { zoom, duration: 1000 });this.context.closeWindow();else {window.utils.showToast({ severity: 'error', summary: 'Node not found', detail: `Node not found for id: ${nodeId}`, life: 3000 });}}"
 						}
 					}
 				}

@@ -24,9 +24,9 @@ import { defaultMemoizeFunction } from "../../utils/utils";
  */
 function TextInput({ id, context, panelContext, windowData, ...props }) {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
-	const [inputValue, setInputValue] = useState(props.value || (typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id]) || "");
+	const [inputValue, setInputValue] = useState(props.value || props.record && (typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id]) || "");
 	const [isValidInput, setIsValidInput] = useState(false);
-	const [disabled, setDisabled] = useState((props.disabled === true || props.disabled === false ? props.disabled : (typeof props.record[id] == 'object')));
+	const [disabled, setDisabled] = useState(props.disabled);
 
 	//Mi tocca metterlo come stato perchè è aggiornato da un'evento asincrono e React non si accorge che cambia qualcosa lì
 	const [icon, setIcon] = useState({ icon: props.icon, iconColor: props.iconColor, iconPosition: props.iconPosition });
@@ -39,11 +39,13 @@ function TextInput({ id, context, panelContext, windowData, ...props }) {
 	}, [props.disabled]);
 
 	useEffect(() => {
+		if(!props.record) return;
+
 		setInputValue(typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id] || "");
 		if (typeof props.record[id] == 'object') {
 			setDisabled(true);
 		}
-	}, [props.record/*, props.value*/]);
+	}, [props.record]);
 
 	useEffect(() => {
 		updatePanelContext({ id, setDisabled });
@@ -114,7 +116,7 @@ function TextInput({ id, context, panelContext, windowData, ...props }) {
 							panelContext.setInvalidMessage(validationRes.message || "");
 						}
 					}
-				}, 1000)
+				}, 500)
 			);
 		} else {
 			setIsValidInput(true);
@@ -140,7 +142,7 @@ function TextInput({ id, context, panelContext, windowData, ...props }) {
 	return (
 		<React.Fragment>
 			<div
-				className={classNames("anacleto-input-text-container mt-3 p-fluid field col",
+				className={classNames("anacleto-input-text-container p-fluid field",
 					props.containerClassName,
 					icon.iconPosition == "left" ? "p-input-icon-left" : "p-input-icon-right", "block",
 					{ "p-float-label": props.hasFloatingLabel }

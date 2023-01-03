@@ -52,7 +52,7 @@
                                     "events": {
                                         "onElementChange": {
                                             "parameters": "node,newClassNames",
-                                            "body": "this.components.window_flow_builder.setNodes((prev) => {\n    const substituteIndex = prev.map((p) => p.id === node.id).indexOf(true);\n    return [...prev.slice(0, substituteIndex), {\n        ...prev[substituteIndex],\n        attributes: {\n            ...prev[substituteIndex].attributes,\n            className: newClassNames\n        }\n    }, ...prev.slice(substituteIndex + 1)]\n});"
+                                            "body": "debugger\nthis.components.window_flow_builder.setNodes((prev) => {\n    const substituteIndex = prev.map((p) => p.id === node.id).indexOf(true);\n    return [...prev.slice(0, substituteIndex), {\n        ...prev[substituteIndex],\n        attributes: {\n            ...prev[substituteIndex].attributes,\n            className: newClassNames\n        }\n    }, ...prev.slice(substituteIndex + 1)]\n});"
                                         }
                                     }
                                 }

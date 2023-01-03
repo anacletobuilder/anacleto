@@ -109,7 +109,7 @@ const NumberInput = (props) => {
     
     return <React.Fragment>
 			<span
-				className={classNames("mt-3 p-fluid p-float-label", icon.iconPosition == "left" ? "p-input-icon-left" : "p-input-icon-right", "block")}
+				className={classNames("p-fluid p-float-label", icon.iconPosition == "left" ? "p-input-icon-left" : "p-input-icon-right", "block")}
 			>
 				<i className={icon.icon} style={{ color: icon.iconColor || "inital" }} />
 				{ Component }
