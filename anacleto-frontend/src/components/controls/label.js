@@ -10,7 +10,7 @@ import { getTranslator } from '../../utils/translator';
 
 const Label = ({ id, context, panelContext, windowData, ...props }) => {
 	const { panelsContext, updatePanelContext } = useContext(PanelsContext);
-	const [label, setLabel] = useState(props.label);
+	const [label, setLabel] = useState(props.record && (typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id]) || props.label);
 	const application = useSelector(selectApplication);
 	const window = useSelector(selectWindow);
 
@@ -24,15 +24,24 @@ const Label = ({ id, context, panelContext, windowData, ...props }) => {
 		setLabel(props.label);
 	}, [props.label]);
 
+	useEffect(() => {
+		if (!props.record) return;
+
+		setLabel((typeof props.record[id] == 'object' ? JSON.stringify(props.record[id]) : props.record[id]) || props.label);
+	}, [props.record]);
+
 	if (panelContext._status !== PANEL_STATUS_READY) return;
 
+	//if(id == "displayName") debugger;
+
+	
 	return (
 		<label
 			className={classNames("anacleto-label", props.className)}
 			htmlFor={props.for}
 		>
 			{props.children}
-			{props.record[id] || t(id,label)}
+			{t(id,label)}
 		</label>
 	)
 }

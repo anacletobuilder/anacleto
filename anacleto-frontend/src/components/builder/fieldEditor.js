@@ -13,6 +13,7 @@ import EditorTextSize, { TEXT_BASE, TEXT_LG, TEXT_SM, TEXT_XL, TEXT_XS } from ".
 import EditorFontWeight, { fontWeights, FONT_BOLD, FONT_LIGHT, FONT_MEDIUM, FONT_NORMAL, FONT_SEMIBOLD, FONT_WEIGHTS } from "./editor/editorFontWeight";
 import EditorPreview from "./editor/editorPreview";
 import { TEXT_SIZES } from "./editor/editorTextSize";
+import { Button } from 'primereact/button';
 const { v4: uuidv4 } = require("uuid");
 
 const FieldEditor = ({ id, context, panelContext, windowData, ...props }) => {
@@ -160,33 +161,30 @@ const FieldEditor = ({ id, context, panelContext, windowData, ...props }) => {
 
 
 	//Listen to state changes to update element className
-	const [stateDebounceTimeout, setStateDebounceTimeout] = useState(null);
 	useEffect(() => {
 		if (!fieldData.node.attributes.component) return;
+		onElementChange(fieldData.node, "className", getClassNames())
+	}, [flexDirection, width, flexJustify, flexAlign, textSize, fontWeight, padding]);
+
+
+	const [stateDebounceTimeout, setStateDebounceTimeout] = useState(null);
+	//call onElementChange event
+	const onElementChange = (fieldData, attribute, value) => {
+		/*
 		clearTimeout(stateDebounceTimeout);
-
-		const updatedClassNames = getClassNames();
 		setStateDebounceTimeout(
-			setTimeout((({ fieldData, updatedClassNames, panel, context, panelsContext, updatePanelContext, panelContext }) => {
-
-				//Update record classnames
-				/*setFieldData((prev) => ({
-					...prev,
-					node: {
-						...prev.node,
-						attributes: {
-							...prev.node.attributes,
-							className: updatedClassNames
-						}
-					}
-				}));*/
+			setTimeout((({ fieldData, panel, context, panelsContext, updatePanelContext, panelContext, windowData, components, attribute, value }) => {
 				//Update flow nodes
 				if (props.events.onElementChange) {
-					props.events.onElementChange.bind({ panel, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(fieldData, updatedClassNames);
+					props.events.onElementChange.bind({ panel, context, windowData, components, updatePanelContext, ...panelContext })(fieldData, attribute, value);
 				}
-			}).bind(null, { fieldData: fieldData.node, updatedClassNames, panel: props, context, windowData, components: panelsContext, updatePanelContext, panelContext }), 1000)
-		);
-	}, [flexDirection, width, flexJustify, flexAlign, textSize, fontWeight, padding]);
+			}).bind(null, { fieldData, panel: props, context, windowData, components: panelsContext, updatePanelContext, panelContext, attribute, value }), 1000)
+		)
+		*/
+		if (props.events.onElementChange) {
+			props.events.onElementChange.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(fieldData, attribute, value);
+		}
+	}
 
 	const onChange = (value) => {
 		setWidth(value);
@@ -248,10 +246,17 @@ const FieldEditor = ({ id, context, panelContext, windowData, ...props }) => {
 	];
 
 	const handleFormFieldChange = (id, event, attributes) => {
-		console.log("OnChange ", id, event, attributes);
+		onElementChange(fieldData.node, id, event)
 	}
+
+	const onClose = (event) =>{
+		if (props.events.onClose) {
+			props.events.onClose.bind({ panel: props, context, windowData, components: panelsContext, updatePanelContext, ...panelContext })(event, props.windowData);
+		}
+	}
+
 	return (<React.Fragment>
-		<div className="hidden xl:flex flex-column justify-content-center align-items-center absolute top-0 right-0 mr-3 pl-3 w-full z-5 bg-white">
+		<div className="hidden xl:flex flex-column justify-content-center align-items-center absolute top-0 right-0 pl-3 w-full z-5 bg-white border-bottom-2 border-300 pb-3">
 			<EditorPreview
 				flexDirection={flexDirection}
 				flexJustify={flexJustify}
@@ -263,7 +268,15 @@ const FieldEditor = ({ id, context, panelContext, windowData, ...props }) => {
 				attributes={fieldData.node.attributes}
 			/>
 		</div>
-		<div className={classNames((props.className || ""), "flex flex-column flex-auto gap-4 overflow-auto xl:mt-8 xl:pt-8")} style={{ height: 0 }}>
+
+		<Button
+			icon="pi pi-times"
+			className="p-button-rounded p-button-text z-5"
+			aria-label="Close" 
+			onClick={onClose}/>
+
+
+		<div className={classNames((props.className || ""), "flex flex-column flex-auto gap-4 overflow-auto  xl:pt-8")} style={{ height: 0 }}>
 			<div className={classNames("flex flex-column flex-auto xl:mt-8 xl:pt-6")}>
 				{sections.map((s, i) => (
 					<React.Fragment key={s.title}>
