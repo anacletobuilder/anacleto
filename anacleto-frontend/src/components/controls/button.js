@@ -28,10 +28,10 @@ const Button = ({ id, context, panelContext, windowData, ...props }) => {
 
 	if(panelContext._status !== PANEL_STATUS_READY) return;
 	return (
-		<div className={classNames("flex-auto", props.containerClassName)}>
+		<div className={classNames("anacleto-button-container", props.containerClassName)}>
 			<PrimeButton
 				className={classNames(
-					"p-button p-2",
+					"p-button p-2 w-full",
 					props.className,
 					props.icon && !props.label
 						? "p-button-rounded p-button-text"

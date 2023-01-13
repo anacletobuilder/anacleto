@@ -82,12 +82,13 @@
                     "id": "userRoles",
                     "component": "AutoComplete",
                     "label": "Roles",
-                    "containerClassName": "col-12 md:col-9",
+                    "containerClassName": "col-12 md:col-9 mt-3",
                     "descriptionField": "description",
                     "availableValuesField": "rolesAvailable",
                     "filterField": "description",
                     "hasFloatingLabel": true,
                     "disabled": true,
+                    "className": " col justify-content-start align-items-start text-base font-normal 2",
                     "events": {
                         "afterRender": {
                             "body": "this.setLabel(`Roles for application: ${this.context.destApplication} tenant: ${this.context.tenant}`)"
@@ -96,8 +97,8 @@
                 },
                 {
                     "component": "Button",
-                    "className": "mt-6 col-12 md:col-4 md:col-offset-4",
-                    "containerClassName": "w-full",
+                    "className": "",
+                    "containerClassName": "md:col-3 md:mt-3 col-12 mt-6",
                     "id": "save",
                     "label": "Update roles",
                     "events": {
@@ -109,11 +110,11 @@
             ],
             "events": {
                 "afterRender": {
-                    "body": "const uid = utils.getSearchParam('uid');\n this.load({uid: uid})"
+                    "body": "const uid = utils.getSearchParam('uid');\nthis.load({uid: uid})"
                 },
                 "onRecordChange": {
                     "parameters": "record",
-                    "body": "debugger;\n//this.components.userPhoto.setImage(record.photoURL)"
+                    "body": "//this.components.userPhoto.setImage(record.photoURL)"
                 }
             }
         }

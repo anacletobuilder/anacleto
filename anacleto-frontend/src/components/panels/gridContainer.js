@@ -28,8 +28,8 @@ function GridContainer({ id, context, panelContext, windowData, ...props }) {
 							(props.children).filter(c => c).map(c => (
 								//use cloneElement for add props to element
 								React.cloneElement(c, c.type?.type?.name ? {
-									//[@lucabiasotto 2022-12-23] grid not has record record: props.record,
-									//[@lucabiasotto 2022-12-23] grid not has record setRecord: props.setRecord,
+									record: props.record, //rember you can use gridContainer in a Form
+									setRecord: props.setRecord, //rember you can use gridContainer in a Form
 									//[@lucabiasotto 2022-12-23] windowData is already in props, here it's undefined windowData: props.windowData,
 								} : {})
 							))

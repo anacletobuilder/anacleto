@@ -43,9 +43,18 @@ const Component = withErrorBoundary(({ component, windowData, ...props }) => {
 		setInvalidMessage,
 		setLabel,
 		setIsLoading,
-		setClassName: useCallback((newClass) => {
-			if (newClass) {
-				setClassName((prev) => prev + " " + newClass);
+		addClass: useCallback((toAdd) => {
+			if (toAdd) {
+				setClassName((prev) => prev + " " + toAdd);
+			}
+		}, []),
+		removeClass: useCallback((toRemove) => {
+			if (toRemove) {
+				setClassName((prev) => {
+					let newClass = prev;
+					toRemove.split(' ').forEach(c => newClass = newClass.replaceAll(c, ''))
+					return newClass;
+				});
 			}
 		}, []),
 	};
@@ -272,7 +281,7 @@ const Component = withErrorBoundary(({ component, windowData, ...props }) => {
 			</div>
 		};
 
-		
+
 		container = <div className={classNames("flex flex-auto", props.containerClassName)}>
 			<Card
 				header={getHeaderTemplate}
