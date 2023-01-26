@@ -32,7 +32,10 @@ class Middleware {
 		if (req.url === "/metadata") {
 			//TODO mmmm va bene così?
 			next();
-		} else {
+		} /*åelse if (req.url.startsWith("/locales/")) {
+			//TODO mmmm va bene così?
+			next();
+		}*/ else {
 			const tenant = req.headers.tenant;
 			if (!tenant) {
 				next("missing_tenant");

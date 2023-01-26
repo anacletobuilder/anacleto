@@ -43,20 +43,20 @@
                 {
                     "containerClassName": "col-12 md:col-4",
                     "component": "TextInput",
-                    "hasFloatingLabel": true,
+                    "hasFloatingLabel": false,
                     "id": "uid",
                     "disabled": true,
                     "label": "UID"
                 },
                 {
-                    "className": "col-12",
+                    "className": "col-12 md:col-3",
                     "component": "Checkbox",
                     "id": "disabled",
                     "disabled": true,
                     "label": "Disabled"
                 },
                 {
-                    "className": "col-12 mb-4",
+                    "className": "col-12 md:col-3",
                     "component": "Checkbox",
                     "id": "emailVerified",
                     "disabled": true,
@@ -65,7 +65,7 @@
                 {
                     "containerClassName": "col-12 md:col-4",
                     "component": "TextInput",
-                    "hasFloatingLabel": true,
+                    "hasFloatingLabel": false,
                     "id": "creationTime",
                     "disabled": true,
                     "label": "Creation time"
@@ -73,7 +73,7 @@
                 {
                     "containerClassName": "col-12 md:col-4",
                     "component": "TextInput",
-                    "hasFloatingLabel": true,
+                    "hasFloatingLabel": false,
                     "id": "lastSignInTime",
                     "disabled": true,
                     "label": "Last login"
@@ -82,13 +82,13 @@
                     "id": "userRoles",
                     "component": "AutoComplete",
                     "label": "Roles",
-                    "containerClassName": "col-12 md:col-9 mt-3",
+                    "containerClassName": "col-12 md:col-9",
                     "descriptionField": "description",
                     "availableValuesField": "rolesAvailable",
                     "filterField": "description",
-                    "hasFloatingLabel": true,
+                    "hasFloatingLabel": false,
                     "disabled": true,
-                    "className": " col justify-content-start align-items-start text-base font-normal 2",
+                    "className": "",
                     "events": {
                         "afterRender": {
                             "body": "this.setLabel(`Roles for application: ${this.context.destApplication} tenant: ${this.context.tenant}`)"
@@ -103,7 +103,7 @@
                     "label": "Update roles",
                     "events": {
                         "onClick": {
-                            "body": "const _this = this;\ncontext.panels.user_detail.setIsLoading(true);\nvar record = context.panels.user_detail.getRecord();\nvar body = {\n    data: record.userRoles\n};\nutils.callServer({\n    url: '/userRoles',\n    method: 'patch',\n    params: {\n        userUid: record.uid,\n        destapplication: _this.context.destApplication\n    },\n    data: body\n}).then(function(response) {\n    if (response.data.success) {\n        utils.showToast({\n            severity: 'success',\n            summary: 'Roles updated',\n            detail: JSON.stringify(response.data),\n            life: 3000\n        });\n    } else {\n        utils.showToast({\n            severity: 'error',\n            summary: 'Error',\n            detail: 'Server error: ' + response.data.message || 'Error',\n            sticky: true\n        });\n    }\n    context.panels.user_detail.setIsLoading(false);\n}).catch(function(error) {\n    utils.showToast({\n        severity: 'error',\n        summary: 'Error',\n        detail: 'Server error: ' + error || 'Error',\n        sticky: true\n    });\n    context.panels.user_detail.setIsLoading(false);\n});"
+                            "body": "const _this = this;\nthis.components.user_detail.setIsLoading(true);\nvar record = this.components.user_detail.getRecord();\nvar body = {\n    data: record.userRoles\n};\nutils.callServer({\n    url: '/userRoles',\n    method: 'patch',\n    params: {\n        userUid: record.uid,\n        destapplication: this.context.destApplication\n    },\n    data: body\n}).then(function(response) {\n    if (response.data.success) {\n        utils.showToast({\n            severity: 'success',\n            summary: 'Roles updated',\n            detail: JSON.stringify(response.data),\n            life: 3000\n        });\n    } else {\n        utils.showToast({\n            severity: 'error',\n            summary: 'Error',\n            detail: 'Server error: ' + response.data.message || 'Error',\n            sticky: true\n        });\n    }\n    _this.components.user_detail.setIsLoading(false);\n}).catch(function(error) {\n    utils.showToast({\n        severity: 'error',\n        summary: 'Error',\n        detail: 'Server error: ' + error || 'Error',\n        sticky: true\n    });\n    _this.components.user_detail.setIsLoading(false);\n});"
                         }
                     }
                 }

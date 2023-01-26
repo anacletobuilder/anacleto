@@ -98,7 +98,7 @@ const ApplicationBuilder = (props) => {
 			)
 		};
 		const utilsArgs = {
-			userCredential: userCredentials,
+			userCredentials,
 			navigate: _navigate,
 			searchParams,
 			confirmDialog,
@@ -107,6 +107,7 @@ const ApplicationBuilder = (props) => {
 			setInputDialogSettings,
 			setSidebarSettings,
 			context,
+			axios
 		};
 		window.utils = utils.init(utilsArgs);
 		window.DateTime = DateTime;
@@ -285,7 +286,7 @@ const ApplicationBuilder = (props) => {
 				tenants={tenants}
 				tenant={tenant}
 				metadata={metadata}
-				userCredential={userCredentials}
+				userCredentials={userCredentials}
 			></TopBar>
 			{isLoading && (
 				<div className="layout-main-container h-screen w-screen flex flex-1 align-content-center flex-wrap card-container blue-container -mb-6">
@@ -335,7 +336,7 @@ const ApplicationBuilder = (props) => {
 									settings={dialogSettings}
 									setDialogSettings={setDialogSettings}
 									metadata={metadata}
-									userCredential={userCredentials}
+									userCredentials={userCredentials}
 									confirmDialog={confirmDialog}
 									toast={toast}
 								/>
@@ -346,7 +347,7 @@ const ApplicationBuilder = (props) => {
 									destApplication={destApplication}
 									tenant={tenant}
 									metadata={metadata}
-									userCredential={userCredentials}
+									userCredentials={userCredentials}
 									setSidebarSettings={setSidebarSettings}
 									confirmDialog={confirmDialog}
 									toast={toast}

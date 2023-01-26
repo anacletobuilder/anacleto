@@ -96,7 +96,7 @@ function Sidebar(props) {
         destapplication: props.destApplication,
         windowId: props.windowId,
         panels: {}, //i pannelli si aggiungono man mano che vengono creati
-        userCredential: props.userCredential,
+        userCredentials: props.userCredentials,
         closeWindow: onHide
     });
 

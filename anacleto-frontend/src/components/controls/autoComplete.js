@@ -27,7 +27,7 @@ function AutoComplete({ id, context, panelContext, windowData, ...props }) {
 		);
 	}, [props.record]);
 
-	if(panelContext._status !== PANEL_STATUS_READY) return;
+	if (panelContext._status !== PANEL_STATUS_READY) return;
 
 	/**
 	 * Metodo con cui filtrare l'autocompletamento
@@ -54,37 +54,45 @@ function AutoComplete({ id, context, panelContext, windowData, ...props }) {
 
 	const onChange = function (_event) {
 		setSelectedValue(_event.value);
-		
-		if(props.setRecord){
+
+		if (props.setRecord) {
 			props.setRecord({ [id]: _event.value });
 		}
 	};
 
 	const labelEl = <label htmlFor={id} className={classNames("pl-2 w-full", props.labelClassName)}>{props.label}</label>;
+	
+
 	return (<React.Fragment>
-			<span className={classNames("anacleto-autocomplete-container p-fluid", props.containerClassName, {
-				"p-float-label": props.hasFloatingLabel,
-				"p-input-icon-left": props.iconPosition === "left",
-				"p-input-icon-right": props.iconPosition === "right",
-			})}>
+		<div
+			className={classNames("anacleto-input-text-container p-fluid field",
+				props.containerClassName,
+				props.iconPosition == "left" ? "p-input-icon-left" : "p-input-icon-right", "block",
+				{ "p-float-label": props.hasFloatingLabel }
+			)}
+		>
 
-				{!props.hasFloatingLabel && labelEl}
-				{props.icon && <i className={props.icon} />}
-				<PrimeAutoComplete
-					dropdown
-					value={selectedValue || props.record[id]}
-					suggestions={filteredList}
-					completeMethod={(e) => completeMethod(e)}
-					field={props.descriptionField}
-					className={classNames("anacleto-autocomplete", props.className)}
-					multiple
-					onChange={(e) => onChange(e)}
-					aria-label={props.label}
-				/>
-				{props.hasFloatingLabel && labelEl}
+			{!props.hasFloatingLabel && labelEl}
+			<i className={props.icon} style={{ color: props.iconColor || "inital" }} />
 
-			</span>
-		</React.Fragment>
+
+			<PrimeAutoComplete
+				dropdown
+				value={selectedValue || props.record[id]}
+				suggestions={filteredList}
+				completeMethod={(e) => completeMethod(e)}
+				field={props.descriptionField}
+				className={classNames(
+					"w-full anacleto-autocomplete", 
+					props.className)}
+				multiple
+				onChange={(e) => onChange(e)}
+				aria-label={props.label}
+			/>
+			{props.hasFloatingLabel && labelEl}
+
+		</div>
+	</React.Fragment>
 	);
 }
 const MemoAutoComplete = React.memo(AutoComplete, (prev, next) => {

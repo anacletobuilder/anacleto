@@ -120,7 +120,7 @@ function TopBar(props) {
 				<Avatar
 					referrerPolicy="no-referrer"
 					image={
-						props.userCredential?.claims?.picture ||
+						props.userCredentials?.claims?.picture ||
 						`${process.env.PUBLIC_URL}/user.svg`
 					}
 					size="large"
@@ -134,16 +134,16 @@ function TopBar(props) {
 								size="xlarge"
 								shape="circle"
 								image={
-									props.userCredential?.claims?.picture ||
+									props.userCredentials?.claims?.picture ||
 									`${process.env.PUBLIC_URL}/user.svg`
 								}
 							/>
 						</div>
 						<div className="flex flex-1 pr-2 pl-2 mt-2 text-base text-500">
-							{props.userCredential?.claims?.name}
+							{props.userCredentials?.claims?.name}
 						</div>
 						<div className="flex flex-1 pr-2 pl-2 text-sm text-500">
-							{props.userCredential?.username}
+							{props.userCredentials?.username}
 						</div>
 					</div>
 					<React.Fragment>{getThemeSwitcher()}</React.Fragment>

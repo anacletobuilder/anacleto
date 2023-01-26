@@ -162,7 +162,7 @@ Dialog.propTypes = {
 	className: PropTypes.string,
 	setDialogSettings: PropTypes.func,
 	settings: PropTypes.object.isRequired,
-	userCredential: PropTypes.object,
+	userCredentials: PropTypes.object,
 	windowId: PropTypes.any,
 };
 

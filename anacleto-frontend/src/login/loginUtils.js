@@ -38,7 +38,7 @@ export const loginWithCredential = async (username, password, callback) => {
         //console.log(userCred);
 
         window.localStorage.setItem('username', userCred.user.email);
-        window.localStorage.setItem('userCredential', JSON.stringify(userCred));
+        window.localStorage.setItem('userCredentials', JSON.stringify(userCred));
         if (callback) {
             callback(userCred.user.email);
         }
@@ -74,7 +74,7 @@ export const loginWithGoogle = async (callback) => {
                 console.log(`user ${user}`);
 
                 window.localStorage.setItem('username', user.email);
-                window.localStorage.setItem('userCredential', JSON.stringify(user));
+                window.localStorage.setItem('userCredentials', JSON.stringify(user));
                 if (callback) {
                     callback(user.email);
                 }
