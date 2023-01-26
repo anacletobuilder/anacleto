@@ -29,13 +29,16 @@ class Middleware {
 	async checkRoles(req, res, next) {
 		logger.debug(`Check request role!`);
 
-		if (req.url === "/metadata") {
+		const isSuperAdmin = superAdminUids.indexOf(req.user.uid) > -1;
+		if (isSuperAdmin) {
+			next();
+		}else if (req.url === "/metadata") {
 			//TODO mmmm va bene così?
 			next();
-		} /*åelse if (req.url.startsWith("/locales/")) {
+		} else if (req.url.startsWith("/locales/")) {
 			//TODO mmmm va bene così?
 			next();
-		}*/ else {
+		} else {
 			const tenant = req.headers.tenant;
 			if (!tenant) {
 				next("missing_tenant");
@@ -46,18 +49,15 @@ class Middleware {
 					tenantRoles = claimsToObject(req.user);
 				}
 
-				const isSuperAdmin = superAdminUids.indexOf(req.user.uid) > -1;
-				if (isSuperAdmin) {
-					next();
-				} else if (
+				if (
 					!tenant ||
 					!tenantRoles ||
 					!tenantRoles.length === 0
 				) {
-					//tenant non abilitato
+					//tenant not enable
 					next("missing_role");
 				} else {
-					//passa il controllo all'handler successivo
+					//has role for tenant, go to next handler
 					next();
 				}
 			}

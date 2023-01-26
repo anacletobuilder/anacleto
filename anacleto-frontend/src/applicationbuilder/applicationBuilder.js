@@ -162,38 +162,8 @@ const ApplicationBuilder = (props) => {
 		getToken()
 			.then((token) => {
 				_token = token;
-				//check translation
-				if (!i18n.hasLoadedNamespace(_i18nResourceBundle)) {
-					//download translation bundle
-					return axios.get(
-						`${process.env.REACT_APP_BACKEND_HOST}/locales/${i18n.language}`,
-						{
-							timeout: 5000,
-							headers: {
-								Authorization: _token,
-								application,
-								tenant,
-							},
-						}
-					);
-				}
-
 				return Promise.resolve();
-			})
-			.then((resp) => {
-				//Load app bundle translation
-				if (resp?.data) {
-					return i18n.addResourceBundle(
-						i18n.language,
-						_i18nResourceBundle,
-						resp.data,
-						true,
-						true
-					);
-				}
-				return Promise.resolve();
-			})
-			.then(() => {
+			}).then((token) => {
 				//load app metadata
 				const headers = {
 					Authorization: _token,
@@ -264,6 +234,38 @@ const ApplicationBuilder = (props) => {
 				}
 
 				setIsLoading(false);
+			})
+			.then(() => {
+				//check translation
+				if (!i18n.hasLoadedNamespace(_i18nResourceBundle)) {
+					//download translation bundle
+					return axios.get(
+						`${process.env.REACT_APP_BACKEND_HOST}/locales/${i18n.language}`,
+						{
+							timeout: 5000,
+							headers: {
+								Authorization: _token,
+								application,
+								tenant,
+							},
+						}
+					);
+				}
+
+				return Promise.resolve();
+			})
+			.then((resp) => {
+				//Load app bundle translation
+				if (resp?.data) {
+					return i18n.addResourceBundle(
+						i18n.language,
+						_i18nResourceBundle,
+						resp.data,
+						true,
+						true
+					);
+				}
+				return Promise.resolve();
 			})
 			.catch((e) => {
 				console.error(e);
