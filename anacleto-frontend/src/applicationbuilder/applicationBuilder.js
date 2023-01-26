@@ -162,7 +162,7 @@ const ApplicationBuilder = (props) => {
 		getToken()
 			.then((token) => {
 				_token = token;
-				return Promise.resolve();
+				return Promise.resolve()
 			}).then((token) => {
 				//load app metadata
 				const headers = {

@@ -33,12 +33,12 @@ class Middleware {
 		if (isSuperAdmin) {
 			next();
 		}else if (req.url === "/metadata") {
-			//TODO mmmm va bene così?
+			//metadata api return metadata based on user roles
 			next();
-		} else if (req.url.startsWith("/locales/")) {
-			//TODO mmmm va bene così?
+		} /*else if (req.url.startsWith("/locales/")) {
+			//default translation request are authorized for logged user
 			next();
-		} else {
+		} */else {
 			const tenant = req.headers.tenant;
 			if (!tenant) {
 				next("missing_tenant");
