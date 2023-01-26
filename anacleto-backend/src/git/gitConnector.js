@@ -99,37 +99,44 @@ class GitConnector {
     async writeFile(application, user, realtivePath, fileContent) {
         const appdir = path.join(this.appsRootPath, application);
         const gitdir = path.join(appdir, ".git");
-
         const absolutedir = path.join(appdir, realtivePath);
+        const appConfigration = appUtils.getAppConfiguration(application);
 
         return fsPromises.mkdir(path.dirname(absolutedir), { recursive: true })
             .then((data) => fsPromises.writeFile(absolutedir, fileContent, 'utf-8'))
-            .then((data) => git.add({
-                fs,
-                dir: appdir,
-                gitdir: gitdir,
-                filepath: realtivePath
-            }))
-            .then((data) => git.commit({
-                fs,
-                dir: realtivePath,
-                gitdir: gitdir,
-                author: {
-                    name: user.name,
-                    email: user.email,
-                },
-                message: `${user.name} update file ${realtivePath}`
-            }))
             .then((data) => {
-                //docs auth https://isomorphic-git.org/docs/en/authentication.html
-                const appConfigration = appUtils.getAppConfiguration(application);
-                return git.push({
+                if (!appConfigration.repository) {
+                    console.warn(`Git reposity non configured for app ${application}`)
+                    return Promise.resolve();
+                }
+
+                return git.add({
                     fs,
-                    http,
-                    dir: realtivePath,
+                    dir: appdir,
                     gitdir: gitdir,
-                    onAuth: this.getAuth(appConfigration),
+                    filepath: realtivePath
                 })
+                    .then((data) => git.commit({
+                        fs,
+                        dir: realtivePath,
+                        gitdir: gitdir,
+                        author: {
+                            name: user.name,
+                            email: user.email,
+                        },
+                        message: `${user.name} update file ${realtivePath}`
+                    }))
+                    .then((data) => {
+                        //docs auth https://isomorphic-git.org/docs/en/authentication.html
+                        return git.push({
+                            fs,
+                            http,
+                            dir: realtivePath,
+                            gitdir: gitdir,
+                            onAuth: this.getAuth(appConfigration),
+                        })
+                    })
+
             })
     }
 
@@ -140,32 +147,39 @@ class GitConnector {
         const absolutedir = path.join(appdir, realtivePath);
 
         return fsPromises.rm(absolutedir, { recursive: true })
-            .then((data) => git.remove({
-                fs,
-                dir: appdir,
-                gitdir: gitdir,
-                filepath: realtivePath
-            }))
-            .then((data) => git.commit({
-                fs,
-                dir: realtivePath,
-                gitdir: gitdir,
-                author: {
-                    name: user.name,
-                    email: user.email,
-                },
-                message: `${user.name} update file ${realtivePath}`
-            }))
             .then((data) => {
-                //docs auth https://isomorphic-git.org/docs/en/authentication.html
-                const appConfigration = appUtils.getAppConfiguration(application);
-                return git.push({
+                if (!appConfigration.repository) {
+                    console.warn(`Git reposity non configured for app ${application}`)
+                    return Promise.resolve();
+                }
+
+                return git.remove({
                     fs,
-                    http,
-                    dir: realtivePath,
+                    dir: appdir,
                     gitdir: gitdir,
-                    onAuth: this.getAuth(appConfigration),
+                    filepath: realtivePath
                 })
+                    .then((data) => git.commit({
+                        fs,
+                        dir: realtivePath,
+                        gitdir: gitdir,
+                        author: {
+                            name: user.name,
+                            email: user.email,
+                        },
+                        message: `${user.name} update file ${realtivePath}`
+                    }))
+                    .then((data) => {
+                        //docs auth https://isomorphic-git.org/docs/en/authentication.html
+                        const appConfigration = appUtils.getAppConfiguration(application);
+                        return git.push({
+                            fs,
+                            http,
+                            dir: realtivePath,
+                            gitdir: gitdir,
+                            onAuth: this.getAuth(appConfigration),
+                        })
+                    })
             })
     }
 

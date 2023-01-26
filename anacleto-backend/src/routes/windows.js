@@ -80,7 +80,7 @@ module.exports = function (app) {
 					res.send({ success: true });
 				})
 				.catch((error) => {
-					console.error(`Update window ${windowName} error`, error);
+					console.error(`Error on create window "${windowName}" `, error);
 					res.send({ success: false, message: error.message });
 				});
 		} catch (e) {
@@ -111,7 +111,7 @@ module.exports = function (app) {
 					res.send({ success: true });
 				})
 				.catch((error) => {
-					console.error(`Create window ${windowName} error`, error);
+					console.error(`Error on update window "${windowName}" `, error);
 					//res.send({ success: false, message: error.message });
 					res.sendStatus(500);
 				});
@@ -139,7 +139,7 @@ module.exports = function (app) {
 					res.send({ success: true });
 				})
 				.catch((error) => {
-					console.error(`Delete window ${windowName} error`, error);
+					console.error(`Error on delete window "${windowName}" `, error);
 					//res.send({ success: false, message: error.message });
 					res.sendStatus(500);
 				});

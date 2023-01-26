@@ -2,14 +2,14 @@ import { getToken as getLoginToken } from '../login/loginUtils'
 /**
  * Classe di utilità lato client, singola istanza
  *
- * @param {string} userCredential
+ * @param {string} userCredentials
  * @param {object} navigate
  * @param {object} searchParams
  */
 class Utils {
 	constructor() { }
 	init(params) {
-		this.userCredential = params.userCredential;
+		this.userCredentials = params.userCredentials;
 		this.navigate = params.navigate;
 		this.searchParams = params.searchParams;
 		this.confirmDialog = params.confirmDialog;
@@ -18,6 +18,7 @@ class Utils {
 		this.setInputDialogSettings = params.setInputDialogSettings;
 		this.setSidebarSettings = params.setSidebarSettings
 		this.context = params.context;
+		this.axios = params.axios;
 		return this;
 	}
 
@@ -35,7 +36,7 @@ class Utils {
 	 * @return ritorna le credenziali di logid di firbasen, con ruoli ecc ecc
 	 */
 	getUserCrential = () => {
-		return this.userCredential;
+		return this.userCredentials;
 	};
 
 	/**
@@ -50,11 +51,11 @@ class Utils {
 		// // checkRevoked true.
 		// debugger;
 		// let checkRevoked = true;
-		// return auth.verifyIdToken(this.userCredential.token, checkRevoked)
+		// return auth.verifyIdToken(this.userCredentials.token, checkRevoked)
 		// 	.then((payload) => {
 		// 		// Token is valid.
 		// 		debugger;
-		// 		return Promise.resolve(this.userCredential)
+		// 		return Promise.resolve(this.userCredentials)
 		// 	})
 		// 	.catch((error) => {
 		// 		debugger;
@@ -144,16 +145,17 @@ class Utils {
 					params.headers
 				);
 
-				const axios = require("axios");
-				return axios({
+
+				return this.axios.request({
 					method: method || "post",
 					baseURL: `${process.env.REACT_APP_BACKEND_HOST}`,
 					url: url,
-					timeout: 60000,
+					timeout: params.timeout || 60000,
 					params: urlParams,
 					headers: headers,
 					data: data,
-				});
+				})
+
 			});
 	};
 

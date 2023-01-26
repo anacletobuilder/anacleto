@@ -98,7 +98,7 @@ const ApplicationBuilder = (props) => {
 			)
 		};
 		const utilsArgs = {
-			userCredential: userCredentials,
+			userCredentials,
 			navigate: _navigate,
 			searchParams,
 			confirmDialog,
@@ -107,6 +107,7 @@ const ApplicationBuilder = (props) => {
 			setInputDialogSettings,
 			setSidebarSettings,
 			context,
+			axios
 		};
 		window.utils = utils.init(utilsArgs);
 		window.DateTime = DateTime;
@@ -161,38 +162,8 @@ const ApplicationBuilder = (props) => {
 		getToken()
 			.then((token) => {
 				_token = token;
-				//check translation
-				if (!i18n.hasLoadedNamespace(_i18nResourceBundle)) {
-					//download translation bundle
-					return axios.get(
-						`${process.env.REACT_APP_BACKEND_HOST}/locales/${i18n.language}`,
-						{
-							timeout: 5000,
-							headers: {
-								Authorization: _token,
-								application,
-								tenant,
-							},
-						}
-					);
-				}
-
-				return Promise.resolve();
-			})
-			.then((resp) => {
-				//Load app bundle translation
-				if (resp?.data) {
-					return i18n.addResourceBundle(
-						i18n.language,
-						_i18nResourceBundle,
-						resp.data,
-						true,
-						true
-					);
-				}
-				return Promise.resolve();
-			})
-			.then(() => {
+				return Promise.resolve()
+			}).then((token) => {
 				//load app metadata
 				const headers = {
 					Authorization: _token,
@@ -264,6 +235,38 @@ const ApplicationBuilder = (props) => {
 
 				setIsLoading(false);
 			})
+			.then(() => {
+				//check translation
+				if (!i18n.hasLoadedNamespace(_i18nResourceBundle)) {
+					//download translation bundle
+					return axios.get(
+						`${process.env.REACT_APP_BACKEND_HOST}/locales/${i18n.language}`,
+						{
+							timeout: 5000,
+							headers: {
+								Authorization: _token,
+								application,
+								tenant,
+							},
+						}
+					);
+				}
+
+				return Promise.resolve();
+			})
+			.then((resp) => {
+				//Load app bundle translation
+				if (resp?.data) {
+					return i18n.addResourceBundle(
+						i18n.language,
+						_i18nResourceBundle,
+						resp.data,
+						true,
+						true
+					);
+				}
+				return Promise.resolve();
+			})
 			.catch((e) => {
 				console.error(e);
 				dispatch(resetMetadata());
@@ -285,7 +288,7 @@ const ApplicationBuilder = (props) => {
 				tenants={tenants}
 				tenant={tenant}
 				metadata={metadata}
-				userCredential={userCredentials}
+				userCredentials={userCredentials}
 			></TopBar>
 			{isLoading && (
 				<div className="layout-main-container h-screen w-screen flex flex-1 align-content-center flex-wrap card-container blue-container -mb-6">
@@ -335,7 +338,7 @@ const ApplicationBuilder = (props) => {
 									settings={dialogSettings}
 									setDialogSettings={setDialogSettings}
 									metadata={metadata}
-									userCredential={userCredentials}
+									userCredentials={userCredentials}
 									confirmDialog={confirmDialog}
 									toast={toast}
 								/>
@@ -346,7 +349,7 @@ const ApplicationBuilder = (props) => {
 									destApplication={destApplication}
 									tenant={tenant}
 									metadata={metadata}
-									userCredential={userCredentials}
+									userCredentials={userCredentials}
 									setSidebarSettings={setSidebarSettings}
 									confirmDialog={confirmDialog}
 									toast={toast}
